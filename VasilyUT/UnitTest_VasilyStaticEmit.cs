@@ -1,6 +1,5 @@
 ﻿using Vasily;
 using Vasily.Core;
-using Vasily.Sql;
 using Xunit;
 
 namespace VasilyUT

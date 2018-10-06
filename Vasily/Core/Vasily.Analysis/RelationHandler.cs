@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using Vasily.Standard;
 
@@ -52,7 +53,7 @@ namespace Vasily.Core
 
                 //获取此种成员排列对应的类型排列
                 ts = GetTypes(results[i].ToArray());
-
+               
                 switch (gsCount)
                 {
                     case 2:
@@ -107,13 +108,23 @@ namespace Vasily.Core
                     sources[j] = filter(parameter[j]);
                 }
 
+                PropertyGetter[] getters = new PropertyGetter[parameter.Length];
+                for (int j = 0; j < sources.Length; j += 1)
+                {
+                    var instance = _mapping[parameter[j]];
+                    getters[j] = MebOperator.Getter(instance.RelationType, instance.ColumnName);
+                   
+                }
 
                 gs["Table"] = _model.TableName;
                 gs["Primary"] = _model.PrimaryKey;
 
                 gs.Set("SourceConditions", sources);
                 gs.Set("TableConditions", table);
-
+                gs.Set("Getters", getters);
+                Debug.WriteLine("========================================================");
+                Debug.WriteLine(getters.Length);
+                Debug.WriteLine("========================================================");
                 //public static string GetFromTable;
                 gs.Set("GetFromTable", SelectString(parameter));
                 //public static string ModifyFromTable;

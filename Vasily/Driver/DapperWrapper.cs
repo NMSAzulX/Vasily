@@ -322,37 +322,70 @@ namespace Vasily
 
     }
 
-    public class DapperWrapper<T, R, C1> : DapperWrapper<T>
+    public class DapperWrapperRelation<T> : DapperWrapper<T>
     {
-        public DapperWrapper(string key) : base(key)
+        internal PropertyGetter[] _emits;
+        internal string[] _sources;
+        internal string[] _tables;
+        public DapperWrapperRelation(string key) : this(key,key)
         {
 
         }
-        public DapperWrapper(string writter, string reader) : base(writter, reader)
+        public DapperWrapperRelation(string writter, string reader) : base(writter, reader)
         {
 
         }
 
-        private int Table_Execute(string sql, int start = 0, params object[] parameters)
+        internal int TableExecute(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
-            for (int i = start; i < parameters.Length; i += 1)
+            for (int i = 0; i < parameters.Length; i += 1)
             {
-                dynamicParams.Add(RelationSql<T, R, C1>.TableConditions[i], parameters[i]);
+                dynamicParams.Add(_tables[i], parameters[i]);
+            }
+            return Reader.Execute(sql, dynamicParams);
+        }
+        internal int SourceExecute(string sql, params object[] parameters)
+        {
+            var dynamicParams = new DynamicParameters();
+            for (int i = 0; i < parameters.Length; i += 1)
+            {
+                dynamicParams.Add(_sources[i],_emits[i](parameters[i]));
             }
             return Reader.Execute(sql, dynamicParams);
         }
 
-        #region 用实体类进行查询(待开发)
-        public IEnumerable<T> Srouce_GetEntities(params object[] paramters)
+        #region 已知实体类信息
+        /// <summary>
+        /// 直接查询到实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
+        /// <returns></returns>
+        internal IEnumerable<T> SourceGets_Wrapper(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < paramters.Length; i += 1)
+            for (int i = 0; i < parameters.Length; i += 1)
             {
-                dynamicParams.Add(RelationSql<T, R, C1>.SourceConditions[i + 1], paramters[i]);
+                dynamicParams.Add(_sources[i+1], _emits[i+1](parameters[i]));
             }
-            var range = Reader.Query<int>(RelationSql<T, R, C1>.GetFromSource, dynamicParams);
+            var range = Reader.Query<int>(sql, dynamicParams);
             return GetEntitiesByIn(range);
+        }
+
+        /// <summary>
+        /// 获取关系
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        internal T SourceGet_Wrapper(string sql, params object[] parameters)
+        {
+            var dynamicParams = new DynamicParameters();
+            for (int i = 0; i < parameters.Length; i += 1)
+            {
+                dynamicParams.Add(_sources[i + 1], _emits[i+1](parameters[i]));
+            }
+            var range = Reader.Query<int>(sql, dynamicParams);
+            return GetEntityByIn(range);
         }
         #endregion
 
@@ -360,550 +393,714 @@ namespace Vasily
         /// <summary>
         /// 直接查询到实体类
         /// </summary>
-        /// <param name="paramters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
+        /// <param name="parameters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
         /// <returns></returns>
-        public IEnumerable<T> Table_Gets(params object[] paramters)
+        public IEnumerable<T> TableGets_Wrapper(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < paramters.Length; i += 1)
+            for (int i = 0; i < parameters.Length; i += 1)
             {
-                dynamicParams.Add(RelationSql<T, R, C1>.TableConditions[i+1], paramters[i]);
+                dynamicParams.Add(_tables[i+1], parameters[i]);
             }
-            var range = Reader.Query<int>(RelationSql<T, R, C1>.GetFromTable, dynamicParams);
+            var range = Reader.Query<int>(sql, dynamicParams);
             return GetEntitiesByIn(range);
         }
-        /// <summary>
-        /// 更新操作
-        /// </summary>
-        /// <param name="paramters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
-        /// <returns></returns>
-        public int Table_Update(params object[] parameters)
-        {
-            return Table_Execute(RelationSql<T, R, C1>.DeleteFromTable, 0, parameters);
-        }
-        /// <summary>
-        /// 删除关系
-        /// </summary>
-        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
-        /// <returns></returns>
-        public int Table_Delete(params object[] parameters)
-        {
-            return Table_Execute(RelationSql<T, R, C1>.DeleteFromTable, 1, parameters);
-        }
-        /// <summary>
-        /// 增加关系
-        /// </summary>
-        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
-        /// <returns></returns>
-        public int Table_Insert(params object[] parameters)
-        {
-            return Table_Execute(RelationSql<T, R, C1>.AddFromTable, 0, parameters);
-        }
+        
         /// <summary>
         /// 获取关系
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T Table_Get(params object[] parameters)
+        public T TableGet_Wrapper(string sql,params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
             for (int i = 0; i < parameters.Length; i += 1)
             {
-                dynamicParams.Add(RelationSql<T, R, C1>.TableConditions[i + 1], parameters[i]);
+                dynamicParams.Add(_tables[i + 1], parameters[i]);
             }
-            var range = Reader.Query<int>(RelationSql<T, R, C1>.GetFromTable, dynamicParams);
+            var range = Reader.Query<int>(sql, dynamicParams);
             return GetEntityByIn(range);
         }
         #endregion
-
-
     }
 
-    public class DapperWrapper<T, R, C1, C2> : DapperWrapper<T>
+    public class DapperWrapper<T, R, C1> : DapperWrapperRelation<T>
     {
-        public DapperWrapper(string key) : base(key)
-        {
 
+        public DapperWrapper(string key) : this(key,key)
+        {
+            
         }
         public DapperWrapper(string writter, string reader) : base(writter, reader)
         {
-
-        }
-
-        private int Table_Execute(string sql, int start = 0, params object[] parameters)
-        {
-            var dynamicParams = new DynamicParameters();
-            for (int i = start; i < parameters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2>.TableConditions[i], parameters[i]);
-            }
-            return Reader.Execute(sql, dynamicParams);
+            _tables = RelationSql<T, R, C1>.TableConditions;
+            _sources = RelationSql<T, R, C1>.SourceConditions;
+            _emits = RelationSql<T, R, C1>.Getters;
         }
 
         #region 用实体类进行查询(待开发)
-        public IEnumerable<T> Srouce_GetEntities(params object[] paramters)
+        /// <summary>
+        /// 获取集合-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public IEnumerable<T> SourceGets(params object[] parameters)
         {
-            var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < paramters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2>.SourceConditions[i + 1], paramters[i]);
-            }
-            var range = Reader.Query<int>(RelationSql<T, R, C1, C2>.GetFromSource, dynamicParams);
-            return GetEntitiesByIn(range);
+            return SourceGets_Wrapper(RelationSql<T, R, C1>.GetFromSource, parameters);
+        }
+        /// <summary>
+        /// 更新操作-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public int SourceUpdate(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1>.ModifyFromSource, parameters);
+        }
+        /// <summary>
+        /// 删除关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public int SourceDelete(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1>.DeleteFromSource, parameters);
+        }
+        /// <summary>
+        /// 增加关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
+        /// <returns></returns>
+        public int SourceInsert(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1>.AddFromSource, 0, parameters);
+        }
+        /// <summary>
+        /// 获取关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public T SourceGet(params object[] parameters)
+        {
+            return SourceGet_Wrapper(RelationSql<T, R, C1>.GetFromSource, parameters);
         }
         #endregion
 
         #region 不知道实体类信息
         /// <summary>
-        /// 直接查询到实体类
+        /// 查询到实体类-直接传值
         /// </summary>
-        /// <param name="paramters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
+        /// <param name="parameters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
         /// <returns></returns>
-        public IEnumerable<T> Table_Gets(params object[] paramters)
+        public IEnumerable<T> TableGets(params object[] parameters)
         {
-            var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < paramters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2>.TableConditions[i + 1], paramters[i]);
-            }
-            var range = Reader.Query<int>(RelationSql<T, R, C1, C2>.GetFromTable, dynamicParams);
-            return GetEntitiesByIn(range);
+            return TableGets_Wrapper(RelationSql<T, R, C1>.GetFromTable, parameters);
         }
         /// <summary>
-        /// 更新操作
+        /// 更新操作-直接传值
         /// </summary>
-        /// <param name="paramters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public int Table_Update(params object[] parameters)
+        public int TableUpdate(params object[] parameters)
         {
-            return Table_Execute(RelationSql<T, R, C1, C2>.DeleteFromTable, 0, parameters);
+            return TableExecute(RelationSql<T, R, C1>.ModifyFromTable,parameters);
         }
         /// <summary>
-        /// 删除关系
+        /// 删除关系-直接传值
         /// </summary>
-        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int Table_Delete(params object[] parameters)
+        public int TableDelete(params object[] parameters)
         {
-            return Table_Execute(RelationSql<T, R, C1, C2>.DeleteFromTable, 1, parameters);
+            return TableExecute(RelationSql<T, R, C1>.DeleteFromTable, parameters);
         }
         /// <summary>
-        /// 增加关系
+        /// 增加关系-直接传值
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public int Table_Insert(params object[] parameters)
+        public int TableInsert(params object[] parameters)
         {
-            return Table_Execute(RelationSql<T, R, C1, C2>.AddFromTable, 0, parameters);
+            return TableExecute(RelationSql<T, R, C1>.AddFromTable, parameters);
         }
         /// <summary>
-        /// 获取关系
+        /// 获取关系-直接传值
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T Table_Get(params object[] parameters)
+        public T TableGet(params object[] parameters)
         {
-            var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < parameters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2>.TableConditions[i], parameters[i]);
-            }
-            var range = Reader.Query<int>(RelationSql<T, R, C1, C2>.GetFromTable, dynamicParams);
-            return GetEntityByIn(range);
+            return TableGet_Wrapper(RelationSql<T, R, C1>.GetFromTable, parameters);
         }
         #endregion
 
 
     }
 
-    public class DapperWrapper<T, R, C1, C2, C3> : DapperWrapper<T>
+    public class DapperWrapper<T, R, C1,C2> : DapperWrapperRelation<T>
     {
-        public DapperWrapper(string key) : base(key)
+
+        public DapperWrapper(string key) : this(key, key)
         {
 
         }
         public DapperWrapper(string writter, string reader) : base(writter, reader)
         {
-
-        }
-
-        private int Table_Execute(string sql, int start = 0, params object[] parameters)
-        {
-            var dynamicParams = new DynamicParameters();
-            for (int i = start; i < parameters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2, C3>.TableConditions[i], parameters[i]);
-            }
-            return Reader.Execute(sql, dynamicParams);
+            _tables = RelationSql<T, R, C1,C2>.TableConditions;
+            _sources = RelationSql<T, R, C1,C2>.SourceConditions;
+            _emits = RelationSql<T, R, C1,C2>.Getters;
         }
 
         #region 用实体类进行查询(待开发)
-        public IEnumerable<T> Srouce_GetEntities(params object[] paramters)
+        /// <summary>
+        /// 获取集合-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public IEnumerable<T> SourceGets(params object[] parameters)
         {
-            var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < paramters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2, C3>.SourceConditions[i + 1], paramters[i]);
-            }
-            var range = Reader.Query<int>(RelationSql<T, R, C1, C2, C3>.GetFromSource, dynamicParams);
-            return GetEntitiesByIn(range);
+            return SourceGets_Wrapper(RelationSql<T, R, C1,C2>.GetFromSource, parameters);
+        }
+        /// <summary>
+        /// 更新操作-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public int SourceUpdate(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1,C2>.ModifyFromSource, parameters);
+        }
+        /// <summary>
+        /// 删除关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public int SourceDelete(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1,C2>.DeleteFromSource, parameters);
+        }
+        /// <summary>
+        /// 增加关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
+        /// <returns></returns>
+        public int SourceInsert(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1,C2>.AddFromSource, 0, parameters);
+        }
+        /// <summary>
+        /// 获取关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public T SourceGet(params object[] parameters)
+        {
+            return SourceGet_Wrapper(RelationSql<T, R, C1,C2>.GetFromSource, parameters);
         }
         #endregion
 
         #region 不知道实体类信息
         /// <summary>
-        /// 直接查询到实体类
+        /// 查询到实体类-直接传值
         /// </summary>
-        /// <param name="paramters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
+        /// <param name="parameters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
         /// <returns></returns>
-        public IEnumerable<T> Table_Gets(params object[] paramters)
+        public IEnumerable<T> TableGets(params object[] parameters)
         {
-            var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < paramters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2, C3>.TableConditions[i+1], paramters[i]);
-            }
-            var range = Reader.Query<int>(RelationSql<T, R, C1, C2, C3>.GetFromTable, dynamicParams);
-            return GetEntitiesByIn(range);
+            return TableGets_Wrapper(RelationSql<T, R, C1,C2>.GetFromTable, parameters);
         }
         /// <summary>
-        /// 更新操作
+        /// 更新操作-直接传值
         /// </summary>
-        /// <param name="paramters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public int Table_Update(params object[] parameters)
+        public int TableUpdate(params object[] parameters)
         {
-            return Table_Execute(RelationSql<T, R, C1, C2, C3>.DeleteFromTable, 0, parameters);
+            return TableExecute(RelationSql<T, R, C1,C2>.ModifyFromTable, parameters);
         }
         /// <summary>
-        /// 删除关系
+        /// 删除关系-直接传值
         /// </summary>
-        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int Table_Delete(params object[] parameters)
+        public int TableDelete(params object[] parameters)
         {
-            return Table_Execute(RelationSql<T, R, C1, C2, C3>.DeleteFromTable, 1, parameters);
+            return TableExecute(RelationSql<T, R, C1,C2>.DeleteFromTable, parameters);
         }
         /// <summary>
-        /// 增加关系
+        /// 增加关系-直接传值
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public int Table_Insert(params object[] parameters)
+        public int TableInsert(params object[] parameters)
         {
-            return Table_Execute(RelationSql<T, R, C1, C2, C3>.AddFromTable, 0, parameters);
+            return TableExecute(RelationSql<T, R, C1,C2>.AddFromTable, parameters);
         }
         /// <summary>
-        /// 获取关系
+        /// 获取关系-直接传值
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T Table_Get(params object[] parameters)
+        public T TableGet(params object[] parameters)
         {
-            var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < parameters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2, C3>.TableConditions[i+1], parameters[i]);
-            }
-            var range = Reader.Query<int>(RelationSql<T, R, C1, C2, C3>.GetFromTable, dynamicParams);
-            return GetEntityByIn(range);
+            return TableGet_Wrapper(RelationSql<T, R, C1,C2>.GetFromTable, parameters);
         }
         #endregion
 
 
     }
 
-    public class DapperWrapper<T, R, C1, C2, C3, C4> : DapperWrapper<T>
+    public class DapperWrapper<T, R, C1,C2,C3> : DapperWrapperRelation<T>
     {
-        public DapperWrapper(string key) : base(key)
+
+        public DapperWrapper(string key) : this(key, key)
         {
 
         }
         public DapperWrapper(string writter, string reader) : base(writter, reader)
         {
-
-        }
-
-        private int Table_Execute(string sql, int start = 0, params object[] parameters)
-        {
-            var dynamicParams = new DynamicParameters();
-            for (int i = start; i < parameters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2, C3, C4>.TableConditions[i], parameters[i]);
-            }
-            return Reader.Execute(sql, dynamicParams);
+            _tables = RelationSql<T, R, C1,C2,C3>.TableConditions;
+            _sources = RelationSql<T, R, C1,C2,C3>.SourceConditions;
+            _emits = RelationSql<T, R, C1,C2,C3>.Getters;
         }
 
         #region 用实体类进行查询(待开发)
-        public IEnumerable<T> Srouce_GetEntities(params object[] paramters)
+        /// <summary>
+        /// 获取集合-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public IEnumerable<T> SourceGets(params object[] parameters)
         {
-            var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < paramters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2, C3, C4>.SourceConditions[i + 1], paramters[i]);
-            }
-            var range = Reader.Query<int>(RelationSql<T, R, C1, C2, C3, C4>.GetFromSource, dynamicParams);
-            return GetEntitiesByIn(range);
+            return SourceGets_Wrapper(RelationSql<T, R, C1,C2,C3>.GetFromSource, parameters);
+        }
+        /// <summary>
+        /// 更新操作-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public int SourceUpdate(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1,C2,C3>.ModifyFromSource, parameters);
+        }
+        /// <summary>
+        /// 删除关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public int SourceDelete(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1,C2,C3>.DeleteFromSource, parameters);
+        }
+        /// <summary>
+        /// 增加关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
+        /// <returns></returns>
+        public int SourceInsert(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1,C2,C3>.AddFromSource, 0, parameters);
+        }
+        /// <summary>
+        /// 获取关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public T SourceGet(params object[] parameters)
+        {
+            return SourceGet_Wrapper(RelationSql<T, R, C1,C2,C3>.GetFromSource, parameters);
         }
         #endregion
 
         #region 不知道实体类信息
         /// <summary>
-        /// 直接查询到实体类
+        /// 查询到实体类-直接传值
         /// </summary>
-        /// <param name="paramters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
+        /// <param name="parameters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
         /// <returns></returns>
-        public IEnumerable<T> Table_Gets(params object[] paramters)
+        public IEnumerable<T> TableGets(params object[] parameters)
         {
-            var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < paramters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2, C3, C4>.TableConditions[i+1], paramters[i]);
-            }
-            var range = Reader.Query<int>(RelationSql<T, R, C1, C2, C3, C4>.GetFromTable, dynamicParams);
-            return GetEntitiesByIn(range);
+            return TableGets_Wrapper(RelationSql<T, R, C1,C2,C3>.GetFromTable, parameters);
         }
         /// <summary>
-        /// 更新操作
+        /// 更新操作-直接传值
         /// </summary>
-        /// <param name="paramters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public int Table_Update(params object[] parameters)
+        public int TableUpdate(params object[] parameters)
         {
-            return Table_Execute(RelationSql<T, R, C1, C2, C3, C4>.DeleteFromTable, 0, parameters);
+            return TableExecute(RelationSql<T, R, C1,C2,C3>.ModifyFromTable, parameters);
         }
         /// <summary>
-        /// 删除关系
+        /// 删除关系-直接传值
         /// </summary>
-        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int Table_Delete(params object[] parameters)
+        public int TableDelete(params object[] parameters)
         {
-            return Table_Execute(RelationSql<T, R, C1, C2, C3, C4>.DeleteFromTable, 1, parameters);
+            return TableExecute(RelationSql<T, R, C1,C2,C3>.DeleteFromTable, parameters);
         }
         /// <summary>
-        /// 增加关系
+        /// 增加关系-直接传值
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public int Table_Insert(params object[] parameters)
+        public int TableInsert(params object[] parameters)
         {
-            return Table_Execute(RelationSql<T, R, C1, C2, C3, C4>.AddFromTable, 0, parameters);
+            return TableExecute(RelationSql<T, R, C1,C2,C3>.AddFromTable, parameters);
         }
         /// <summary>
-        /// 获取关系
+        /// 获取关系-直接传值
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T Table_Get(params object[] parameters)
+        public T TableGet(params object[] parameters)
         {
-            var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < parameters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2, C3, C4>.TableConditions[i+1], parameters[i]);
-            }
-            var range = Reader.Query<int>(RelationSql<T, R, C1, C2, C3, C4>.GetFromTable, dynamicParams);
-            return GetEntityByIn(range);
+            return TableGet_Wrapper(RelationSql<T, R, C1,C2,C3>.GetFromTable, parameters);
         }
         #endregion
 
 
     }
 
-    public class DapperWrapper<T, R, C1, C2, C3, C4, C5> : DapperWrapper<T>
+    public class DapperWrapper<T, R, C1,C2,C3,C4> : DapperWrapperRelation<T>
     {
-        public DapperWrapper(string key) : base(key)
+
+        public DapperWrapper(string key) : this(key, key)
         {
 
         }
         public DapperWrapper(string writter, string reader) : base(writter, reader)
         {
-
-        }
-
-        private int Table_Execute(string sql, int start = 0, params object[] parameters)
-        {
-            var dynamicParams = new DynamicParameters();
-            for (int i = start; i < parameters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2, C3, C4, C5>.TableConditions[i], parameters[i]);
-            }
-            return Reader.Execute(sql, dynamicParams);
+            _tables = RelationSql<T, R, C1,C2,C3,C4>.TableConditions;
+            _sources = RelationSql<T, R, C1,C2,C3,C4>.SourceConditions;
+            _emits = RelationSql<T, R, C1,C2,C3,C4>.Getters;
         }
 
         #region 用实体类进行查询(待开发)
-        public IEnumerable<T> Srouce_GetEntities(params object[] paramters)
+        /// <summary>
+        /// 获取集合-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public IEnumerable<T> SourceGets(params object[] parameters)
         {
-            var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < paramters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2, C3, C4, C5>.SourceConditions[i + 1], paramters[i]);
-            }
-            var range = Reader.Query<int>(RelationSql<T, R, C1, C2, C3, C4, C5>.GetFromSource, dynamicParams);
-            return GetEntitiesByIn(range);
+            return SourceGets_Wrapper(RelationSql<T, R, C1,C2,C3,C4>.GetFromSource, parameters);
+        }
+        /// <summary>
+        /// 更新操作-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public int SourceUpdate(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1,C2,C3,C4>.ModifyFromSource, parameters);
+        }
+        /// <summary>
+        /// 删除关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public int SourceDelete(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1,C2,C3,C4>.DeleteFromSource, parameters);
+        }
+        /// <summary>
+        /// 增加关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
+        /// <returns></returns>
+        public int SourceInsert(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1,C2,C3,C4>.AddFromSource, 0, parameters);
+        }
+        /// <summary>
+        /// 获取关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public T SourceGet(params object[] parameters)
+        {
+            return SourceGet_Wrapper(RelationSql<T, R, C1,C2,C3,C4>.GetFromSource, parameters);
         }
         #endregion
 
         #region 不知道实体类信息
         /// <summary>
-        /// 直接查询到实体类
+        /// 查询到实体类-直接传值
         /// </summary>
-        /// <param name="paramters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
+        /// <param name="parameters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
         /// <returns></returns>
-        public IEnumerable<T> Table_Gets(params object[] paramters)
+        public IEnumerable<T> TableGets(params object[] parameters)
         {
-            var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < paramters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2, C3, C4, C5>.TableConditions[i+1], paramters[i]);
-            }
-            var range = Reader.Query<int>(RelationSql<T, R, C1, C2, C3, C4, C5>.GetFromTable, dynamicParams);
-            return GetEntitiesByIn(range);
+            return TableGets_Wrapper(RelationSql<T, R, C1,C2,C3,C4>.GetFromTable, parameters);
         }
         /// <summary>
-        /// 更新操作
+        /// 更新操作-直接传值
         /// </summary>
-        /// <param name="paramters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public int Table_Update(params object[] parameters)
+        public int TableUpdate(params object[] parameters)
         {
-            return Table_Execute(RelationSql<T, R, C1, C2, C3, C4, C5>.DeleteFromTable, 0, parameters);
+            return TableExecute(RelationSql<T, R, C1,C2,C3,C4>.ModifyFromTable, parameters);
         }
         /// <summary>
-        /// 删除关系
+        /// 删除关系-直接传值
         /// </summary>
-        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int Table_Delete(params object[] parameters)
+        public int TableDelete(params object[] parameters)
         {
-            return Table_Execute(RelationSql<T, R, C1, C2, C3, C4, C5>.DeleteFromTable, 1, parameters);
+            return TableExecute(RelationSql<T, R, C1,C2,C3,C4>.DeleteFromTable, parameters);
         }
         /// <summary>
-        /// 增加关系
+        /// 增加关系-直接传值
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public int Table_Insert(params object[] parameters)
+        public int TableInsert(params object[] parameters)
         {
-            return Table_Execute(RelationSql<T, R, C1, C2, C3, C4, C5>.AddFromTable, 0, parameters);
+            return TableExecute(RelationSql<T, R, C1,C2,C3,C4>.AddFromTable, parameters);
         }
         /// <summary>
-        /// 获取关系
+        /// 获取关系-直接传值
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T Table_Get(params object[] parameters)
+        public T TableGet(params object[] parameters)
         {
-            var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < parameters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2, C3, C4, C5>.TableConditions[i+1], parameters[i]);
-            }
-            var range = Reader.Query<int>(RelationSql<T, R, C1, C2, C3, C4, C5>.GetFromTable, dynamicParams);
-            return GetEntityByIn(range);
+            return TableGet_Wrapper(RelationSql<T, R, C1,C2,C3,C4>.GetFromTable, parameters);
         }
         #endregion
 
 
     }
 
-    public class DapperWrapper<T, R, C1, C2, C3, C4, C5, C6> : DapperWrapper<T>
+    public class DapperWrapper<T, R, C1, C2, C3, C4, C5> : DapperWrapperRelation<T>
     {
-        public DapperWrapper(string key) : base(key)
+
+        public DapperWrapper(string key) : this(key, key)
         {
 
         }
         public DapperWrapper(string writter, string reader) : base(writter, reader)
         {
-
-        }
-
-        private int Table_Execute(string sql, int start = 0, params object[] parameters)
-        {
-            var dynamicParams = new DynamicParameters();
-            for (int i = start; i < parameters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.TableConditions[i], parameters[i]);
-            }
-            return Reader.Execute(sql, dynamicParams);
+            _tables = RelationSql<T, R, C1, C2, C3, C4, C5>.TableConditions;
+            _sources = RelationSql<T, R, C1, C2, C3, C4, C5>.SourceConditions;
+            _emits = RelationSql<T, R, C1, C2, C3, C4, C5>.Getters;
         }
 
         #region 用实体类进行查询(待开发)
-        public IEnumerable<T> Srouce_GetEntities(params object[] paramters)
+        /// <summary>
+        /// 获取集合-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public IEnumerable<T> SourceGets(params object[] parameters)
         {
-            var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < paramters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.SourceConditions[i + 1], paramters[i]);
-            }
-            var range = Reader.Query<int>(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.GetFromSource, dynamicParams);
-            return GetEntitiesByIn(range);
+            return SourceGets_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5>.GetFromSource, parameters);
+        }
+        /// <summary>
+        /// 更新操作-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public int SourceUpdate(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.ModifyFromSource, parameters);
+        }
+        /// <summary>
+        /// 删除关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public int SourceDelete(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.DeleteFromSource, parameters);
+        }
+        /// <summary>
+        /// 增加关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
+        /// <returns></returns>
+        public int SourceInsert(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.AddFromSource, 0, parameters);
+        }
+        /// <summary>
+        /// 获取关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public T SourceGet(params object[] parameters)
+        {
+            return SourceGet_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5>.GetFromSource, parameters);
         }
         #endregion
 
         #region 不知道实体类信息
         /// <summary>
-        /// 直接查询到实体类
+        /// 查询到实体类-直接传值
         /// </summary>
-        /// <param name="paramters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
+        /// <param name="parameters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
         /// <returns></returns>
-        public IEnumerable<T> Table_Gets(params object[] paramters)
+        public IEnumerable<T> TableGets(params object[] parameters)
         {
-            var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < paramters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.TableConditions[i+1], paramters[i]);
-            }
-            var range = Reader.Query<int>(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.GetFromTable, dynamicParams);
-            return GetEntitiesByIn(range);
+            return TableGets_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5>.GetFromTable, parameters);
         }
         /// <summary>
-        /// 更新操作
+        /// 更新操作-直接传值
         /// </summary>
-        /// <param name="paramters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public int Table_Update(params object[] parameters)
+        public int TableUpdate(params object[] parameters)
         {
-            return Table_Execute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.DeleteFromTable, 0, parameters);
+            return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.ModifyFromTable, parameters);
         }
         /// <summary>
-        /// 删除关系
+        /// 删除关系-直接传值
         /// </summary>
-        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int Table_Delete(params object[] parameters)
+        public int TableDelete(params object[] parameters)
         {
-            return Table_Execute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.DeleteFromTable, 1, parameters);
+            return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.DeleteFromTable, parameters);
         }
         /// <summary>
-        /// 增加关系
+        /// 增加关系-直接传值
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public int Table_Insert(params object[] parameters)
+        public int TableInsert(params object[] parameters)
         {
-            return Table_Execute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.AddFromTable, 0, parameters);
+            return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.AddFromTable, parameters);
         }
         /// <summary>
-        /// 获取关系
+        /// 获取关系-直接传值
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T Table_Get(params object[] parameters)
+        public T TableGet(params object[] parameters)
         {
-            var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < parameters.Length; i += 1)
-            {
-                dynamicParams.Add(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.TableConditions[i+1], parameters[i]);
-            }
-            var range = Reader.Query<int>(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.GetFromTable, dynamicParams);
-            return GetEntityByIn(range);
+            return TableGet_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5>.GetFromTable, parameters);
         }
         #endregion
 
 
     }
 
+    public class DapperWrapper<T, R, C1, C2, C3, C4, C5, C6> : DapperWrapperRelation<T>
+    {
+
+        public DapperWrapper(string key) : this(key, key)
+        {
+
+        }
+        public DapperWrapper(string writter, string reader) : base(writter, reader)
+        {
+            _tables = RelationSql<T, R, C1, C2, C3, C4, C5, C6>.TableConditions;
+            _sources = RelationSql<T, R, C1, C2, C3, C4, C5, C6>.SourceConditions;
+            _emits = RelationSql<T, R, C1, C2, C3, C4, C5, C6>.Getters;
+        }
+
+        #region 用实体类进行查询(待开发)
+        /// <summary>
+        /// 获取集合-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public IEnumerable<T> SourceGets(params object[] parameters)
+        {
+            return SourceGets_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.GetFromSource, parameters);
+        }
+        /// <summary>
+        /// 更新操作-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public int SourceUpdate(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.ModifyFromSource, parameters);
+        }
+        /// <summary>
+        /// 删除关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public int SourceDelete(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.DeleteFromSource, parameters);
+        }
+        /// <summary>
+        /// 增加关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
+        /// <returns></returns>
+        public int SourceInsert(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.AddFromSource, 0, parameters);
+        }
+        /// <summary>
+        /// 获取关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public T SourceGet(params object[] parameters)
+        {
+            return SourceGet_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.GetFromSource, parameters);
+        }
+        #endregion
+
+        #region 不知道实体类信息
+        /// <summary>
+        /// 查询到实体类-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
+        /// <returns></returns>
+        public IEnumerable<T> TableGets(params object[] parameters)
+        {
+            return TableGets_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.GetFromTable, parameters);
+        }
+        /// <summary>
+        /// 更新操作-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public int TableUpdate(params object[] parameters)
+        {
+            return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.ModifyFromTable, parameters);
+        }
+        /// <summary>
+        /// 删除关系-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
+        /// <returns></returns>
+        public int TableDelete(params object[] parameters)
+        {
+            return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.DeleteFromTable, parameters);
+        }
+        /// <summary>
+        /// 增加关系-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
+        /// <returns></returns>
+        public int TableInsert(params object[] parameters)
+        {
+            return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.AddFromTable, parameters);
+        }
+        /// <summary>
+        /// 获取关系-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public T TableGet(params object[] parameters)
+        {
+            return TableGet_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.GetFromTable, parameters);
+        }
+        #endregion
+
+
+    }
     public enum VasilyRequestType
     {
         Complete = 0,

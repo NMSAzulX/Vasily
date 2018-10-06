@@ -4,7 +4,7 @@ using Xunit;
 
 namespace VasilyUT
 {
-    public class UnitTest_VasilyAnalysistor
+    public class UnitTest_VasilyRelation
     {
         [Fact(DisplayName = "A32-关系数组")]
         public void TestTableArray()

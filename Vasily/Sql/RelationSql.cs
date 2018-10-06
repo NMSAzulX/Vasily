@@ -1,8 +1,11 @@
 ﻿namespace Vasily
 {
-    
+    public delegate object PropertyGetter(object instance);
+
     public static class RelationSql<T, Relation, C1>
     {
+        public static PropertyGetter[] Getters;
+
         public static string Table;
         public static string Primary;
 
@@ -24,6 +27,8 @@
     }
     public static class RelationSql<T, Relation, C1, C2>
     {
+        public static PropertyGetter[] Getters;
+
         public static string Table;
         public static string Primary;
 
@@ -43,6 +48,8 @@
     }
     public static class RelationSql<T, Relation, C1, C2, C3>
     {
+        public static PropertyGetter[] Getters;
+
         public static string Table;
         public static string Primary;
 
@@ -61,6 +68,8 @@
     }
     public static class RelationSql<T, Relation, C1, C2, C3, C4>
     {
+        public static PropertyGetter[] Getters;
+
         public static string Table;
         public static string Primary;
 
@@ -79,6 +88,8 @@
     }
     public class RelationSql<T, Relation, C1, C2, C3, C4, C5>
     {
+        public static PropertyGetter[] Getters;
+
         public static string Table;
         public static string Primary;
 
@@ -97,6 +108,8 @@
     }
     public class RelationSql<T, Relation, C1, C2, C3, C4, C5, C6>
     {
+        public static PropertyGetter[] Getters;
+
         public static string Table;
         public static string Primary;
 
