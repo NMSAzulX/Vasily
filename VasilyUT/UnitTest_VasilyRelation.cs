@@ -46,18 +46,28 @@ namespace VasilyUT
             Assert.Equal("UPDATE `关系映射表` SET `ClassId`=@Cid WHERE `StudentId`=@Sid", RelationSql<Class, Relation, Student>.ModifyFromSource);
         }
 
-        [Fact(DisplayName = "A32-删除-关系表生成测试")]
-        public void TestDeleteRelation32()
+        [Fact(DisplayName = "A32-前置删除-关系表生成测试")]
+        public void TestDeletePreRelation32()
         {
             SqlPackage<Relation> package = new SqlPackage<Relation>();
 
-            Assert.Equal("DELETE FROM `关系映射表` WHERE `StudentId`=@StudentId", RelationSql<Student, Relation, Relation>.DeleteFromTable);
-            Assert.Equal("DELETE FROM `关系映射表` WHERE `Id`=@Id", RelationSql<Relation, Relation, Class>.DeleteFromTable);
+            Assert.Equal("DELETE FROM `关系映射表` WHERE `StudentId`=@StudentId", RelationSql<Student, Relation, Relation>.DeletePreFromTable);
+            Assert.Equal("DELETE FROM `关系映射表` WHERE `Id`=@Id", RelationSql<Relation, Relation, Class>.DeletePreFromTable);
 
-            Assert.Equal("DELETE FROM `关系映射表` WHERE `StudentId`=@Sid", RelationSql<Student, Relation, Class>.DeleteFromSource);
-            Assert.Equal("DELETE FROM `关系映射表` WHERE `ClassId`=@Cid", RelationSql<Class, Relation, Student>.DeleteFromSource);
+            Assert.Equal("DELETE FROM `关系映射表` WHERE `StudentId`=@Sid", RelationSql<Student, Relation, Class>.DeletePreFromSource);
+            Assert.Equal("DELETE FROM `关系映射表` WHERE `ClassId`=@Cid", RelationSql<Class, Relation, Student>.DeletePreFromSource);
         }
+        [Fact(DisplayName = "A32-后置删除-关系表生成测试")]
+        public void TestDeleteAftRelation32()
+        {
+            SqlPackage<Relation> package = new SqlPackage<Relation>();
 
+            Assert.Equal("DELETE FROM `关系映射表` WHERE `Id`=@Id", RelationSql<Student, Relation, Relation>.DeleteAftFromTable);
+            Assert.Equal("DELETE FROM `关系映射表` WHERE `ClassId`=@ClassId", RelationSql<Relation, Relation, Class>.DeleteAftFromTable);
+
+            Assert.Equal("DELETE FROM `关系映射表` WHERE `ClassId`=@Cid", RelationSql<Student, Relation, Class>.DeleteAftFromSource);
+            Assert.Equal("DELETE FROM `关系映射表` WHERE `StudentId`=@Sid", RelationSql<Class, Relation, Student>.DeleteAftFromSource);
+        }
         [Fact(DisplayName = "A32-插入-关系表生成测试")]
         public void TestInsertRelation32()
         {

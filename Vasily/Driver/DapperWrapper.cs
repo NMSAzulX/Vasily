@@ -345,12 +345,31 @@ namespace Vasily
             }
             return Reader.Execute(sql, dynamicParams);
         }
+        internal int TableAftExecute(string sql, params object[] parameters)
+        {
+            var dynamicParams = new DynamicParameters();
+            for (int i = 0; i < parameters.Length; i += 1)
+            {
+                dynamicParams.Add(_tables[i+1], parameters[i+1]);
+            }
+            return Reader.Execute(sql, dynamicParams);
+        }
         internal int SourceExecute(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
             for (int i = 0; i < parameters.Length; i += 1)
             {
                 dynamicParams.Add(_sources[i],_emits[i](parameters[i]));
+            }
+            return Reader.Execute(sql, dynamicParams);
+        }
+
+        internal int SourceAftExecute(string sql, params object[] parameters)
+        {
+            var dynamicParams = new DynamicParameters();
+            for (int i = 0; i < parameters.Length; i += 1)
+            {
+                dynamicParams.Add(_sources[i+1], _emits[i+1](parameters[i]));
             }
             return Reader.Execute(sql, dynamicParams);
         }
@@ -460,11 +479,20 @@ namespace Vasily
         /// <summary>
         /// 删除关系-直接传实体类
         /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
+        /// <returns></returns>
+        public int SourcePreDelete(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1>.DeletePreFromSource, parameters);
+        }
+        /// <summary>
+        /// 删除关系-直接传实体类
+        /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int SourceDelete(params object[] parameters)
+        public int SourceAftDelete(params object[] parameters)
         {
-            return SourceExecute(RelationSql<T, R, C1>.DeleteFromSource, parameters);
+            return SourceAftExecute(RelationSql<T, R, C1>.DeleteAftFromSource, parameters);
         }
         /// <summary>
         /// 增加关系-直接传实体类
@@ -510,9 +538,18 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int TableDelete(params object[] parameters)
+        public int TablePreDelete(params object[] parameters)
         {
-            return TableExecute(RelationSql<T, R, C1>.DeleteFromTable, parameters);
+            return TableExecute(RelationSql<T, R, C1>.DeletePreFromTable, parameters);
+        }
+        /// <summary>
+        /// 删除关系-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public int TableAftDelete(params object[] parameters)
+        {
+            return TableAftExecute(RelationSql<T, R, C1>.DeleteAftFromTable, parameters);
         }
         /// <summary>
         /// 增加关系-直接传值
@@ -573,11 +610,20 @@ namespace Vasily
         /// <summary>
         /// 删除关系-直接传实体类
         /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
+        /// <returns></returns>
+        public int SourcePreDelete(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1, C2>.DeletePreFromSource, parameters);
+        }
+        /// <summary>
+        /// 删除关系-直接传实体类
+        /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int SourceDelete(params object[] parameters)
+        public int SourceAftDelete(params object[] parameters)
         {
-            return SourceExecute(RelationSql<T, R, C1,C2>.DeleteFromSource, parameters);
+            return SourceAftExecute(RelationSql<T, R, C1, C2>.DeleteAftFromSource, parameters);
         }
         /// <summary>
         /// 增加关系-直接传实体类
@@ -623,9 +669,18 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int TableDelete(params object[] parameters)
+        public int TablePreDelete(params object[] parameters)
         {
-            return TableExecute(RelationSql<T, R, C1,C2>.DeleteFromTable, parameters);
+            return TableExecute(RelationSql<T, R, C1, C2>.DeletePreFromTable, parameters);
+        }
+        /// <summary>
+        /// 删除关系-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public int TableAftDelete(params object[] parameters)
+        {
+            return TableAftExecute(RelationSql<T, R, C1, C2>.DeleteAftFromTable, parameters);
         }
         /// <summary>
         /// 增加关系-直接传值
@@ -686,11 +741,20 @@ namespace Vasily
         /// <summary>
         /// 删除关系-直接传实体类
         /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
+        /// <returns></returns>
+        public int SourcePreDelete(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1, C2, C3>.DeletePreFromSource, parameters);
+        }
+        /// <summary>
+        /// 删除关系-直接传实体类
+        /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int SourceDelete(params object[] parameters)
+        public int SourceAftDelete(params object[] parameters)
         {
-            return SourceExecute(RelationSql<T, R, C1,C2,C3>.DeleteFromSource, parameters);
+            return SourceAftExecute(RelationSql<T, R, C1, C2, C3>.DeleteAftFromSource, parameters);
         }
         /// <summary>
         /// 增加关系-直接传实体类
@@ -736,9 +800,18 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int TableDelete(params object[] parameters)
+        public int TablePreDelete(params object[] parameters)
         {
-            return TableExecute(RelationSql<T, R, C1,C2,C3>.DeleteFromTable, parameters);
+            return TableExecute(RelationSql<T, R, C1, C2, C3>.DeletePreFromTable, parameters);
+        }
+        /// <summary>
+        /// 删除关系-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public int TableAftDelete(params object[] parameters)
+        {
+            return TableAftExecute(RelationSql<T, R, C1, C2, C3>.DeleteAftFromTable, parameters);
         }
         /// <summary>
         /// 增加关系-直接传值
@@ -799,11 +872,20 @@ namespace Vasily
         /// <summary>
         /// 删除关系-直接传实体类
         /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
+        /// <returns></returns>
+        public int SourcePreDelete(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1, C2, C3, C4>.DeletePreFromSource, parameters);
+        }
+        /// <summary>
+        /// 删除关系-直接传实体类
+        /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int SourceDelete(params object[] parameters)
+        public int SourceAftDelete(params object[] parameters)
         {
-            return SourceExecute(RelationSql<T, R, C1,C2,C3,C4>.DeleteFromSource, parameters);
+            return SourceAftExecute(RelationSql<T, R, C1, C2, C3, C4>.DeleteAftFromSource, parameters);
         }
         /// <summary>
         /// 增加关系-直接传实体类
@@ -849,9 +931,18 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int TableDelete(params object[] parameters)
+        public int TablePreDelete(params object[] parameters)
         {
-            return TableExecute(RelationSql<T, R, C1,C2,C3,C4>.DeleteFromTable, parameters);
+            return TableExecute(RelationSql<T, R, C1, C2, C3, C4>.DeletePreFromTable, parameters);
+        }
+        /// <summary>
+        /// 删除关系-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public int TableAftDelete(params object[] parameters)
+        {
+            return TableAftExecute(RelationSql<T, R, C1, C2, C3, C4>.DeleteAftFromTable, parameters);
         }
         /// <summary>
         /// 增加关系-直接传值
@@ -912,11 +1003,20 @@ namespace Vasily
         /// <summary>
         /// 删除关系-直接传实体类
         /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
+        /// <returns></returns>
+        public int SourcePreDelete(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.DeletePreFromSource, parameters);
+        }
+        /// <summary>
+        /// 删除关系-直接传实体类
+        /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int SourceDelete(params object[] parameters)
+        public int SourceAftDelete(params object[] parameters)
         {
-            return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.DeleteFromSource, parameters);
+            return SourceAftExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.DeleteAftFromSource, parameters);
         }
         /// <summary>
         /// 增加关系-直接传实体类
@@ -962,9 +1062,18 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int TableDelete(params object[] parameters)
+        public int TablePreDelete(params object[] parameters)
         {
-            return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.DeleteFromTable, parameters);
+            return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.DeletePreFromTable, parameters);
+        }
+        /// <summary>
+        /// 删除关系-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public int TableAftDelete(params object[] parameters)
+        {
+            return TableAftExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.DeleteAftFromTable, parameters);
         }
         /// <summary>
         /// 增加关系-直接传值
@@ -1025,11 +1134,20 @@ namespace Vasily
         /// <summary>
         /// 删除关系-直接传实体类
         /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
+        /// <returns></returns>
+        public int SourcePreDelete(params object[] parameters)
+        {
+            return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.DeletePreFromSource, parameters);
+        }
+        /// <summary>
+        /// 删除关系-直接传实体类
+        /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int SourceDelete(params object[] parameters)
+        public int SourceAftDelete(params object[] parameters)
         {
-            return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.DeleteFromSource, parameters);
+            return SourceAftExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.DeleteAftFromSource, parameters);
         }
         /// <summary>
         /// 增加关系-直接传实体类
@@ -1075,9 +1193,18 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int TableDelete(params object[] parameters)
+        public int TablePreDelete(params object[] parameters)
         {
-            return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.DeleteFromTable, parameters);
+            return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.DeletePreFromTable, parameters);
+        }
+        /// <summary>
+        /// 删除关系-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public int TableAftDelete(params object[] parameters)
+        {
+            return TableAftExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.DeleteAftFromTable, parameters);
         }
         /// <summary>
         /// 增加关系-直接传值

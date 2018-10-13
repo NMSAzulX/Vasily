@@ -122,15 +122,14 @@ namespace Vasily.Core
                 gs.Set("SourceConditions", sources);
                 gs.Set("TableConditions", table);
                 gs.Set("Getters", getters);
-                Debug.WriteLine("========================================================");
-                Debug.WriteLine(getters.Length);
-                Debug.WriteLine("========================================================");
+
                 //public static string GetFromTable;
                 gs.Set("GetFromTable", SelectString(parameter));
                 //public static string ModifyFromTable;
                 gs.Set("ModifyFromTable", UpdateString(parameter));
                 //public static string DeleteFromTable;
-                gs.Set("DeleteFromTable", DeleteString(parameter[0]));
+                gs.Set("DeletePreFromTable", DeletePreString(parameter[0]));
+                gs.Set("DeleteAftFromTable", DeleteAftString(parameter));
                 //public static string AddFromTable;
                 gs.Set("AddFromTable", InsertString(parameter));
 
@@ -142,7 +141,8 @@ namespace Vasily.Core
                 //public static string ModifyFromSource;
                 gs.Set("ModifyFromSource", UpdateString(parameter, filter));
                 //public static string DeleteFromSource;
-                gs.Set("DeleteFromSource", DeleteString(parameter[0], filter));
+                gs.Set("DeletePreFromSource", DeletePreString(parameter[0], filter));
+                gs.Set("DeleteAftFromSource", DeleteAftString(parameter, filter));
                 //public static string AddFromSource;
                 gs.Set("AddFromSource", InsertString(parameter,filter));
             }
@@ -205,7 +205,7 @@ namespace Vasily.Core
         /// </summary>
         /// <param name="filter">将参数化映射到标签中类的主键或其他字段上</param>
         /// <returns></returns>
-        public string DeleteString(MemberInfo member, Func<MemberInfo, string> filter = null)
+        public string DeletePreString(MemberInfo member, Func<MemberInfo, string> filter = null)
         {
             if (filter != null)
             {
@@ -214,6 +214,25 @@ namespace Vasily.Core
                 return _delete_template.DeleteWithCondition(model, member);
             }
             return _delete_template.DeleteWithCondition(_model, member);
+        }
+        /// <summary>
+        /// 获取删除语句
+        /// </summary>
+        /// <param name="filter">将参数化映射到标签中类的主键或其他字段上</param>
+        /// <returns></returns>
+        public string DeleteAftString(MemberInfo[] members, Func<MemberInfo, string> filter = null)
+        {
+
+            MemberInfo[] temp = new MemberInfo[members.Length - 1];
+            Array.Copy(members, 1, temp, 0, members.Length - 1);
+
+            if (filter != null)
+            {
+                var model = _model.CopyInstance();
+                model.FilterFunction = filter;
+                return _delete_template.DeleteWithCondition(model, temp);
+            }
+            return _delete_template.DeleteWithCondition(_model, temp);
         }
 
         /// <summary>

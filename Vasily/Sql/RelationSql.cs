@@ -14,14 +14,16 @@
 
         public static string GetFromSource;
         public static string ModifyFromSource;
-        public static string DeleteFromSource;
+        public static string DeletePreFromSource;
+        public static string DeleteAftFromSource;
         public static string AddFromSource;
 
         public static string GetFromTable;
         public static string ModifyFromTable;
-        public static string DeleteFromTable;
+        public static string DeletePreFromTable;
+        public static string DeleteAftFromTable;
         public static string AddFromTable;
-       
+
 
 
     }
@@ -37,12 +39,14 @@
 
         public static string GetFromSource;
         public static string ModifyFromSource;
-        public static string DeleteFromSource;
+        public static string DeletePreFromSource;
+        public static string DeleteAftFromSource;
         public static string AddFromSource;
 
         public static string GetFromTable;
         public static string ModifyFromTable;
-        public static string DeleteFromTable;
+        public static string DeletePreFromTable;
+        public static string DeleteAftFromTable;
         public static string AddFromTable;
 
     }
@@ -58,12 +62,14 @@
 
         public static string GetFromSource;
         public static string ModifyFromSource;
-        public static string DeleteFromSource;
+        public static string DeletePreFromSource;
+        public static string DeleteAftFromSource;
         public static string AddFromSource;
 
         public static string GetFromTable;
         public static string ModifyFromTable;
-        public static string DeleteFromTable;
+        public static string DeletePreFromTable;
+        public static string DeleteAftFromTable;
         public static string AddFromTable;
     }
     public static class RelationSql<T, Relation, C1, C2, C3, C4>
@@ -78,12 +84,14 @@
 
         public static string GetFromSource;
         public static string ModifyFromSource;
-        public static string DeleteFromSource;
+        public static string DeletePreFromSource;
+        public static string DeleteAftFromSource;
         public static string AddFromSource;
 
         public static string GetFromTable;
         public static string ModifyFromTable;
-        public static string DeleteFromTable;
+        public static string DeletePreFromTable;
+        public static string DeleteAftFromTable;
         public static string AddFromTable;
     }
     public class RelationSql<T, Relation, C1, C2, C3, C4, C5>
@@ -98,12 +106,14 @@
 
         public static string GetFromSource;
         public static string ModifyFromSource;
-        public static string DeleteFromSource;
+        public static string DeletePreFromSource;
+        public static string DeleteAftFromSource;
         public static string AddFromSource;
 
         public static string GetFromTable;
         public static string ModifyFromTable;
-        public static string DeleteFromTable;
+        public static string DeletePreFromTable;
+        public static string DeleteAftFromTable;
         public static string AddFromTable;
     }
     public class RelationSql<T, Relation, C1, C2, C3, C4, C5, C6>
@@ -118,12 +128,14 @@
 
         public static string GetFromSource;
         public static string ModifyFromSource;
-        public static string DeleteFromSource;
+        public static string DeletePreFromSource;
+        public static string DeleteAftFromSource;
         public static string AddFromSource;
 
         public static string GetFromTable;
         public static string ModifyFromTable;
-        public static string DeleteFromTable;
+        public static string DeletePreFromTable;
+        public static string DeleteAftFromTable;
         public static string AddFromTable;
     }
 }
