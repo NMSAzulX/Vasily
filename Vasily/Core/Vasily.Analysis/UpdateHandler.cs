@@ -9,7 +9,7 @@ namespace Vasily.Core
         public UpdateHandler(string splites, Type entity_type) : base(splites, entity_type)
         {
             _template = new UpdateTemplate();
-            _model.ColFunction = (item) => { return Column(item); };
+            _model.ColFunction = (item) => { return _model.Column(item); };
             _model.AddIgnores(_primary_member);
         }
 

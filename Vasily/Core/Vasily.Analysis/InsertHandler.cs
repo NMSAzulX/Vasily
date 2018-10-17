@@ -9,7 +9,7 @@ namespace Vasily.Core
         public InsertHandler(string splites, Type entity_type) : base(splites, entity_type)
         {
             _template = new InsertTemplate();
-            _model.ColFunction = (item) => { return Column(item); };
+            _model.ColFunction = (item) => { return _model.Column(item); };
             _model.AddIgnores(_primary_member);
         }
 

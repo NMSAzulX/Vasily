@@ -43,16 +43,19 @@ namespace Vasily.Core
                 update.Append(',');
             }
 
-            update.Length -= 1;
-
             StringBuilder sql = new StringBuilder(60);
-            sql.Append("UPDATE ");
-            sql.Append(model.Left);
-            sql.Append(model.TableName);
-            sql.Append(model.Right);
-            sql.Append(" SET ");
-            sql.Append(update);
-            sql.Append(" WHERE ");
+            if (update.Length > 0)
+            {
+                update.Length -= 1;
+                sql.Append("UPDATE ");
+                sql.Append(model.Left);
+                sql.Append(model.TableName);
+                sql.Append(model.Right);
+                sql.Append(" SET ");
+                sql.Append(update);
+                sql.Append(" WHERE ");
+            }
+  
             return sql.ToString();
         }
 

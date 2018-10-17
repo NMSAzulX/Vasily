@@ -108,7 +108,7 @@ namespace Vasily.Core
                     sources[j] = filter(parameter[j]);
                 }
 
-                PropertyGetter[] getters = new PropertyGetter[parameter.Length];
+                MemberGetter[] getters = new MemberGetter[parameter.Length];
                 for (int j = 0; j < sources.Length; j += 1)
                 {
                     var instance = _mapping[parameter[j]];

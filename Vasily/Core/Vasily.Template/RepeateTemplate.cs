@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
 using Vasily.Standard;
 
 namespace Vasily.Core
@@ -10,7 +11,7 @@ namespace Vasily.Core
         /// </summary>
         /// <param name="model">载有生成信息的Model</param>
         /// <returns>查重字符串结果</returns>
-        public string Repeate(MakerModel model)
+        public string RepeateCount(MakerModel model)
         {
             StringBuilder sql = new StringBuilder(40);
             sql.Append("SELECT COUNT(*) FROM ");
@@ -18,31 +19,53 @@ namespace Vasily.Core
             sql.Append(model.TableName);
             sql.Append(model.Right);
             sql.Append(" WHERE ");
-            foreach (var item in model.Members)
-            {
-                sql.Append(model.Left);
-                if (model.ColFunction != null)
-                {
-                    sql.Append(model.ColFunction(item));
-                }
-                else
-                {
-                    sql.Append(item.Name);
-                }
-                sql.Append(model.Right);
-                sql.Append("=@");
-                if (model.FilterFunction != null)
-                {
-                    sql.Append(model.FilterFunction(item));
-                }
-                else
-                {
-                    sql.Append(item.Name);
-                }
-                sql.Append(" AND ");
-            }
 
-            sql.Length -= 5;
+            ConditionTemplate template = new ConditionTemplate();
+            sql.Append(template.Condition(model, model.Members));
+
+            return sql.ToString();
+        }
+
+        // <summary>
+        /// 根据model信息生成 SELECT [primary] FROM [TableName] WHERE [Member1]=@Member1 AND [Member2]=@Member2 ....
+        /// </summary>
+        /// <param name="model">载有生成信息的Model</param>
+        /// <returns>查重字符串结果</returns>
+        public string RepeateId(MakerModel model)
+        {
+            StringBuilder sql = new StringBuilder(40);
+            sql.Append("SELECT ");
+            sql.Append(model.Left);
+            sql.Append(model.PrimaryKey);
+            sql.Append(model.Right);
+            sql.Append(" FROM ");
+            sql.Append(model.Left);
+            sql.Append(model.TableName);
+            sql.Append(model.Right);
+            sql.Append(" WHERE ");
+
+            ConditionTemplate template = new ConditionTemplate();
+            sql.Append(template.Condition(model, model.Members));
+
+            return sql.ToString();
+        }
+
+        // <summary>
+        /// 根据model信息生成 SELECT * FROM [TableName] WHERE [Member1]=@Member1 AND [Member2]=@Member2 ....
+        /// </summary>
+        /// <param name="model">载有生成信息的Model</param>
+        /// <returns>查重字符串结果</returns>
+        public string RepeateEntities(MakerModel model)
+        {
+            StringBuilder sql = new StringBuilder(40);
+            sql.Append("SELECT * FROM ");
+            sql.Append(model.Left);
+            sql.Append(model.TableName);
+            sql.Append(model.Right);
+            sql.Append(" WHERE ");
+
+            ConditionTemplate template = new ConditionTemplate();
+            sql.Append(template.Condition(model, model.Members));
 
             return sql.ToString();
         }

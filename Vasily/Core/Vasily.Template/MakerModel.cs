@@ -14,12 +14,25 @@ namespace Vasily
         public HashSet<MemberInfo> Members;
         public Func<MemberInfo, string> ColFunction;
         public Func<MemberInfo, string> FilterFunction;
+        public Dictionary<MemberInfo, string> ColumnMapping;
 
         public MakerModel()
         {
 
         }
-
+        /// <summary>
+        /// 根据ColumnAttribute的映射返回实际字段名
+        /// </summary>
+        /// <param name="item">当前属性</param>
+        /// <returns>数据库中实际字段名</returns>
+        public string Column(MemberInfo item)
+        {
+            if (ColumnMapping.ContainsKey(item))
+            {
+                return ColumnMapping[item];
+            }
+            return item.Name;
+        }
         /// <summary>
         /// 成员集合求并集
         /// </summary>
@@ -100,12 +113,25 @@ namespace Vasily
         public static HashSet<MemberInfo> Members;
         public static Func<MemberInfo, string> ColFunction;
         public static Func<MemberInfo, string> FilterFunction;
+        public static Dictionary<MemberInfo, string> ColumnMapping;
 
         static MakerModel()
         {
 
         }
-
+        /// <summary>
+        /// 根据ColumnAttribute的映射返回实际字段名
+        /// </summary>
+        /// <param name="item">当前属性</param>
+        /// <returns>数据库中实际字段名</returns>
+        public static string Column(MemberInfo item)
+        {
+            if (ColumnMapping.ContainsKey(item))
+            {
+                return ColumnMapping[item];
+            }
+            return item.Name;
+        }
         /// <summary>
         /// 成员集合求并集
         /// </summary>

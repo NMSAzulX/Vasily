@@ -10,7 +10,6 @@ namespace Vasily.Core
         internal bool _primary_manually;
         internal Type _entity_type;
         internal AttrOperator _handler;
-        internal Dictionary<MemberInfo, string> _column_mapping;
         internal MakerModel _model;
         internal MemberInfo _primary_member;
         public HandlerBase(string spiltes,Type entity_type)
@@ -54,13 +53,13 @@ namespace Vasily.Core
             }
 
             //列名映射解析
-            _column_mapping = new Dictionary<MemberInfo, string>();
+            Dictionary<MemberInfo, string> _column_mapping = new Dictionary<MemberInfo, string>();
             var mappings = _handler.Mappings<ColumnAttribute>();
             foreach (var item in mappings)
             {
                 _column_mapping[item.Member] = item.Instance.Name;
             }
-
+            _model.ColumnMapping = _column_mapping;
             //填充属性
             _model.LoadMembers(_handler._members);
 
@@ -75,21 +74,8 @@ namespace Vasily.Core
             gs.Set("Left", _model.Left);
             gs.Set("Right", _model.Right);
             gs.Set("Members", _model.Members);
+            gs.Set("ColumnMapping", _column_mapping);
 
-        }
-
-        /// <summary>
-        /// 获取属性在数据库的映射名
-        /// </summary>
-        /// <param name="name">属性/字段名</param>
-        /// <returns>返回对应的数据库中的列名</returns>
-        public string Column(MemberInfo item)
-        {
-            if (_column_mapping.ContainsKey(item))
-            {
-                return _column_mapping[item];
-            }
-            return item.Name;
         }
 
         //~HandlerBase()

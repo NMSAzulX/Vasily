@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using Vasily.Standard;
 
@@ -41,6 +42,40 @@ namespace Vasily.Core
                 sql.Append(" AND ");
             }
             sql.Length -= 5;
+            return sql.ToString();
+        }
+        public string Condition(MakerModel model, IEnumerable<MemberInfo> conditions)
+        {
+            StringBuilder sql = new StringBuilder();
+
+            foreach (var item in conditions)
+            {
+                sql.Append(model.Left);
+                if (model.ColFunction != null)
+                {
+                    sql.Append(model.ColFunction(item));
+                }
+                else
+                {
+                    sql.Append(item.Name);
+                }
+                sql.Append(model.Right);
+
+                sql.Append("=@");
+                if (model.FilterFunction != null)
+                {
+                    sql.Append(model.FilterFunction(item));
+                }
+                else
+                {
+                    sql.Append(item.Name);
+                }
+                sql.Append(" AND ");
+            }
+            if (sql.Length>0)
+            {
+                sql.Length -= 5;
+            }
             return sql.ToString();
         }
 

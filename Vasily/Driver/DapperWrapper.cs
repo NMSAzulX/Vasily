@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using Vasily.Core;
 
 namespace Vasily
 {
@@ -119,6 +120,43 @@ namespace Vasily
                 return Normal_Insert(instances);
             }
         }
+
+        public bool NoRepeateInsert(T instance)
+        {
+            if (!IsRepeat(instance))
+            {
+                if (RequestType == VasilyRequestType.Complete)
+                {
+                    return Complate_Insert(instance)>0;
+                }
+                else
+                {
+                    return Normal_Insert(instance)>0;
+                }
+            }
+            return false;
+        }
+        /// <summary>
+        /// 先查重，如果没有则插入，再根据插入的实体类通过唯一约束找到主键赋值给实体类
+        /// </summary>
+        /// <typeparam name="S">主键类型</typeparam>
+        /// <param name="instance">实体类</param>
+        /// <returns></returns>
+        public bool SafeInsert<S>(T instance)
+        {
+            bool result = false;
+
+            if (NoRepeateInsert(instance))
+            {
+                result = true;
+            }
+
+            S temp = GetNoRepeateId<S>(instance);
+            Sql<T>.SetPrimary(instance, temp);
+
+            return result;
+        }
+
         public bool UpdateByPrimary(IEnumerable<T> instances)
         {
             if (RequestType == VasilyRequestType.Complete)
@@ -287,7 +325,26 @@ namespace Vasily
         /// <returns>返回结果</returns>
         public bool IsRepeat(T instance)
         {
-            return Reader.ExecuteScalar<int>(Sql<T>.Repeate, instance) > 0;
+            return Reader.ExecuteScalar<int>(Sql<T>.RepeateCount, instance) > 0;
+        }
+        /// <summary>
+        /// 通过实体类获取跟其相同唯一约束的集合
+        /// </summary>
+        /// <param name="instance">实体类</param>
+        /// <returns>结果集</returns>
+        public IEnumerable<T> GetRepeates(T instance)
+        {
+            return Reader.Query<T>(Sql<T>.RepeateEntities);
+        }
+        /// <summary>
+        /// 通过实体类获取当前实体的主键
+        /// </summary>
+        /// <typeparam name="S">主键类型</typeparam>
+        /// <param name="instance">实体类</param>
+        /// <returns>主键</returns>
+        public S GetNoRepeateId<S>(T instance)
+        {
+            return Reader.ExecuteScalar<S>(Sql<T>.RepeateId,instance);
         }
         #endregion
 
@@ -324,7 +381,7 @@ namespace Vasily
 
     public class DapperWrapperRelation<T> : DapperWrapper<T>
     {
-        internal PropertyGetter[] _emits;
+        internal MemberGetter[] _emits;
         internal string[] _sources;
         internal string[] _tables;
         public DapperWrapperRelation(string key) : this(key,key)

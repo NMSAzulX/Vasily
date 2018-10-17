@@ -1,8 +1,12 @@
-﻿namespace Vasily
+﻿using Vasily.Core;
+
+namespace Vasily
 {
     
     public class Sql<T>
     {
+
+        public static MemberSetter SetPrimary;
         public static string Primary;
         public static string Table;
 
@@ -28,6 +32,8 @@
         public static string InsertAll;
         public static string Insert;
 
-        public static string Repeate;
+        public static string RepeateCount;
+        public static string RepeateId;
+        public static string RepeateEntities;
     }
 }

@@ -5,13 +5,17 @@ using Vasily;
 
 namespace VasilyUT.Entity
 {
-    public class Class
+    [Table("AB")]
+    public class Class:IVasilyNormal
     {
         [PrimaryKey]
         public int Cid;
+        public string Other;
     }
-    public class Class1
+    [Table("AB")]
+    public class Class1 : IVasilyNormal
     {
+        [PrimaryKey]
         public string Name;
     }
     

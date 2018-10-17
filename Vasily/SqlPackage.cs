@@ -63,8 +63,9 @@ namespace Vasily
             if (IsNormal)
             {
                 GsOperator gs = new GsOperator(typeof(Sql<>), _entity_type);
-                SelectHandler select = new SelectHandler(_splites, _entity_type);
+                gs["SetPrimary"] = MebOperator.Setter(_entity_type, _primary);
 
+                SelectHandler select = new SelectHandler(_splites, _entity_type);
                 gs["Table"] = select._model.TableName;
                 gs["Primary"] = _primary;
                 gs["SelectAll"] = select.SelectAll();
@@ -94,8 +95,9 @@ namespace Vasily
                 gs["DeleteByPrimary"] = delete.DeleteByPrimary();
 
                 RepeateHandler repeate = new RepeateHandler(_splites, _entity_type);
-                gs["Repeate"] = repeate.Repeate();
-
+                gs["RepeateCount"] = repeate.RepeateCount();
+                gs["RepeateId"] = repeate.RepeateId();
+                gs["RepeateEntities"] = repeate.RepeateEntities();
             }
         }
 
