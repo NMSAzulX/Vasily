@@ -20,14 +20,28 @@
 
 - ### 引擎结构
   ​
-![VasilyEngine](https://github.com/NMSAzulX/Vasily/blob/master/Image/VasilyEngine.png)
+  ![VasilyEngine](https://github.com/NMSAzulX/Vasily/blob/master/Image/VasilyEngine.png)
 
+  1. 引擎的入口VasilyRunner会扫描整个项目，挑选出实现IVasilyNormal接口或实现IVasilyRelation接口的类。
 
+  2. 将扫描结果切片并发交由SqlPackage处理。SqlPackage是引擎外壳，其核心部分是由不同的Handler组成的，包括SelectHandler,UpdateHandler,InsertHandler,RepeateHandler,DeleteHandler,RelationHandler.
+
+  3. SqlPackage通过区分接口来决定扫描结果交由哪个Handler类处理。
+
+     实现IVasilyNormal接口的实体类将被Select、Update、Insert、Delete、Repeate5个Handler处理。
+
+     实现IVasilyRelation接口的实体类将被RelationHandler单独处理。
+
+  4. Handler拿到实体类之后，将由两部分进行处理。即父类BaseHandler,以及SQL生成模板Template.
+
+  5. BaseHandler接过实体类之后将会拆解、过滤、重组成MakerModel,  同时进行静态化处理, 生成MakerModel<TEntityType>.
+
+  6. Template用上一步得到的MakerModel自动生成SQL语句。由于MakerModel和Template均可以在重用，因此并没有直接集成在Handler中，而是解耦出来。至于RelationHandler是没有Template的，因为目前还没有看到重用的价值。
 
 - ### 使用简介
 
 
-  1. #### 实体类标签
+  1. #### 实体类注解
 
      |    注解名    |      参数      |                           参数说明                           | 注解对象 |                           注解说明                           | 解析接口                       |
      | :----------: | :------------: | :----------------------------------------------------------: | :------: | :----------------------------------------------------------: | ------------------------------ |
