@@ -514,7 +514,7 @@ namespace Vasily
             _emits = RelationSql<T, R, C1>.Getters;
         }
 
-        #region 用实体类进行查询(待开发)
+        #region 用实体类进行查询
         /// <summary>
         /// 获取集合-直接传实体类
         /// </summary>
@@ -645,7 +645,7 @@ namespace Vasily
             _emits = RelationSql<T, R, C1,C2>.Getters;
         }
 
-        #region 用实体类进行查询(待开发)
+        #region 用实体类进行查询
         /// <summary>
         /// 获取集合-直接传实体类
         /// </summary>
@@ -776,7 +776,7 @@ namespace Vasily
             _emits = RelationSql<T, R, C1,C2,C3>.Getters;
         }
 
-        #region 用实体类进行查询(待开发)
+        #region 用实体类进行查询
         /// <summary>
         /// 获取集合-直接传实体类
         /// </summary>
@@ -907,7 +907,7 @@ namespace Vasily
             _emits = RelationSql<T, R, C1,C2,C3,C4>.Getters;
         }
 
-        #region 用实体类进行查询(待开发)
+        #region 用实体类进行
         /// <summary>
         /// 获取集合-直接传实体类
         /// </summary>
@@ -1038,7 +1038,7 @@ namespace Vasily
             _emits = RelationSql<T, R, C1, C2, C3, C4, C5>.Getters;
         }
 
-        #region 用实体类进行查询(待开发)
+        #region 用实体类进行查询
         /// <summary>
         /// 获取集合-直接传实体类
         /// </summary>
@@ -1169,7 +1169,7 @@ namespace Vasily
             _emits = RelationSql<T, R, C1, C2, C3, C4, C5, C6>.Getters;
         }
 
-        #region 用实体类进行查询(待开发)
+        #region 用实体类进行查询
         /// <summary>
         /// 获取集合-直接传实体类
         /// </summary>
