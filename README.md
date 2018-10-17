@@ -56,7 +56,7 @@
 
 
 
-    ```c#
+```c#
  namespace VasilyWebDemo.Entity
  {
      [Table("tb_test",SqlType.MySql)]
@@ -89,7 +89,7 @@
          }
      }
  }
-    ```
+```
 
 
  ```c#
