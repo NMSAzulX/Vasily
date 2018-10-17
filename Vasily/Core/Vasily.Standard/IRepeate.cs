@@ -1,6 +1,6 @@
 ﻿namespace Vasily.Standard
 {
-    interface IRepeate
+    public interface IRepeate
     {
         /// <summary>
         /// 根据model信息生成 SELECT COUNT(*) FROM [TableName] WHERE [Member1]=@Member1 AND [Member2]=@Member2 ....
