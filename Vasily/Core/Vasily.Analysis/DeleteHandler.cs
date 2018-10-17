@@ -3,7 +3,7 @@ using Vasily.Standard;
 
 namespace Vasily.Core
 {
-    public class DeleteHandler : HandlerBase
+    public class DeleteHandler : BaseHandler
     {
         private IDelete _template;
         public DeleteHandler(string splites, Type entity_type) : base(splites, entity_type)

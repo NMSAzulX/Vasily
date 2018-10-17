@@ -3,7 +3,7 @@ using Vasily.Standard;
 
 namespace Vasily.Core
 {
-    public class SelectHandler : HandlerBase
+    public class SelectHandler : BaseHandler
     {
         private ISelect _template;
         public SelectHandler(string splites, Type entity_type) : base(splites, entity_type)

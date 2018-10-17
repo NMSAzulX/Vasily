@@ -3,7 +3,7 @@ using Vasily.Standard;
 
 namespace Vasily.Core
 {
-    public class InsertHandler : HandlerBase
+    public class InsertHandler : BaseHandler
     {
         private IInsert _template;
         public InsertHandler(string splites, Type entity_type) : base(splites, entity_type)

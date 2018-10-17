@@ -3,7 +3,7 @@ using Vasily.Standard;
 
 namespace Vasily.Core
 {
-    public class UpdateHandler : HandlerBase
+    public class UpdateHandler : BaseHandler
     {
         private IUpdate _template;
         public UpdateHandler(string splites, Type entity_type) : base(splites, entity_type)

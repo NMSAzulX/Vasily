@@ -6,7 +6,7 @@ using Vasily.Standard;
 
 namespace Vasily.Core
 {
-    public partial class RelationHandler : HandlerBase
+    public partial class RelationHandler : BaseHandler
     {
         private ISelect _select_template;
         private IUpdate _update_template;

@@ -5,14 +5,14 @@ using System.Reflection;
 
 namespace Vasily.Core
 {
-    public abstract class HandlerBase
+    public abstract class BaseHandler
     {
         internal bool _primary_manually;
         internal Type _entity_type;
         internal AttrOperator _handler;
         internal MakerModel _model;
         internal MemberInfo _primary_member;
-        public HandlerBase(string spiltes,Type entity_type)
+        public BaseHandler(string spiltes,Type entity_type)
         {
             _model = new MakerModel();
             if (spiltes == null)

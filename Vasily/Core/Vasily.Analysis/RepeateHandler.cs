@@ -3,7 +3,7 @@ using Vasily.Standard;
 
 namespace Vasily.Core
 {
-    public class RepeateHandler : HandlerBase
+    public class RepeateHandler : BaseHandler
     {
         private IRepeate _template;
         public RepeateHandler(string splites, Type entity_type) : base(splites, entity_type)
