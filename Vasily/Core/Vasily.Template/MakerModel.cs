@@ -102,6 +102,7 @@ namespace Vasily
     /// Members成员信息
     /// ColFunction 为组建SQL语句时用到的过滤函数
     /// FilterFunction 为组建@参数时用到的过滤函数
+    /// ColumnMapping 为Column的映射的缓存
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public static class MakerModel<T>
