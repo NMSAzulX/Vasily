@@ -43,21 +43,21 @@
 
   1. #### 实体类注解
 
-     |    注解名    |      参数      |                           参数说明                           | 注解对象 |                           注解说明                           | 解析接口                       |
-     | :----------: | :------------: | :----------------------------------------------------------: | :------: | :----------------------------------------------------------: | ------------------------------ |
-     |    Table     | string,SqlType |           第一个参数为表名；第二个参数为数据库类型           |    类    |                      该实体类属于哪个表                      | IVasilyNormal                  |
-     |   Primary    |       ——       |                              ——                              |   成员   |                       标识该成员为主键                       | IVasilyNormal                  |
-     |    Colunm    |     string     |                    成员到数据库的列名映射                    |   成员   |   使用该注解的成员将用参数作为成员名参与SQL的自动生成过程    | IVasilyNormal                  |
-     |  NoRepeate   |       ——       |                              ——                              |   成员   |            使用该注解将成员标记为查重所需要的成员            | IVasilyNormal                  |
-     |   Relation   |  Type,string   | 第一个参数为当前列与哪个实体类相关联；第二个参数为所关联实体类的成员名 |   成员   |              使用该注解我们可以创建关系封装操作              | IVasilyRelation                |
-     |    Ignore    |       ——       |                              ——                              |   成员   |         使用该注解表示该成员不会参与SQL自动生成过程          | IVasilyNormal，IVasilyRelation |
-     | InsertIgnore |       ——       |                              ——                              |   成员   | 使用该注解的成员生成SQL之后，将不会出现在Sql<T>.Insert中,但会出现在Sql<T>.InsertAll中 | IVasilyNormal                  |
-     | SelectIgnore |       ——       |                              ——                              |   成员   |   使用该注解的成员生成SQL之后，不会在带有‘All’的SQL语句中    | IVasilyNormal                  |
-     | UpdateIgnore |       ——       |                              ——                              |   成员   |   使用该注解的成员生成SQL之后，不会在带有‘All’的SQL语句中    | IVasilyNormal                  |
+   |    注解名    |      参数      |                           参数说明                           | 注解对象 |                           注解说明                           | 解析接口                       |
+   | :----------: | :------------: | :----------------------------------------------------------: | :------: | :----------------------------------------------------------: | ------------------------------ |
+   |    Table     | string,SqlType |           第一个参数为表名；第二个参数为数据库类型           |    类    |                      该实体类属于哪个表                      | IVasilyNormal                  |
+   |   Primary    |       ——       |                              ——                              |   成员   |                       标识该成员为主键                       | IVasilyNormal                  |
+   |    Colunm    |     string     |                    成员到数据库的列名映射                    |   成员   |   使用该注解的成员将用参数作为成员名参与SQL的自动生成过程    | IVasilyNormal                  |
+   |  NoRepeate   |       ——       |                              ——                              |   成员   |            使用该注解将成员标记为查重所需要的成员            | IVasilyNormal                  |
+   |   Relation   |  Type,string   | 第一个参数为当前列与哪个实体类相关联；第二个参数为所关联实体类的成员名 |   成员   |              使用该注解我们可以创建关系封装操作              | IVasilyRelation                |
+   |    Ignore    |       ——       |                              ——                              |   成员   |         使用该注解表示该成员不会参与SQL自动生成过程          | IVasilyNormal，IVasilyRelation |
+   | InsertIgnore |       ——       |                              ——                              |   成员   | 使用该注解的成员生成SQL之后，将不会出现在Sql<T>.Insert中,但会出现在Sql<T>.InsertAll中 | IVasilyNormal                  |
+   | SelectIgnore |       ——       |                              ——                              |   成员   |   使用该注解的成员生成SQL之后，不会在带有‘All’的SQL语句中    | IVasilyNormal                  |
+   | UpdateIgnore |       ——       |                              ——                              |   成员   |   使用该注解的成员生成SQL之后，不会在带有‘All’的SQL语句中    | IVasilyNormal                  |
 
 
 
- ```c#
+    ```c#
  namespace VasilyWebDemo.Entity
  {
      [Table("tb_test",SqlType.MySql)]
@@ -90,7 +90,7 @@
          }
      }
  }
- ```
+    ```
 
 
  ```c#
