@@ -408,7 +408,7 @@ namespace Vasily
         internal int TableExecute(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < parameters.Length; i += 1)
+            for (int i = 0; i < _tables.Length; i += 1)
             {
                 dynamicParams.Add(_tables[i], parameters[i]);
             }
@@ -417,7 +417,7 @@ namespace Vasily
         internal int TableAftExecute(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < parameters.Length; i += 1)
+            for (int i = 0; i < _tables.Length-1; i += 1)
             {
                 dynamicParams.Add(_tables[i + 1], parameters[i + 1]);
             }
@@ -426,7 +426,7 @@ namespace Vasily
         internal int SourceExecute(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < parameters.Length; i += 1)
+            for (int i = 0; i < _sources.Length; i += 1)
             {
                 dynamicParams.Add(_sources[i], _emits[i](parameters[i]));
             }
@@ -436,7 +436,7 @@ namespace Vasily
         internal int SourceAftExecute(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < parameters.Length; i += 1)
+            for (int i = 0; i < _sources.Length-1; i += 1)
             {
                 dynamicParams.Add(_sources[i + 1], _emits[i + 1](parameters[i]));
             }
@@ -452,7 +452,7 @@ namespace Vasily
         internal IEnumerable<T> SourceGets_Wrapper(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < parameters.Length; i += 1)
+            for (int i = 0; i < _sources.Length-1; i += 1)
             {
                 dynamicParams.Add(_sources[i + 1], _emits[i + 1](parameters[i]));
             }
@@ -468,7 +468,7 @@ namespace Vasily
         internal T SourceGet_Wrapper(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < parameters.Length; i += 1)
+            for (int i = 0; i < _sources.Length-1; i += 1)
             {
                 dynamicParams.Add(_sources[i + 1], _emits[i + 1](parameters[i]));
             }
@@ -486,7 +486,7 @@ namespace Vasily
         internal IEnumerable<T> TableGets_Wrapper(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < parameters.Length; i += 1)
+            for (int i = 0; i < _tables.Length-1; i += 1)
             {
                 dynamicParams.Add(_tables[i + 1], parameters[i]);
             }
@@ -502,7 +502,7 @@ namespace Vasily
         public T TableGet_Wrapper(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < parameters.Length; i += 1)
+            for (int i = 0; i < _tables.Length-1; i += 1)
             {
                 dynamicParams.Add(_tables[i + 1], parameters[i]);
             }
