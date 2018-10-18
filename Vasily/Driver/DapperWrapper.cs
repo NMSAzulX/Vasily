@@ -17,7 +17,7 @@ namespace Vasily
         {
             Writter = Connector.ReadInitor(writter)();
             Reader = Connector.ReadInitor(reader)();
-            RequestType = VasilyRequestType.Normal;
+            RequestType = VasilyRequestType.Complete;
         }
 
         public DapperWrapper UseType(VasilyRequestType type)
@@ -25,9 +25,18 @@ namespace Vasily
             RequestType = type;
             return this;
         }
+
     }
     public class DapperWrapper<T> : DapperWrapper
     {
+        public static DapperWrapper<T> UseKey(string key)
+        {
+            return new DapperWrapper<T>(key);
+        }
+        public static DapperWrapper<T> UseKey(string writter,string reader)
+        {
+            return new DapperWrapper<T>(writter,reader);
+        }
         public DapperWrapper(string key) : base(key, key) { }
         public DapperWrapper(string writter, string reader) : base(writter, reader) { }
 
@@ -127,11 +136,11 @@ namespace Vasily
             {
                 if (RequestType == VasilyRequestType.Complete)
                 {
-                    return Complate_Insert(instance)>0;
+                    return Complate_Insert(instance) > 0;
                 }
                 else
                 {
-                    return Normal_Insert(instance)>0;
+                    return Normal_Insert(instance) > 0;
                 }
             }
             return false;
@@ -142,7 +151,7 @@ namespace Vasily
         /// <typeparam name="S">主键类型</typeparam>
         /// <param name="instance">实体类</param>
         /// <returns></returns>
-        public bool SafeInsert<S>(T instance)
+        public bool SafeInsert(T instance)
         {
             bool result = false;
 
@@ -151,8 +160,8 @@ namespace Vasily
                 result = true;
             }
 
-            S temp = GetNoRepeateId<S>(instance);
-            Sql<T>.SetPrimary(instance, temp);
+            object obj = Reader.ExecuteScalar(Sql<T>.RepeateId, instance);
+            Sql<T>.SetPrimary(instance, obj);
 
             return result;
         }
@@ -344,8 +353,9 @@ namespace Vasily
         /// <returns>主键</returns>
         public S GetNoRepeateId<S>(T instance)
         {
-            return Reader.ExecuteScalar<S>(Sql<T>.RepeateId,instance);
+            return Reader.ExecuteScalar<S>(Sql<T>.RepeateId, instance);
         }
+        
         #endregion
 
         #region 实体类的DELETE函数
@@ -376,15 +386,17 @@ namespace Vasily
         }
         #endregion
 
-
+        public static implicit operator DapperWrapper<T>(string key)
+        {
+            return new DapperWrapper<T>(key);
+        }
     }
-
     public class DapperWrapperRelation<T> : DapperWrapper<T>
     {
         internal MemberGetter[] _emits;
         internal string[] _sources;
         internal string[] _tables;
-        public DapperWrapperRelation(string key) : this(key,key)
+        public DapperWrapperRelation(string key) : this(key, key)
         {
 
         }
@@ -407,7 +419,7 @@ namespace Vasily
             var dynamicParams = new DynamicParameters();
             for (int i = 0; i < parameters.Length; i += 1)
             {
-                dynamicParams.Add(_tables[i+1], parameters[i+1]);
+                dynamicParams.Add(_tables[i + 1], parameters[i + 1]);
             }
             return Reader.Execute(sql, dynamicParams);
         }
@@ -416,7 +428,7 @@ namespace Vasily
             var dynamicParams = new DynamicParameters();
             for (int i = 0; i < parameters.Length; i += 1)
             {
-                dynamicParams.Add(_sources[i],_emits[i](parameters[i]));
+                dynamicParams.Add(_sources[i], _emits[i](parameters[i]));
             }
             return Reader.Execute(sql, dynamicParams);
         }
@@ -426,7 +438,7 @@ namespace Vasily
             var dynamicParams = new DynamicParameters();
             for (int i = 0; i < parameters.Length; i += 1)
             {
-                dynamicParams.Add(_sources[i+1], _emits[i+1](parameters[i]));
+                dynamicParams.Add(_sources[i + 1], _emits[i + 1](parameters[i]));
             }
             return Reader.Execute(sql, dynamicParams);
         }
@@ -442,7 +454,7 @@ namespace Vasily
             var dynamicParams = new DynamicParameters();
             for (int i = 0; i < parameters.Length; i += 1)
             {
-                dynamicParams.Add(_sources[i+1], _emits[i+1](parameters[i]));
+                dynamicParams.Add(_sources[i + 1], _emits[i + 1](parameters[i]));
             }
             var range = Reader.Query<int>(sql, dynamicParams);
             return GetEntitiesByIn(range);
@@ -458,7 +470,7 @@ namespace Vasily
             var dynamicParams = new DynamicParameters();
             for (int i = 0; i < parameters.Length; i += 1)
             {
-                dynamicParams.Add(_sources[i + 1], _emits[i+1](parameters[i]));
+                dynamicParams.Add(_sources[i + 1], _emits[i + 1](parameters[i]));
             }
             var range = Reader.Query<int>(sql, dynamicParams);
             return GetEntityByIn(range);
@@ -471,23 +483,23 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
         /// <returns></returns>
-        public IEnumerable<T> TableGets_Wrapper(string sql, params object[] parameters)
+        internal IEnumerable<T> TableGets_Wrapper(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
             for (int i = 0; i < parameters.Length; i += 1)
             {
-                dynamicParams.Add(_tables[i+1], parameters[i]);
+                dynamicParams.Add(_tables[i + 1], parameters[i]);
             }
             var range = Reader.Query<int>(sql, dynamicParams);
             return GetEntitiesByIn(range);
         }
-        
+
         /// <summary>
         /// 获取关系
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T TableGet_Wrapper(string sql,params object[] parameters)
+        public T TableGet_Wrapper(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
             for (int i = 0; i < parameters.Length; i += 1)
@@ -498,14 +510,26 @@ namespace Vasily
             return GetEntityByIn(range);
         }
         #endregion
+
     }
 
     public class DapperWrapper<T, R, C1> : DapperWrapperRelation<T>
     {
-
-        public DapperWrapper(string key) : this(key,key)
+        public static implicit operator DapperWrapper<T, R, C1>(string key)
         {
-            
+            return new DapperWrapper<T, R, C1>(key);
+        }
+        public new static DapperWrapper<T, R, C1> UseKey(string key)
+        {
+            return new DapperWrapper<T, R, C1>(key);
+        }
+        public new static DapperWrapper<T, R, C1> UseKey(string writter, string reader)
+        {
+            return new DapperWrapper<T, R, C1>(writter, reader);
+        }
+        public DapperWrapper(string key) : this(key, key)
+        {
+
         }
         public DapperWrapper(string writter, string reader) : base(writter, reader)
         {
@@ -588,7 +612,7 @@ namespace Vasily
         /// <returns></returns>
         public int TableUpdate(params object[] parameters)
         {
-            return TableExecute(RelationSql<T, R, C1>.ModifyFromTable,parameters);
+            return TableExecute(RelationSql<T, R, C1>.ModifyFromTable, parameters);
         }
         /// <summary>
         /// 删除关系-直接传值
@@ -631,18 +655,29 @@ namespace Vasily
 
     }
 
-    public class DapperWrapper<T, R, C1,C2> : DapperWrapperRelation<T>
+    public class DapperWrapper<T, R, C1, C2> : DapperWrapperRelation<T>
     {
-
+        public static implicit operator DapperWrapper<T, R, C1, C2>(string key)
+        {
+            return new DapperWrapper<T, R, C1, C2>(key);
+        }
+        public new static DapperWrapper<T, R, C1, C2> UseKey(string key)
+        {
+            return new DapperWrapper<T, R, C1, C2>(key);
+        }
+        public new static DapperWrapper<T, R, C1, C2> UseKey(string writter, string reader)
+        {
+            return new DapperWrapper<T, R, C1, C2>(writter, reader);
+        }
         public DapperWrapper(string key) : this(key, key)
         {
 
         }
         public DapperWrapper(string writter, string reader) : base(writter, reader)
         {
-            _tables = RelationSql<T, R, C1,C2>.TableConditions;
-            _sources = RelationSql<T, R, C1,C2>.SourceConditions;
-            _emits = RelationSql<T, R, C1,C2>.Getters;
+            _tables = RelationSql<T, R, C1, C2>.TableConditions;
+            _sources = RelationSql<T, R, C1, C2>.SourceConditions;
+            _emits = RelationSql<T, R, C1, C2>.Getters;
         }
 
         #region 用实体类进行查询
@@ -653,7 +688,7 @@ namespace Vasily
         /// <returns></returns>
         public IEnumerable<T> SourceGets(params object[] parameters)
         {
-            return SourceGets_Wrapper(RelationSql<T, R, C1,C2>.GetFromSource, parameters);
+            return SourceGets_Wrapper(RelationSql<T, R, C1, C2>.GetFromSource, parameters);
         }
         /// <summary>
         /// 更新操作-直接传实体类
@@ -662,7 +697,7 @@ namespace Vasily
         /// <returns></returns>
         public int SourceUpdate(params object[] parameters)
         {
-            return SourceExecute(RelationSql<T, R, C1,C2>.ModifyFromSource, parameters);
+            return SourceExecute(RelationSql<T, R, C1, C2>.ModifyFromSource, parameters);
         }
         /// <summary>
         /// 删除关系-直接传实体类
@@ -689,7 +724,7 @@ namespace Vasily
         /// <returns></returns>
         public int SourceInsert(params object[] parameters)
         {
-            return SourceExecute(RelationSql<T, R, C1,C2>.AddFromSource, 0, parameters);
+            return SourceExecute(RelationSql<T, R, C1, C2>.AddFromSource, 0, parameters);
         }
         /// <summary>
         /// 获取关系-直接传实体类
@@ -698,7 +733,7 @@ namespace Vasily
         /// <returns></returns>
         public T SourceGet(params object[] parameters)
         {
-            return SourceGet_Wrapper(RelationSql<T, R, C1,C2>.GetFromSource, parameters);
+            return SourceGet_Wrapper(RelationSql<T, R, C1, C2>.GetFromSource, parameters);
         }
         #endregion
 
@@ -710,7 +745,7 @@ namespace Vasily
         /// <returns></returns>
         public IEnumerable<T> TableGets(params object[] parameters)
         {
-            return TableGets_Wrapper(RelationSql<T, R, C1,C2>.GetFromTable, parameters);
+            return TableGets_Wrapper(RelationSql<T, R, C1, C2>.GetFromTable, parameters);
         }
         /// <summary>
         /// 更新操作-直接传值
@@ -719,7 +754,7 @@ namespace Vasily
         /// <returns></returns>
         public int TableUpdate(params object[] parameters)
         {
-            return TableExecute(RelationSql<T, R, C1,C2>.ModifyFromTable, parameters);
+            return TableExecute(RelationSql<T, R, C1, C2>.ModifyFromTable, parameters);
         }
         /// <summary>
         /// 删除关系-直接传值
@@ -746,7 +781,7 @@ namespace Vasily
         /// <returns></returns>
         public int TableInsert(params object[] parameters)
         {
-            return TableExecute(RelationSql<T, R, C1,C2>.AddFromTable, parameters);
+            return TableExecute(RelationSql<T, R, C1, C2>.AddFromTable, parameters);
         }
         /// <summary>
         /// 获取关系-直接传值
@@ -755,25 +790,36 @@ namespace Vasily
         /// <returns></returns>
         public T TableGet(params object[] parameters)
         {
-            return TableGet_Wrapper(RelationSql<T, R, C1,C2>.GetFromTable, parameters);
+            return TableGet_Wrapper(RelationSql<T, R, C1, C2>.GetFromTable, parameters);
         }
         #endregion
 
 
     }
 
-    public class DapperWrapper<T, R, C1,C2,C3> : DapperWrapperRelation<T>
+    public class DapperWrapper<T, R, C1, C2, C3> : DapperWrapperRelation<T>
     {
-
+        public static implicit operator DapperWrapper<T, R, C1, C2, C3>(string key)
+        {
+            return new DapperWrapper<T, R, C1, C2, C3>(key);
+        }
+        public new static DapperWrapper<T, R, C1, C2, C3> UseKey(string key)
+        {
+            return new DapperWrapper<T, R, C1, C2, C3>(key);
+        }
+        public new static DapperWrapper<T, R, C1, C2, C3> UseKey(string writter, string reader)
+        {
+            return new DapperWrapper<T, R, C1, C2, C3>(writter, reader);
+        }
         public DapperWrapper(string key) : this(key, key)
         {
 
         }
         public DapperWrapper(string writter, string reader) : base(writter, reader)
         {
-            _tables = RelationSql<T, R, C1,C2,C3>.TableConditions;
-            _sources = RelationSql<T, R, C1,C2,C3>.SourceConditions;
-            _emits = RelationSql<T, R, C1,C2,C3>.Getters;
+            _tables = RelationSql<T, R, C1, C2, C3>.TableConditions;
+            _sources = RelationSql<T, R, C1, C2, C3>.SourceConditions;
+            _emits = RelationSql<T, R, C1, C2, C3>.Getters;
         }
 
         #region 用实体类进行查询
@@ -784,7 +830,7 @@ namespace Vasily
         /// <returns></returns>
         public IEnumerable<T> SourceGets(params object[] parameters)
         {
-            return SourceGets_Wrapper(RelationSql<T, R, C1,C2,C3>.GetFromSource, parameters);
+            return SourceGets_Wrapper(RelationSql<T, R, C1, C2, C3>.GetFromSource, parameters);
         }
         /// <summary>
         /// 更新操作-直接传实体类
@@ -793,7 +839,7 @@ namespace Vasily
         /// <returns></returns>
         public int SourceUpdate(params object[] parameters)
         {
-            return SourceExecute(RelationSql<T, R, C1,C2,C3>.ModifyFromSource, parameters);
+            return SourceExecute(RelationSql<T, R, C1, C2, C3>.ModifyFromSource, parameters);
         }
         /// <summary>
         /// 删除关系-直接传实体类
@@ -820,7 +866,7 @@ namespace Vasily
         /// <returns></returns>
         public int SourceInsert(params object[] parameters)
         {
-            return SourceExecute(RelationSql<T, R, C1,C2,C3>.AddFromSource, 0, parameters);
+            return SourceExecute(RelationSql<T, R, C1, C2, C3>.AddFromSource, 0, parameters);
         }
         /// <summary>
         /// 获取关系-直接传实体类
@@ -829,7 +875,7 @@ namespace Vasily
         /// <returns></returns>
         public T SourceGet(params object[] parameters)
         {
-            return SourceGet_Wrapper(RelationSql<T, R, C1,C2,C3>.GetFromSource, parameters);
+            return SourceGet_Wrapper(RelationSql<T, R, C1, C2, C3>.GetFromSource, parameters);
         }
         #endregion
 
@@ -841,7 +887,7 @@ namespace Vasily
         /// <returns></returns>
         public IEnumerable<T> TableGets(params object[] parameters)
         {
-            return TableGets_Wrapper(RelationSql<T, R, C1,C2,C3>.GetFromTable, parameters);
+            return TableGets_Wrapper(RelationSql<T, R, C1, C2, C3>.GetFromTable, parameters);
         }
         /// <summary>
         /// 更新操作-直接传值
@@ -850,7 +896,7 @@ namespace Vasily
         /// <returns></returns>
         public int TableUpdate(params object[] parameters)
         {
-            return TableExecute(RelationSql<T, R, C1,C2,C3>.ModifyFromTable, parameters);
+            return TableExecute(RelationSql<T, R, C1, C2, C3>.ModifyFromTable, parameters);
         }
         /// <summary>
         /// 删除关系-直接传值
@@ -877,7 +923,7 @@ namespace Vasily
         /// <returns></returns>
         public int TableInsert(params object[] parameters)
         {
-            return TableExecute(RelationSql<T, R, C1,C2,C3>.AddFromTable, parameters);
+            return TableExecute(RelationSql<T, R, C1, C2, C3>.AddFromTable, parameters);
         }
         /// <summary>
         /// 获取关系-直接传值
@@ -886,25 +932,36 @@ namespace Vasily
         /// <returns></returns>
         public T TableGet(params object[] parameters)
         {
-            return TableGet_Wrapper(RelationSql<T, R, C1,C2,C3>.GetFromTable, parameters);
+            return TableGet_Wrapper(RelationSql<T, R, C1, C2, C3>.GetFromTable, parameters);
         }
         #endregion
 
 
     }
 
-    public class DapperWrapper<T, R, C1,C2,C3,C4> : DapperWrapperRelation<T>
+    public class DapperWrapper<T, R, C1, C2, C3, C4> : DapperWrapperRelation<T>
     {
-
+        public static implicit operator DapperWrapper<T, R, C1, C2, C3, C4>(string key)
+        {
+            return new DapperWrapper<T, R, C1, C2, C3, C4>(key);
+        }
+        public new static DapperWrapper<T, R, C1, C2, C3, C4> UseKey(string key)
+        {
+            return new DapperWrapper<T, R, C1, C2, C3, C4>(key);
+        }
+        public new static DapperWrapper<T, R, C1, C2, C3, C4> UseKey(string writter, string reader)
+        {
+            return new DapperWrapper<T, R, C1, C2, C3, C4>(writter, reader);
+        }
         public DapperWrapper(string key) : this(key, key)
         {
 
         }
         public DapperWrapper(string writter, string reader) : base(writter, reader)
         {
-            _tables = RelationSql<T, R, C1,C2,C3,C4>.TableConditions;
-            _sources = RelationSql<T, R, C1,C2,C3,C4>.SourceConditions;
-            _emits = RelationSql<T, R, C1,C2,C3,C4>.Getters;
+            _tables = RelationSql<T, R, C1, C2, C3, C4>.TableConditions;
+            _sources = RelationSql<T, R, C1, C2, C3, C4>.SourceConditions;
+            _emits = RelationSql<T, R, C1, C2, C3, C4>.Getters;
         }
 
         #region 用实体类进行
@@ -915,7 +972,7 @@ namespace Vasily
         /// <returns></returns>
         public IEnumerable<T> SourceGets(params object[] parameters)
         {
-            return SourceGets_Wrapper(RelationSql<T, R, C1,C2,C3,C4>.GetFromSource, parameters);
+            return SourceGets_Wrapper(RelationSql<T, R, C1, C2, C3, C4>.GetFromSource, parameters);
         }
         /// <summary>
         /// 更新操作-直接传实体类
@@ -924,7 +981,7 @@ namespace Vasily
         /// <returns></returns>
         public int SourceUpdate(params object[] parameters)
         {
-            return SourceExecute(RelationSql<T, R, C1,C2,C3,C4>.ModifyFromSource, parameters);
+            return SourceExecute(RelationSql<T, R, C1, C2, C3, C4>.ModifyFromSource, parameters);
         }
         /// <summary>
         /// 删除关系-直接传实体类
@@ -951,7 +1008,7 @@ namespace Vasily
         /// <returns></returns>
         public int SourceInsert(params object[] parameters)
         {
-            return SourceExecute(RelationSql<T, R, C1,C2,C3,C4>.AddFromSource, 0, parameters);
+            return SourceExecute(RelationSql<T, R, C1, C2, C3, C4>.AddFromSource, 0, parameters);
         }
         /// <summary>
         /// 获取关系-直接传实体类
@@ -960,7 +1017,7 @@ namespace Vasily
         /// <returns></returns>
         public T SourceGet(params object[] parameters)
         {
-            return SourceGet_Wrapper(RelationSql<T, R, C1,C2,C3,C4>.GetFromSource, parameters);
+            return SourceGet_Wrapper(RelationSql<T, R, C1, C2, C3, C4>.GetFromSource, parameters);
         }
         #endregion
 
@@ -972,7 +1029,7 @@ namespace Vasily
         /// <returns></returns>
         public IEnumerable<T> TableGets(params object[] parameters)
         {
-            return TableGets_Wrapper(RelationSql<T, R, C1,C2,C3,C4>.GetFromTable, parameters);
+            return TableGets_Wrapper(RelationSql<T, R, C1, C2, C3, C4>.GetFromTable, parameters);
         }
         /// <summary>
         /// 更新操作-直接传值
@@ -981,7 +1038,7 @@ namespace Vasily
         /// <returns></returns>
         public int TableUpdate(params object[] parameters)
         {
-            return TableExecute(RelationSql<T, R, C1,C2,C3,C4>.ModifyFromTable, parameters);
+            return TableExecute(RelationSql<T, R, C1, C2, C3, C4>.ModifyFromTable, parameters);
         }
         /// <summary>
         /// 删除关系-直接传值
@@ -1008,7 +1065,7 @@ namespace Vasily
         /// <returns></returns>
         public int TableInsert(params object[] parameters)
         {
-            return TableExecute(RelationSql<T, R, C1,C2,C3,C4>.AddFromTable, parameters);
+            return TableExecute(RelationSql<T, R, C1, C2, C3, C4>.AddFromTable, parameters);
         }
         /// <summary>
         /// 获取关系-直接传值
@@ -1017,7 +1074,7 @@ namespace Vasily
         /// <returns></returns>
         public T TableGet(params object[] parameters)
         {
-            return TableGet_Wrapper(RelationSql<T, R, C1,C2,C3,C4>.GetFromTable, parameters);
+            return TableGet_Wrapper(RelationSql<T, R, C1, C2, C3, C4>.GetFromTable, parameters);
         }
         #endregion
 
@@ -1026,7 +1083,18 @@ namespace Vasily
 
     public class DapperWrapper<T, R, C1, C2, C3, C4, C5> : DapperWrapperRelation<T>
     {
-
+        public static implicit operator DapperWrapper<T, R, C1, C2, C3, C4, C5>(string key)
+        {
+            return new DapperWrapper<T, R, C1, C2, C3, C4, C5>(key);
+        }
+        public new static DapperWrapper<T, R, C1, C2, C3, C4, C5> UseKey(string key)
+        {
+            return new DapperWrapper<T, R, C1, C2, C3, C4, C5>(key);
+        }
+        public new static DapperWrapper<T, R, C1, C2, C3, C4, C5> UseKey(string writter, string reader)
+        {
+            return new DapperWrapper<T, R, C1, C2, C3, C4, C5>(writter, reader);
+        }
         public DapperWrapper(string key) : this(key, key)
         {
 
@@ -1157,7 +1225,18 @@ namespace Vasily
 
     public class DapperWrapper<T, R, C1, C2, C3, C4, C5, C6> : DapperWrapperRelation<T>
     {
-
+        public static implicit operator DapperWrapper<T, R, C1, C2, C3, C4, C5, C6>(string key)
+        {
+            return new DapperWrapper<T, R, C1, C2, C3, C4, C5, C6>(key);
+        }
+        public new static DapperWrapper<T, R, C1, C2, C3, C4, C5, C6> UseKey(string key)
+        {
+            return new DapperWrapper<T, R, C1, C2, C3, C4, C5, C6>(key);
+        }
+        public new static DapperWrapper<T, R, C1, C2, C3, C4, C5, C6> UseKey(string writter, string reader)
+        {
+            return new DapperWrapper<T, R, C1, C2, C3, C4, C5, C6>(writter, reader);
+        }
         public DapperWrapper(string key) : this(key, key)
         {
 
