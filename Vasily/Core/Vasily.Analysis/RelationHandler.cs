@@ -93,7 +93,11 @@ namespace Vasily.Core
                 {
                     if (_mapping.ContainsKey(item))
                     {
-                        return _mapping[item].ColumnName;
+                        string result = _mapping[item].ColumnName;
+                        if (result!=null)
+                        {
+                            return result;
+                        }
                     }
                     return item.Name;
                 };

@@ -14,16 +14,16 @@ namespace Vasily
             if (column_name==null)
             {
                 var info = (new AttrOperator(type)).Member<PrimaryKeyAttribute>();
-                if (info==null)
-                {
-                    throw new NullReferenceException($"{type.Name}类型中，主键不存在！");
-                }
-                else
+                if (info!=null)
                 {
                     column_name = info.Name;
                 }
+                else
+                {
+                    column_name = null;
+                }
             }
-            ColumnName = column_name ?? throw new NullReferenceException($"不完整的映射关系，需要您制定该标签的第二个参数，如果为空则默认视为主键。");
+            ColumnName = column_name;
         }
     }
 }

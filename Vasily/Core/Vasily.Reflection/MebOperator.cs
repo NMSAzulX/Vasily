@@ -90,7 +90,21 @@ namespace Vasily.Core
 
             if (member_type == null)
             {
-                throw new Exception($"在{type}中没有发现{name}字段，请检查代码！");
+                var members = type.GetMembers();
+                if (members.Length>5)
+                {
+                    throw new Exception($"在{type}中没有发现{name}字段，请检查代码！");
+                }
+                else
+                {
+                    string temp_name = type.Name.Split('_')[0];
+                    if (VasilyRunner.RelationExtentsionTyps.ContainsKey(temp_name))
+                    {
+                        return Getter(VasilyRunner.RelationExtentsionTyps[temp_name],name);
+                    }
+                    
+                }
+                
             }
             else
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
@@ -8,6 +9,12 @@ namespace Vasily
 {
     public class VasilyRunner
     {
+        public static ConcurrentDictionary<string, Type> RelationExtentsionTyps;
+
+        static VasilyRunner()
+        {
+            RelationExtentsionTyps = new ConcurrentDictionary<string, Type>();
+        }
         /// <summary>
         /// 开局必须调用的函数
         /// </summary>
@@ -28,6 +35,11 @@ namespace Vasily
                 temp_Type = typeCollection.Current;
                 if (temp_Type.IsClass && !temp_Type.IsAbstract)
                 {
+                    var temp_Name = temp_Type.Name.Split('-')[0];
+                    if (!RelationExtentsionTyps.ContainsKey(temp_Name))
+                    {
+                        RelationExtentsionTyps[temp_Name] = temp_Type;
+                    }
                     for (int i = 0; i < interfaceNames.Length; i+=1)
                     {
                         if (temp_Type.GetInterface(interfaceNames[i]) != null)
