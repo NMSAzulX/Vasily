@@ -83,9 +83,9 @@
          
          [Ignore]
          public string CompanyName{
-             get{
- 				return company+name;
-             }
+          get{
+ 				    return company+name;
+          }
          }
      }
  }
@@ -97,24 +97,24 @@
  {
  	//假设有国家实体类并有主键country.id
  	[Table("tb_country",SqlType.MySql)]
-     public class TestCountry:IVasilyNormal{
-     	[Primary]
-     	[Column("country.id")]
- 		public int countryid;
-     }
-     //假设有公司实体类并有主键company_id
-     [Table("tb_country",SqlType.MySql)]
-     public class TestCompany:IVasilyNormal{
-     	[Primary]
- 		public int company_id;
+      public class TestCountry:IVasilyNormal{
+     	  [Primary]
+     	  [Column("country.id")]
+ 		    public int countryid;
+      }
+      //假设有公司实体类并有主键company_id
+      [Table("tb_country",SqlType.MySql)]
+      public class TestCompany:IVasilyNormal{
+     	  [Primary]
+ 		    public int company_id;
      }
      
      //假设有公司实体类并有主键department_id,并有个最顶级部门的标识did
      [Table("tb_country",SqlType.MySql)]
      public class TestCompany:IVasilyNormal{
-     	[Primary]
- 		public int department_id;
- 		public int did;
+     	  [Primary]
+ 		    public int department_id;
+ 		    public int did;
      }
      
      //假设数据库有如下关系成员tid、部门did、公司主键id，国家的主键id为关联成员则建实体类如下
@@ -131,10 +131,10 @@
          [Relation(typeof(TestDepartment),"did")]
          public int department_id { get; set; }
          
-     	 [Relation(typeof(TestCompany))]
+     	   [Relation(typeof(TestCompany))]
          public int the_company_id{get;set;}
          
- 		 [Relation(typeof(TestCountry),"country.id")]
+ 		     [Relation(typeof(TestCountry),"country.id")]
          public int country_id{get;set;}
          
          public DateTime UpdateTime{get;set;}
