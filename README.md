@@ -38,6 +38,21 @@
 
 > 6. Template用上一步得到的MakerModel自动生成SQL语句。由于MakerModel和Template均可以在重用，因此并没有直接内聚在Handler中，而是解耦出来。至于RelationHandler是没有Template的，因为目前还没有看到重用的价值。  
  
+ 以下为MakerModel注释
+  ```c#
+    /// <summary>
+    /// 当初始化MakerModel的时候，会产生静态泛型副本，以便后续直接用模板处理
+    /// 其中Left,Right,TableName,PrimaryKey,Members会被复制
+    /// Left,Right为SQL内置关键字分隔符
+    /// TableName为表名
+    /// PrimaryKey主键名
+    /// Members成员信息
+    /// ColFunction 为组建SQL语句时用到的过滤函数
+    /// FilterFunction 为组建@参数时用到的过滤函数
+    /// ColumnMapping 为Column的映射的缓存
+    /// </summary>
+ ```  
+ 
   ​
 
 
@@ -50,13 +65,15 @@
 | 2 |	TEntityType + BaseHandler | MakerModel |	MakerModel&lt;TEntityType&gt; |
 | 3 |	MakerModel + Tempalte |	—— | Sql&lt;TEntityType&gt; / DapperWrapper&lt;TEntityType&gt; |
 | 4 |	MakerModel + RelationHandler | ——	| RelationSql&lt;T,R,S....&gt; / DapperWrapper&lt;T,R,S....&gt; |
+
+
  
   ​
 
 
 - ### 使用简介
 
-1. #### 实体类注解
+  #### 实体类注解
  
   ​  
   
