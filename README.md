@@ -47,7 +47,7 @@
 | :----: | :-----------------------------: | :-----------: | :--------------------------: |
 | 0 |	—— | —— |	Template |
 | 1 |	VasilyRunner + IVasilyNorml/IVasilyRelation |	TEntityType |	—— |
-| 2 |	EntityType + BaseHandler | MakerModel |	MakerModel&lt;TEntityType&gt; |
+| 2 |	TEntityType + BaseHandler | MakerModel |	MakerModel&lt;TEntityType&gt; |
 | 3 |	MakerModel + Tempalte |	—— | Sql&lt;TEntityType&gt; / DapperWrapper&lt;TEntityType&gt; |
 | 4 |	MakerModel + RelationHandler | ——	| RelationSql&lt;T,R,S....&gt; / DapperWrapper&lt;T,R,S....&gt; |
  
@@ -72,8 +72,7 @@
 | SelectIgnore |       ——       |                              ——                              |   成员   |   使用该注解的成员生成SQL之后，不会在带有‘All’的SQL语句中    | IVasilyNormal                  |
 | UpdateIgnore |       ——       |                              ——                              |   成员   |   使用该注解的成员生成SQL之后，不会在带有‘All’的SQL语句中    | IVasilyNormal                  |
 
-注解Demo
-
+建立一个实体类
 ```c#
 namespace VasilyWebDemo.Entity
 {
@@ -109,9 +108,11 @@ namespace VasilyWebDemo.Entity
         }
     }
 }
+```  
+程序中调用
+ ```c#
+
 ```
-
-
  ```c#
  namespace VasilyWebDemo.Entity
 {
