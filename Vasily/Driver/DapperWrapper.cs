@@ -40,6 +40,9 @@ namespace Vasily
         public DapperWrapper(string key) : base(key, key) { }
         public DapperWrapper(string writter, string reader) : base(writter, reader) { }
 
+        public DapperWrapper<T> Normal { get { RequestType = VasilyRequestType.Normal; return this; } }
+        public DapperWrapper<T> Complete { get { RequestType = VasilyRequestType.Complete; return this; } }
+
         #region 把下面的Complate和Normal方法都封装一下
         public IEnumerable<T> GetEntitiesByIn(params int[] range)
         {
@@ -391,20 +394,21 @@ namespace Vasily
             return new DapperWrapper<T>(key);
         }
     }
-    public class DapperWrapperRelation<T> : DapperWrapper<T>
+    public abstract class RelationWrapper<T> : DapperWrapper<T>
     {
         internal MemberGetter[] _emits;
         internal string[] _sources;
         internal string[] _tables;
-        public DapperWrapperRelation(string key) : this(key, key)
+        public RelationWrapper(string key) : this(key, key)
         {
 
         }
-        public DapperWrapperRelation(string writter, string reader) : base(writter, reader)
+        public RelationWrapper(string writter, string reader) : base(writter, reader)
         {
 
         }
 
+        #region 内部函数封装
         internal int TableExecute(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
@@ -432,7 +436,6 @@ namespace Vasily
             }
             return Reader.Execute(sql, dynamicParams);
         }
-
         internal int SourceAftExecute(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
@@ -442,8 +445,7 @@ namespace Vasily
             }
             return Reader.Execute(sql, dynamicParams);
         }
-
-        #region 已知实体类信息
+       
         /// <summary>
         /// 直接查询到实体类
         /// </summary>
@@ -475,9 +477,7 @@ namespace Vasily
             var range = Reader.Query<int>(sql, dynamicParams);
             return GetEntityByIn(range);
         }
-        #endregion
-
-        #region 不知道实体类信息
+       
         /// <summary>
         /// 直接查询到实体类
         /// </summary>
@@ -511,19 +511,132 @@ namespace Vasily
         }
         #endregion
 
+        #region 用实体类进行查询
+        /// <summary>
+        /// 获取集合-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public virtual IEnumerable<T> SourceGets(params object[] parameters)
+        {
+            return null;
+        }
+        /// <summary>
+        /// 更新操作-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public virtual int SourceUpdate(params object[] parameters)
+        {
+            return 0;
+        }
+        /// <summary>
+        /// 删除关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
+        /// <returns></returns>
+        public virtual int SourcePreDelete(params object[] parameters)
+        {
+            return 0;
+        }
+        /// <summary>
+        /// 删除关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public virtual int SourceAftDelete(params object[] parameters)
+        {
+            return 0;
+        }
+        /// <summary>
+        /// 增加关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
+        /// <returns></returns>
+        public virtual int SourceInsert(params object[] parameters)
+        {
+            return 0;
+        }
+        /// <summary>
+        /// 获取关系-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public virtual T SourceGet(params object[] parameters)
+        {
+            return default(T);
+        }
+        #endregion
+
+        #region 不知道实体类信息
+        /// <summary>
+        /// 查询到实体类-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
+        /// <returns></returns>
+        public virtual IEnumerable<T> TableGets(params object[] parameters)
+        {
+            return null;
+        }
+        /// <summary>
+        /// 更新操作-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public virtual int TableUpdate(params object[] parameters)
+        {
+            return 0;
+        }
+        /// <summary>
+        /// 删除关系-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
+        /// <returns></returns>
+        public virtual int TablePreDelete(params object[] parameters)
+        {
+            return 0;
+        }
+        /// <summary>
+        /// 删除关系-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public virtual int TableAftDelete(params object[] parameters)
+        {
+            return 0;
+        }
+        /// <summary>
+        /// 增加关系-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
+        /// <returns></returns>
+        public virtual int TableInsert(params object[] parameters)
+        {
+            return 0;
+        }
+        /// <summary>
+        /// 获取关系-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
+        /// <returns></returns>
+        public virtual T TableGet(params object[] parameters)
+        {
+            return default(T);
+        }
+        #endregion
     }
 
-    public class DapperWrapper<T, R, C1> : DapperWrapperRelation<T>
+    public class DapperWrapper<T, R, C1> : RelationWrapper<T>
     {
         public static implicit operator DapperWrapper<T, R, C1>(string key)
         {
             return new DapperWrapper<T, R, C1>(key);
         }
-        public new static DapperWrapper<T, R, C1> UseKey(string key)
+        public new static RelationWrapper<T> UseKey(string key)
         {
             return new DapperWrapper<T, R, C1>(key);
         }
-        public new static DapperWrapper<T, R, C1> UseKey(string writter, string reader)
+        public new static RelationWrapper<T> UseKey(string writter, string reader)
         {
             return new DapperWrapper<T, R, C1>(writter, reader);
         }
@@ -544,7 +657,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public IEnumerable<T> SourceGets(params object[] parameters)
+        public override IEnumerable<T> SourceGets(params object[] parameters)
         {
             return SourceGets_Wrapper(RelationSql<T, R, C1>.GetFromSource, parameters);
         }
@@ -553,7 +666,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int SourceUpdate(params object[] parameters)
+        public override int SourceUpdate(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1>.ModifyFromSource, parameters);
         }
@@ -562,7 +675,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int SourcePreDelete(params object[] parameters)
+        public override int SourcePreDelete(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1>.DeletePreFromSource, parameters);
         }
@@ -571,7 +684,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int SourceAftDelete(params object[] parameters)
+        public override int SourceAftDelete(params object[] parameters)
         {
             return SourceAftExecute(RelationSql<T, R, C1>.DeleteAftFromSource, parameters);
         }
@@ -580,7 +693,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public int SourceInsert(params object[] parameters)
+        public override int SourceInsert(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1>.AddFromSource, 0, parameters);
         }
@@ -589,7 +702,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T SourceGet(params object[] parameters)
+        public override T SourceGet(params object[] parameters)
         {
             return SourceGet_Wrapper(RelationSql<T, R, C1>.GetFromSource, parameters);
         }
@@ -601,7 +714,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
         /// <returns></returns>
-        public IEnumerable<T> TableGets(params object[] parameters)
+        public override IEnumerable<T> TableGets(params object[] parameters)
         {
             return TableGets_Wrapper(RelationSql<T, R, C1>.GetFromTable, parameters);
         }
@@ -610,7 +723,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public int TableUpdate(params object[] parameters)
+        public override int TableUpdate(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1>.ModifyFromTable, parameters);
         }
@@ -619,7 +732,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int TablePreDelete(params object[] parameters)
+        public override int TablePreDelete(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1>.DeletePreFromTable, parameters);
         }
@@ -628,7 +741,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int TableAftDelete(params object[] parameters)
+        public override int TableAftDelete(params object[] parameters)
         {
             return TableAftExecute(RelationSql<T, R, C1>.DeleteAftFromTable, parameters);
         }
@@ -637,7 +750,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public int TableInsert(params object[] parameters)
+        public override int TableInsert(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1>.AddFromTable, parameters);
         }
@@ -646,7 +759,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T TableGet(params object[] parameters)
+        public override T TableGet(params object[] parameters)
         {
             return TableGet_Wrapper(RelationSql<T, R, C1>.GetFromTable, parameters);
         }
@@ -655,17 +768,17 @@ namespace Vasily
 
     }
 
-    public class DapperWrapper<T, R, C1, C2> : DapperWrapperRelation<T>
+    public class DapperWrapper<T, R, C1, C2> : RelationWrapper<T>
     {
         public static implicit operator DapperWrapper<T, R, C1, C2>(string key)
         {
             return new DapperWrapper<T, R, C1, C2>(key);
         }
-        public new static DapperWrapper<T, R, C1, C2> UseKey(string key)
+        public new static RelationWrapper<T> UseKey(string key)
         {
             return new DapperWrapper<T, R, C1, C2>(key);
         }
-        public new static DapperWrapper<T, R, C1, C2> UseKey(string writter, string reader)
+        public new static RelationWrapper<T> UseKey(string writter, string reader)
         {
             return new DapperWrapper<T, R, C1, C2>(writter, reader);
         }
@@ -686,7 +799,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public IEnumerable<T> SourceGets(params object[] parameters)
+        public override IEnumerable<T> SourceGets(params object[] parameters)
         {
             return SourceGets_Wrapper(RelationSql<T, R, C1, C2>.GetFromSource, parameters);
         }
@@ -695,7 +808,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int SourceUpdate(params object[] parameters)
+        public override int SourceUpdate(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2>.ModifyFromSource, parameters);
         }
@@ -704,7 +817,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int SourcePreDelete(params object[] parameters)
+        public override int SourcePreDelete(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2>.DeletePreFromSource, parameters);
         }
@@ -713,7 +826,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int SourceAftDelete(params object[] parameters)
+        public override int SourceAftDelete(params object[] parameters)
         {
             return SourceAftExecute(RelationSql<T, R, C1, C2>.DeleteAftFromSource, parameters);
         }
@@ -722,7 +835,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public int SourceInsert(params object[] parameters)
+        public override int SourceInsert(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2>.AddFromSource, 0, parameters);
         }
@@ -731,7 +844,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T SourceGet(params object[] parameters)
+        public override T SourceGet(params object[] parameters)
         {
             return SourceGet_Wrapper(RelationSql<T, R, C1, C2>.GetFromSource, parameters);
         }
@@ -743,7 +856,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
         /// <returns></returns>
-        public IEnumerable<T> TableGets(params object[] parameters)
+        public override IEnumerable<T> TableGets(params object[] parameters)
         {
             return TableGets_Wrapper(RelationSql<T, R, C1, C2>.GetFromTable, parameters);
         }
@@ -752,7 +865,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public int TableUpdate(params object[] parameters)
+        public override int TableUpdate(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2>.ModifyFromTable, parameters);
         }
@@ -761,7 +874,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int TablePreDelete(params object[] parameters)
+        public override int TablePreDelete(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2>.DeletePreFromTable, parameters);
         }
@@ -770,7 +883,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int TableAftDelete(params object[] parameters)
+        public override int TableAftDelete(params object[] parameters)
         {
             return TableAftExecute(RelationSql<T, R, C1, C2>.DeleteAftFromTable, parameters);
         }
@@ -779,7 +892,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public int TableInsert(params object[] parameters)
+        public override int TableInsert(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2>.AddFromTable, parameters);
         }
@@ -788,7 +901,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T TableGet(params object[] parameters)
+        public override T TableGet(params object[] parameters)
         {
             return TableGet_Wrapper(RelationSql<T, R, C1, C2>.GetFromTable, parameters);
         }
@@ -797,17 +910,17 @@ namespace Vasily
 
     }
 
-    public class DapperWrapper<T, R, C1, C2, C3> : DapperWrapperRelation<T>
+    public class DapperWrapper<T, R, C1, C2, C3> : RelationWrapper<T>
     {
         public static implicit operator DapperWrapper<T, R, C1, C2, C3>(string key)
         {
             return new DapperWrapper<T, R, C1, C2, C3>(key);
         }
-        public new static DapperWrapper<T, R, C1, C2, C3> UseKey(string key)
+        public new static RelationWrapper<T> UseKey(string key)
         {
             return new DapperWrapper<T, R, C1, C2, C3>(key);
         }
-        public new static DapperWrapper<T, R, C1, C2, C3> UseKey(string writter, string reader)
+        public new static RelationWrapper<T> UseKey(string writter, string reader)
         {
             return new DapperWrapper<T, R, C1, C2, C3>(writter, reader);
         }
@@ -828,7 +941,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public IEnumerable<T> SourceGets(params object[] parameters)
+        public override IEnumerable<T> SourceGets(params object[] parameters)
         {
             return SourceGets_Wrapper(RelationSql<T, R, C1, C2, C3>.GetFromSource, parameters);
         }
@@ -837,7 +950,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int SourceUpdate(params object[] parameters)
+        public override int SourceUpdate(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3>.ModifyFromSource, parameters);
         }
@@ -846,7 +959,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int SourcePreDelete(params object[] parameters)
+        public override int SourcePreDelete(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3>.DeletePreFromSource, parameters);
         }
@@ -855,7 +968,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int SourceAftDelete(params object[] parameters)
+        public override int SourceAftDelete(params object[] parameters)
         {
             return SourceAftExecute(RelationSql<T, R, C1, C2, C3>.DeleteAftFromSource, parameters);
         }
@@ -864,7 +977,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public int SourceInsert(params object[] parameters)
+        public override int SourceInsert(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3>.AddFromSource, 0, parameters);
         }
@@ -873,7 +986,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T SourceGet(params object[] parameters)
+        public override T SourceGet(params object[] parameters)
         {
             return SourceGet_Wrapper(RelationSql<T, R, C1, C2, C3>.GetFromSource, parameters);
         }
@@ -885,7 +998,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
         /// <returns></returns>
-        public IEnumerable<T> TableGets(params object[] parameters)
+        public override IEnumerable<T> TableGets(params object[] parameters)
         {
             return TableGets_Wrapper(RelationSql<T, R, C1, C2, C3>.GetFromTable, parameters);
         }
@@ -894,7 +1007,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public int TableUpdate(params object[] parameters)
+        public override int TableUpdate(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3>.ModifyFromTable, parameters);
         }
@@ -903,7 +1016,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int TablePreDelete(params object[] parameters)
+        public override int TablePreDelete(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3>.DeletePreFromTable, parameters);
         }
@@ -912,7 +1025,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int TableAftDelete(params object[] parameters)
+        public override int TableAftDelete(params object[] parameters)
         {
             return TableAftExecute(RelationSql<T, R, C1, C2, C3>.DeleteAftFromTable, parameters);
         }
@@ -921,7 +1034,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public int TableInsert(params object[] parameters)
+        public override int TableInsert(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3>.AddFromTable, parameters);
         }
@@ -930,7 +1043,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T TableGet(params object[] parameters)
+        public override T TableGet(params object[] parameters)
         {
             return TableGet_Wrapper(RelationSql<T, R, C1, C2, C3>.GetFromTable, parameters);
         }
@@ -939,17 +1052,17 @@ namespace Vasily
 
     }
 
-    public class DapperWrapper<T, R, C1, C2, C3, C4> : DapperWrapperRelation<T>
+    public class DapperWrapper<T, R, C1, C2, C3, C4> : RelationWrapper<T>
     {
         public static implicit operator DapperWrapper<T, R, C1, C2, C3, C4>(string key)
         {
             return new DapperWrapper<T, R, C1, C2, C3, C4>(key);
         }
-        public new static DapperWrapper<T, R, C1, C2, C3, C4> UseKey(string key)
+        public new static RelationWrapper<T> UseKey(string key)
         {
             return new DapperWrapper<T, R, C1, C2, C3, C4>(key);
         }
-        public new static DapperWrapper<T, R, C1, C2, C3, C4> UseKey(string writter, string reader)
+        public new static RelationWrapper<T> UseKey(string writter, string reader)
         {
             return new DapperWrapper<T, R, C1, C2, C3, C4>(writter, reader);
         }
@@ -970,7 +1083,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public IEnumerable<T> SourceGets(params object[] parameters)
+        public override IEnumerable<T> SourceGets(params object[] parameters)
         {
             return SourceGets_Wrapper(RelationSql<T, R, C1, C2, C3, C4>.GetFromSource, parameters);
         }
@@ -979,7 +1092,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int SourceUpdate(params object[] parameters)
+        public override int SourceUpdate(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3, C4>.ModifyFromSource, parameters);
         }
@@ -988,7 +1101,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int SourcePreDelete(params object[] parameters)
+        public override int SourcePreDelete(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3, C4>.DeletePreFromSource, parameters);
         }
@@ -997,7 +1110,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int SourceAftDelete(params object[] parameters)
+        public override int SourceAftDelete(params object[] parameters)
         {
             return SourceAftExecute(RelationSql<T, R, C1, C2, C3, C4>.DeleteAftFromSource, parameters);
         }
@@ -1006,7 +1119,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public int SourceInsert(params object[] parameters)
+        public override int SourceInsert(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3, C4>.AddFromSource, 0, parameters);
         }
@@ -1015,7 +1128,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T SourceGet(params object[] parameters)
+        public override T SourceGet(params object[] parameters)
         {
             return SourceGet_Wrapper(RelationSql<T, R, C1, C2, C3, C4>.GetFromSource, parameters);
         }
@@ -1027,7 +1140,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
         /// <returns></returns>
-        public IEnumerable<T> TableGets(params object[] parameters)
+        public override IEnumerable<T> TableGets(params object[] parameters)
         {
             return TableGets_Wrapper(RelationSql<T, R, C1, C2, C3, C4>.GetFromTable, parameters);
         }
@@ -1036,7 +1149,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public int TableUpdate(params object[] parameters)
+        public override int TableUpdate(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3, C4>.ModifyFromTable, parameters);
         }
@@ -1045,7 +1158,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int TablePreDelete(params object[] parameters)
+        public override int TablePreDelete(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3, C4>.DeletePreFromTable, parameters);
         }
@@ -1054,7 +1167,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int TableAftDelete(params object[] parameters)
+        public override int TableAftDelete(params object[] parameters)
         {
             return TableAftExecute(RelationSql<T, R, C1, C2, C3, C4>.DeleteAftFromTable, parameters);
         }
@@ -1063,7 +1176,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public int TableInsert(params object[] parameters)
+        public override int TableInsert(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3, C4>.AddFromTable, parameters);
         }
@@ -1072,7 +1185,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T TableGet(params object[] parameters)
+        public override T TableGet(params object[] parameters)
         {
             return TableGet_Wrapper(RelationSql<T, R, C1, C2, C3, C4>.GetFromTable, parameters);
         }
@@ -1081,17 +1194,17 @@ namespace Vasily
 
     }
 
-    public class DapperWrapper<T, R, C1, C2, C3, C4, C5> : DapperWrapperRelation<T>
+    public class DapperWrapper<T, R, C1, C2, C3, C4, C5> : RelationWrapper<T>
     {
         public static implicit operator DapperWrapper<T, R, C1, C2, C3, C4, C5>(string key)
         {
             return new DapperWrapper<T, R, C1, C2, C3, C4, C5>(key);
         }
-        public new static DapperWrapper<T, R, C1, C2, C3, C4, C5> UseKey(string key)
+        public new static RelationWrapper<T> UseKey(string key)
         {
             return new DapperWrapper<T, R, C1, C2, C3, C4, C5>(key);
         }
-        public new static DapperWrapper<T, R, C1, C2, C3, C4, C5> UseKey(string writter, string reader)
+        public new static RelationWrapper<T> UseKey(string writter, string reader)
         {
             return new DapperWrapper<T, R, C1, C2, C3, C4, C5>(writter, reader);
         }
@@ -1112,7 +1225,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public IEnumerable<T> SourceGets(params object[] parameters)
+        public override IEnumerable<T> SourceGets(params object[] parameters)
         {
             return SourceGets_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5>.GetFromSource, parameters);
         }
@@ -1121,7 +1234,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int SourceUpdate(params object[] parameters)
+        public override int SourceUpdate(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.ModifyFromSource, parameters);
         }
@@ -1130,7 +1243,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int SourcePreDelete(params object[] parameters)
+        public override int SourcePreDelete(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.DeletePreFromSource, parameters);
         }
@@ -1139,7 +1252,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int SourceAftDelete(params object[] parameters)
+        public override int SourceAftDelete(params object[] parameters)
         {
             return SourceAftExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.DeleteAftFromSource, parameters);
         }
@@ -1148,7 +1261,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public int SourceInsert(params object[] parameters)
+        public override int SourceInsert(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.AddFromSource, 0, parameters);
         }
@@ -1157,7 +1270,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T SourceGet(params object[] parameters)
+        public override T SourceGet(params object[] parameters)
         {
             return SourceGet_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5>.GetFromSource, parameters);
         }
@@ -1169,7 +1282,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
         /// <returns></returns>
-        public IEnumerable<T> TableGets(params object[] parameters)
+        public override IEnumerable<T> TableGets(params object[] parameters)
         {
             return TableGets_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5>.GetFromTable, parameters);
         }
@@ -1178,7 +1291,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public int TableUpdate(params object[] parameters)
+        public override int TableUpdate(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.ModifyFromTable, parameters);
         }
@@ -1187,7 +1300,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int TablePreDelete(params object[] parameters)
+        public override int TablePreDelete(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.DeletePreFromTable, parameters);
         }
@@ -1196,7 +1309,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int TableAftDelete(params object[] parameters)
+        public override int TableAftDelete(params object[] parameters)
         {
             return TableAftExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.DeleteAftFromTable, parameters);
         }
@@ -1205,7 +1318,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public int TableInsert(params object[] parameters)
+        public override int TableInsert(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.AddFromTable, parameters);
         }
@@ -1214,7 +1327,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T TableGet(params object[] parameters)
+        public override T TableGet(params object[] parameters)
         {
             return TableGet_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5>.GetFromTable, parameters);
         }
@@ -1223,17 +1336,17 @@ namespace Vasily
 
     }
 
-    public class DapperWrapper<T, R, C1, C2, C3, C4, C5, C6> : DapperWrapperRelation<T>
+    public class DapperWrapper<T, R, C1, C2, C3, C4, C5, C6> : RelationWrapper<T>
     {
         public static implicit operator DapperWrapper<T, R, C1, C2, C3, C4, C5, C6>(string key)
         {
             return new DapperWrapper<T, R, C1, C2, C3, C4, C5, C6>(key);
         }
-        public new static DapperWrapper<T, R, C1, C2, C3, C4, C5, C6> UseKey(string key)
+        public new static RelationWrapper<T> UseKey(string key)
         {
             return new DapperWrapper<T, R, C1, C2, C3, C4, C5, C6>(key);
         }
-        public new static DapperWrapper<T, R, C1, C2, C3, C4, C5, C6> UseKey(string writter, string reader)
+        public new static RelationWrapper<T> UseKey(string writter, string reader)
         {
             return new DapperWrapper<T, R, C1, C2, C3, C4, C5, C6>(writter, reader);
         }
@@ -1254,7 +1367,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public IEnumerable<T> SourceGets(params object[] parameters)
+        public override IEnumerable<T> SourceGets(params object[] parameters)
         {
             return SourceGets_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.GetFromSource, parameters);
         }
@@ -1263,7 +1376,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int SourceUpdate(params object[] parameters)
+        public override int SourceUpdate(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.ModifyFromSource, parameters);
         }
@@ -1272,7 +1385,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int SourcePreDelete(params object[] parameters)
+        public override int SourcePreDelete(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.DeletePreFromSource, parameters);
         }
@@ -1281,7 +1394,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int SourceAftDelete(params object[] parameters)
+        public override int SourceAftDelete(params object[] parameters)
         {
             return SourceAftExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.DeleteAftFromSource, parameters);
         }
@@ -1290,7 +1403,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public int SourceInsert(params object[] parameters)
+        public override int SourceInsert(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.AddFromSource, 0, parameters);
         }
@@ -1299,7 +1412,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T SourceGet(params object[] parameters)
+        public override T SourceGet(params object[] parameters)
         {
             return SourceGet_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.GetFromSource, parameters);
         }
@@ -1311,7 +1424,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第三个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1 </param>
         /// <returns></returns>
-        public IEnumerable<T> TableGets(params object[] parameters)
+        public override IEnumerable<T> TableGets(params object[] parameters)
         {
             return TableGets_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.GetFromTable, parameters);
         }
@@ -1320,7 +1433,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public int TableUpdate(params object[] parameters)
+        public override int TableUpdate(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.ModifyFromTable, parameters);
         }
@@ -1329,7 +1442,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where t=@t</param>
         /// <returns></returns>
-        public int TablePreDelete(params object[] parameters)
+        public override int TablePreDelete(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.DeletePreFromTable, parameters);
         }
@@ -1338,7 +1451,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public int TableAftDelete(params object[] parameters)
+        public override int TableAftDelete(params object[] parameters)
         {
             return TableAftExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.DeleteAftFromTable, parameters);
         }
@@ -1347,7 +1460,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public int TableInsert(params object[] parameters)
+        public override int TableInsert(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.AddFromTable, parameters);
         }
@@ -1356,7 +1469,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T TableGet(params object[] parameters)
+        public override T TableGet(params object[] parameters)
         {
             return TableGet_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.GetFromTable, parameters);
         }
