@@ -34,7 +34,7 @@
 
 > 4. Handler拿到实体类之后，将由两部分进行处理。即父类BaseHandler,以及SQL生成模板Template.
 
-> 5. BaseHandler接过实体类之后将会拆解、过滤、重组成MakerModel,  同时进行静态化处理, 生成MakerModel<TEntityType>.
+> 5. BaseHandler接过实体类之后将会拆解、过滤、重组成MakerModel,  同时进行静态化处理, 生成MakerModel&lt;TEntityType&gt;.
 
 > 6. Template用上一步得到的MakerModel自动生成SQL语句。由于MakerModel和Template均可以在重用，因此并没有直接内聚在Handler中，而是解耦出来。至于RelationHandler是没有Template的，因为目前还没有看到重用的价值。  
  
@@ -46,10 +46,10 @@
 |    序号    |    流程    |    中间产出物    |    可用产出物    | 
 | :----: | :-----------------------------: | :-----------: | :--------------------------: |
 | 0 |	—— | —— |	Template |
-| 1 |	VasilyRunner + IVasilyNorml/IVasilyRelation |	EntityType |	—— |
-| 2 |	EntityType + BaseHandler | MakerModel |	MakerModel<EntityType> |
-| 3 |	MakerModel + Tempalte |	—— | Sql<EntityType> / DapperWrapper<EntityType> |
-| 4 |	MakerModel + RelationHandler | ——	| RelationSql<T,R,S....> / DapperWrapper<T,R,S....> |
+| 1 |	VasilyRunner + IVasilyNorml/IVasilyRelation |	TEntityType |	—— |
+| 2 |	EntityType + BaseHandler | MakerModel |	MakerModel&lt;TEntityType&gt; |
+| 3 |	MakerModel + Tempalte |	—— | Sql&lt;TEntityType&gt; / DapperWrapper&lt;TEntityType&gt; |
+| 4 |	MakerModel + RelationHandler | ——	| RelationSql&lt;T,R,S....&gt; / DapperWrapper&lt;T,R,S....&gt; |
  
   ​
 
@@ -68,7 +68,7 @@
 |  NoRepeate   |       ——       |                              ——                              |   成员   |            使用该注解将成员标记为查重所需要的成员            | IVasilyNormal                  |
 |   Relation   |  Type,string   | 第一个参数为当前列与哪个实体类相关联；第二个参数为所关联实体类的成员名 |   成员   |              使用该注解我们可以创建关系封装操作              | IVasilyRelation                |
 |    Ignore    |       ——       |                              ——                              |   成员   |         使用该注解表示该成员不会参与SQL自动生成过程          | IVasilyNormal，IVasilyRelation |
-| InsertIgnore |       ——       |                              ——                              |   成员   | 使用该注解的成员生成SQL之后，将不会出现在Sql<T>.Insert中,但会出现在Sql<T>.InsertAll中 | IVasilyNormal                  |
+| InsertIgnore |       ——       |                              ——                              |   成员   | 使用该注解的成员生成SQL之后，将不会出现在Sql&lt;T&gt;.Insert中,但会出现在Sql&lt;T&gt;.InsertAll中 | IVasilyNormal                  |
 | SelectIgnore |       ——       |                              ——                              |   成员   |   使用该注解的成员生成SQL之后，不会在带有‘All’的SQL语句中    | IVasilyNormal                  |
 | UpdateIgnore |       ——       |                              ——                              |   成员   |   使用该注解的成员生成SQL之后，不会在带有‘All’的SQL语句中    | IVasilyNormal                  |
 
