@@ -38,7 +38,8 @@
 
 > 6. Template用上一步得到的MakerModel自动生成SQL语句。由于MakerModel和Template均可以在重用，因此并没有直接内聚在Handler中，而是解耦出来。至于RelationHandler是没有Template的，因为目前还没有看到重用的价值。
 
-  - 以下为流程与产出表
+
+以下为流程与产出表
 
 |    序号    |    流程    |    中间产出物    |    可用产出物    | 
 | :----: | :-----------------------------: | :-----------: | :--------------------------: |
@@ -47,13 +48,15 @@
 | 2 |	EntityType + BaseHandler | MakerModel |	MakerModel<EntityType> |
 | 3 |	MakerModel + Tempalte |	—— | Sql<EntityType> / DapperWrapper<EntityType> |
 | 4 |	MakerModel + RelationHandler | ——	| RelationSql<T,R,S....> / DapperWrapper<T,R,S....> |
-
+ 
+  ​
 
 
 - ### 使用简介
 
 1. #### 实体类注解
-
+ 
+  ​
 |    注解名    |      参数      |                           参数说明                           |   注解对象   |                           注解说明                           |           解析接口           |
 | :---------: | :-----------: | :----------------------------------------------------------: | :----------: | :----------------------------------------------------------: | :-----------------------------: |
 |    Table     | string,SqlType |           第一个参数为表名；第二个参数为数据库类型           |    类    |                      该实体类属于哪个表                      | IVasilyNormal                  |
