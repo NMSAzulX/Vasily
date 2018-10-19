@@ -38,7 +38,7 @@
 
 > 6. Template用上一步得到的MakerModel自动生成SQL语句。由于MakerModel和Template均可以在重用，因此并没有直接内聚在Handler中，而是解耦出来。至于RelationHandler是没有Template的，因为目前还没有看到重用的价值。  
  
- 以下为MakerModel注释
+  * MakerModel注释
   ```c#
     /// <summary>
     /// 当初始化MakerModel的时候，会产生静态泛型副本，以便后续直接用模板处理
@@ -56,7 +56,7 @@
   ​
 
 
-以下为流程与产出表
+ * 流程与产出表
 
 |    序号    |    流程    |    中间产出物    |    可用产出物    | 
 | :----: | :-----------------------------: | :-----------: | :--------------------------: |
@@ -109,11 +109,12 @@ public class TestRelation:IVasilyRelation
 }
 ```  
 
-先讲注解：
-RelationAttribute,两个参数:  
+注解RelationAttribute,两个参数:  
 
-Parameter1: 是该外联字段所属的类;  
-Parameter2: 参数是为了区分操作，Vasily提供了两种关系操作; 
+ * Parameter1: 是该外联字段所属的类;  
+ 
+ * Parameter2: 参数是为了区分操作，Vasily提供了两种关系操作;  
+ 
 
   >先看生成结果：  
   >> 1、select student_id from [table] where class_id=@class_id  
@@ -127,8 +128,13 @@ Parameter2: 参数是为了区分操作，Vasily提供了两种关系操作;
 它们对应的API操作为SourceGet,SourceXXX等等
 这类函数传参直接传对象，如SourceGets(myClassInstance); 
 这里myClassInstane会通过emit缓存方法获取cid的值。 
+   
+  ​
+   
+ ------  
+  ​
 
-
+   
 在RelationHandler中，该实体类被扫描处理成一个排列树(以两个元素为最低标准)，上面的类结果如下：  
  
  * A32 = 3!/(3-2)! = 6  
@@ -136,6 +142,14 @@ Parameter2: 参数是为了区分操作，Vasily提供了两种关系操作;
 
  * A33 = 3!/0!=6  
 >A33 :   [Student,Class,TestRelation]、 [Class,Student,TestRelation] 、[Student,TestRelation,Class]、[TestRelation,Student,Class]、[Class,TestRelation,Student]、[TestRelation,Class,Student]  
+    
+    ​
+
+  ------  
+    
+   ​
+
+      
 
 一共12种，为此Vasily将缓存有12种操作关系的静态类。  
 
@@ -143,9 +157,10 @@ Parameter2: 参数是为了区分操作，Vasily提供了两种关系操作;
 >>业务上来讲，是通过class获取studnet。  
 
 > RelationSql<Student,TestRelation,Class,TestRelation> 代表属于TestRelation类中的[Student,Class,TestRelation]三者之间的关系; 
->>业务上来讲，是通过Class和TestRelation来获取Student.
+>>业务上来讲，是通过Class和TestRelation来获取Student.  
 
-可以看的出来:  
+
+总结:  
 
  * 第一个泛型代表了最终需要获取的对象;  
  
@@ -153,7 +168,12 @@ Parameter2: 参数是为了区分操作，Vasily提供了两种关系操作;
  
  * 第三个泛型以后代表了条件;  
  
+   ​
 
+------  
+  ​  
+  
+  
 下面我们看一下以上实体的处理结果：  
 ```
 RelationSql<Student,TestRelation,Class>.GetFromTable  = SELECT `student_id` FROM `relation_table` WHERE `class_id`=@class_id
@@ -177,8 +197,13 @@ RelationSql<Student, Relation, Class>.DeletePreFromTable = "DELETE FROM `relatio
 //后置删除
 RelationSql<Student, Relation, Class, Relation>.DeleteAftFromSource = "DELETE FROM `relation_table` WHERE`class_id`=@cid AND `id`=@id
 ```  
-其他更多的例子可以看看UT测试的代码
 
+其他更多的例子可以看看UT测试的代码
+  ​  
+  
+  
+  
+------
 #### 关系拓展
 
 找儿子模型
