@@ -267,11 +267,11 @@ var children = DapperWrapper<TestRelation,TestRelation,TestRelation_万寿无疆
 
    - [x] 将支持并发解析操作
 
-   - [ ] 将跟随.NET Core2.1特性进行性能修改
+   - [x] 将跟随.NET Core2.1特性进行性能修改
 
-   - [ ] 进一步封装Sql相关的操作
+   - [x] 支持关系操作
 
-   - [ ] 支持增加之后自动获取主键ID操作
+   - [x] 支持唯一约束安全插入，并获取主键ID
 
      ​
 
@@ -281,6 +281,7 @@ var children = DapperWrapper<TestRelation,TestRelation,TestRelation_万寿无疆
    - 2018-02-26：发布1.0.1版本，修改部分备注信息，增加单元测试，优化部分逻辑.
    - 2018-02-27：发布1.0.2版本，修改部分命名空间，修改Nuget标签信息，增加HttpDemo, 完善Github ReadMe文档.
    - 2018-03-24：支持并发操作，改EString为StringBuilder操作，从而支持Core2.1的性能提升.
+   - 2018-10-19：重构Vasily,优化解析引擎，采用排列树支持关系操作，增强注解，解耦解析模板，优化操作体验.
 
 ~~~
 
