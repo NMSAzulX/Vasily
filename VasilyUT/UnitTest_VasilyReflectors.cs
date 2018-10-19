@@ -5,11 +5,28 @@ using Vasily;
 using Vasily.Core;
 using VasilyUT.Entity;
 using Xunit;
+using Vasily.Extensions.ReflectionExtensions;
 
 namespace VasilyUT
 {
     public class UnitTest_VasilyReflectors
     {
+        public class TestType
+        {
+            public int? test_field;
+            public int? test_property { get; set; }
+        }
+
+        [Fact(DisplayName = "语法糖扩展")]
+        public void TestTypeExtension()
+        {
+           var field = typeof(TestType).GetField("test_field");
+            var property = typeof(TestType).GetProperty("test_property");
+            Assert.True(field.FieldType.IsNullable());
+            Assert.True(property.PropertyType.IsNullable());
+            Assert.Equal(typeof(int), property.PropertyType.GetNullableType());
+            Assert.Equal(typeof(int), field.FieldType.GetNullableType());
+        }
 
         [Fact(DisplayName ="单成员单标签实例")]
         public void TestSaSiSm()

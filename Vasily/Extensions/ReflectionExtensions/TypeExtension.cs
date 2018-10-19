@@ -12,5 +12,17 @@ namespace Vasily.Extensions.ReflectionExtensions
             }
             return type.GetGenericArguments()[index];
         }
+        public static bool IsNullable(this Type type)
+        {
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                return true;
+            }
+            return false;
+        }
+        public static Type GetNullableType(this Type type)
+        {
+            return type.GetGenericType(0);
+        }
     }
 }
