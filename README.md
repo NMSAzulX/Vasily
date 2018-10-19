@@ -198,15 +198,16 @@ RelationSql<Student, Relation, Class>.DeletePreFromTable = "DELETE FROM `relatio
 RelationSql<Student, Relation, Class, Relation>.DeleteAftFromSource = "DELETE FROM `relation_table` WHERE`class_id`=@cid AND `id`=@id
 ```  
 
-其他更多的例子可以看看UT测试的代码
+其他更多的例子可以看看UT测试的代码  
+
   ​  
   
-  
-  
-------
+------  
+  ​
+
 #### 关系拓展
 
-找儿子模型
+ * 找儿子模型
 
 ```c#
 [Table("relation_table")]
@@ -220,8 +221,8 @@ public class TestRelation:IVasilyRelation
 }
 ``` 
 
-看这个实体，根据我们上述的实战来看，成关系必须至少是两个实体之间，而这个类里面仅仅有一个关系注解而且还是指向自身的。
-从业务的角度上很容易看清楚这是个常见的撸自身设计，在前端很有可能是个树形展示，接下来我们使用relation扩展解析来解决这个关系操作。
+> 看这个实体，根据我们上述的实战来看，成关系必须至少是两个实体之间，而这个类里面仅仅有一个关系注解而且还是指向自身的。
+> 从业务的角度上很容易看清楚这是个常见的撸自身设计，在前端很有可能是个树形展示，接下来我们使用relation扩展解析来解决这个关系操作。
 
 ```c#
 //新建一个类
@@ -239,12 +240,12 @@ public class TestRelation:IVasilyRelation
 }
 ``` 
 
-首先我们以TestRelation_为前缀创建一个类，当Vasily在解析[Relation(typeof(TestRelation_Luzishen),"rid")]的时候，会按照TestRelation类，rid字段生成EMIT映射操作，另外也让RelationSql<>的关系更加清晰。
+首先我们以TestRelation_为前缀创建一个类，当Vasily在解析`[Relation(typeof(TestRelation_Luzishen),"rid")]`的时候，会按照TestRelation类，rid字段生成EMIT映射操作，另外也让RelationSql<>的关系更加清晰。
 
-RelationSql<TestRelation,TestRelation,TestRelation_Luzishen>.GetFromSource= SELECT rid FROM relation_table WHERE parent_id=@rid
-从上面的结果可以看到parent_id=@rid，父id与本类的主键建立起了关系。
+从结果`RelationSql<TestRelation,TestRelation,TestRelation_Luzishen>.GetFromSource= SELECT rid FROM relation_table WHERE parent_id=@rid`
+可以看到parent_id=@rid，父id与本类的主键建立起了关系。
 
-当然了，如果你想有个健康的爸爸也可以这样写：
+当然了，如果我们想有个健康的爸爸也可以这样写：
 ```c#
 public class TestRelation_万寿无疆{
 	[PrimaryKey]
