@@ -1,6 +1,6 @@
 ﻿using Vasily.Core;
 
-namespace Vasily
+namespace System
 {
     
     public class Sql<T>

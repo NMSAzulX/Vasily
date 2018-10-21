@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Vasily;
 
-namespace Vasily
+namespace System
 {
     public class VasilyRunner
     {

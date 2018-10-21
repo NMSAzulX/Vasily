@@ -1,0 +1,14 @@
+I:\OpenSource\Vasily\VasilyDemo\bin\Debug\netcoreapp2.1\VasilyDemo.deps.json
+I:\OpenSource\Vasily\VasilyDemo\bin\Debug\netcoreapp2.1\VasilyDemo.runtimeconfig.json
+I:\OpenSource\Vasily\VasilyDemo\bin\Debug\netcoreapp2.1\VasilyDemo.runtimeconfig.dev.json
+I:\OpenSource\Vasily\VasilyDemo\bin\Debug\netcoreapp2.1\VasilyDemo.dll
+I:\OpenSource\Vasily\VasilyDemo\bin\Debug\netcoreapp2.1\VasilyDemo.pdb
+I:\OpenSource\Vasily\VasilyDemo\bin\Debug\netcoreapp2.1\Vasily.dll
+I:\OpenSource\Vasily\VasilyDemo\bin\Debug\netcoreapp2.1\Vasily.pdb
+I:\OpenSource\Vasily\VasilyDemo\obj\Debug\netcoreapp2.1\VasilyDemo.csprojAssemblyReference.cache
+I:\OpenSource\Vasily\VasilyDemo\obj\Debug\netcoreapp2.1\VasilyDemo.csproj.CoreCompileInputs.cache
+I:\OpenSource\Vasily\VasilyDemo\obj\Debug\netcoreapp2.1\VasilyDemo.AssemblyInfoInputs.cache
+I:\OpenSource\Vasily\VasilyDemo\obj\Debug\netcoreapp2.1\VasilyDemo.AssemblyInfo.cs
+I:\OpenSource\Vasily\VasilyDemo\obj\Debug\netcoreapp2.1\VasilyDemo.csproj.CopyComplete
+I:\OpenSource\Vasily\VasilyDemo\obj\Debug\netcoreapp2.1\VasilyDemo.dll
+I:\OpenSource\Vasily\VasilyDemo\obj\Debug\netcoreapp2.1\VasilyDemo.pdb

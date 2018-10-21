@@ -1,4 +1,5 @@
-﻿using Vasily;
+﻿using System;
+using Vasily;
 using VasilyUT.Entity;
 using Xunit;
 

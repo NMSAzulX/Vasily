@@ -1,4 +1,4 @@
-﻿namespace Vasily
+﻿namespace System
 {
     public class GenericType
     {
