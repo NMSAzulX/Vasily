@@ -19,13 +19,6 @@ namespace Vasily
             Reader = Connector.ReadInitor(reader)();
             RequestType = VasilyRequestType.Complete;
         }
-
-        public DapperWrapper UseType(VasilyRequestType type)
-        {
-            RequestType = type;
-            return this;
-        }
-
     }
     public class DapperWrapper<T> : DapperWrapper
     {
@@ -199,7 +192,7 @@ namespace Vasily
         /// 获取表中所有的完整实体类
         /// </summary>
         /// <returns>结果集</returns>
-        public IEnumerable<T> Complete_GetAll()
+        internal IEnumerable<T> Complete_GetAll()
         {
             return Reader.Query<T>(Sql<T>.SelectAll);
         }
@@ -208,7 +201,7 @@ namespace Vasily
         /// </summary>
         /// <param name="primary">主键ID</param>
         /// <returns>实体类</returns>
-        public T Complete_GetByPrimary(object primary)
+        internal T Complete_GetByPrimary(object primary)
         {
             var dynamicParams = new DynamicParameters();
             dynamicParams.Add(Sql<T>.Primary, primary);
@@ -219,7 +212,7 @@ namespace Vasily
         /// </summary>
         /// <param name="range">主键范围</param>
         /// <returns>结果集</returns>
-        public IEnumerable<T> Complete_GetByIn<S>(params S[] range)
+        internal IEnumerable<T> Complete_GetByIn<S>(params S[] range)
         {
             var dynamicParams = new DynamicParameters();
             dynamicParams.Add("keys", range);
@@ -234,7 +227,7 @@ namespace Vasily
         /// 获取表中所有的业务相关的实体类(带有select_ignore标签的会被排除)
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<T> Normal_GetAll()
+        internal IEnumerable<T> Normal_GetAll()
         {
             return Reader.Query<T>(Sql<T>.Select);
         }
@@ -243,7 +236,7 @@ namespace Vasily
         /// </summary>
         /// <param name="primary">主键ID</param>
         /// <returns>实体类</returns>
-        public T Normal_GetByPrimary(object primary)
+        internal T Normal_GetByPrimary(object primary)
         {
             var dynamicParams = new DynamicParameters();
             dynamicParams.Add(Sql<T>.Primary, primary);
@@ -254,7 +247,7 @@ namespace Vasily
         /// </summary>
         /// <param name="range">主键范围</param>
         /// <returns>结果集</returns>
-        public IEnumerable<T> Normal_GetByIn<S>(params S[] range)
+        internal IEnumerable<T> Normal_GetByIn<S>(params S[] range)
         {
             var dynamicParams = new DynamicParameters();
             dynamicParams.Add("keys", range);
@@ -269,11 +262,11 @@ namespace Vasily
         /// </summary>
         /// <param name="instance">需要更新的实体类</param>
         /// <returns>更新结果</returns>
-        public bool Complete_UpdateByPrimary(params T[] instances)
+        internal bool Complete_UpdateByPrimary(params T[] instances)
         {
             return Writter.Execute(Sql<T>.UpdateAllByPrimary, instances) == instances.Length;
         }
-        public bool Complete_UpdateByPrimary(IEnumerable<T> instances)
+        internal bool Complete_UpdateByPrimary(IEnumerable<T> instances)
         {
             return Writter.Execute(Sql<T>.UpdateAllByPrimary, instances) == instances.Count();
         }
@@ -285,11 +278,11 @@ namespace Vasily
         /// </summary>
         /// <param name="instance">需要更新的实体类</param>
         /// <returns>更新结果</returns>
-        public bool Normal_UpdateByPrimary(params T[] instances)
+        internal bool Normal_UpdateByPrimary(params T[] instances)
         {
             return Writter.Execute(Sql<T>.UpdateByPrimary, instances) == instances.Length;
         }
-        public bool Normal_UpdateByPrimary(IEnumerable<T> instances)
+        internal bool Normal_UpdateByPrimary(IEnumerable<T> instances)
         {
             return Writter.Execute(Sql<T>.UpdateByPrimary, instances) == instances.Count();
         }
@@ -302,11 +295,11 @@ namespace Vasily
         /// </summary>
         /// <param name="instances">实体类</param>
         /// <returns>返回结果</returns>
-        public int Complate_Insert(params T[] instances)
+        internal int Complate_Insert(params T[] instances)
         {
             return Writter.Execute(Sql<T>.InsertAll, instances);
         }
-        public int Complate_Insert(IEnumerable<T> instances)
+        internal int Complate_Insert(IEnumerable<T> instances)
         {
             return Writter.Execute(Sql<T>.InsertAll, instances);
         }
@@ -318,11 +311,11 @@ namespace Vasily
         /// </summary>
         /// <param name="instances">实体类</param>
         /// <returns>返回结果</returns>
-        public int Normal_Insert(params T[] instances)
+        internal int Normal_Insert(params T[] instances)
         {
             return Writter.Execute(Sql<T>.Insert, instances);
         }
-        public int Normal_Insert(IEnumerable<T> instances)
+        internal int Normal_Insert(IEnumerable<T> instances)
         {
             return Writter.Execute(Sql<T>.Insert, instances);
         }
