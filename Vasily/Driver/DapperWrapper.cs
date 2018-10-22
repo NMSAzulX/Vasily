@@ -25,6 +25,40 @@ namespace System
             RequestType = VasilyRequestType.Complete;
         }
 
+        /// <summary>
+        /// 事务重试机制
+        /// </summary>
+        /// <param name="action">事务操作委托</param>
+        /// <param name="retry">重试次数</param>
+        /// <param name="get_errors">获取指定次数的异常错误</param>
+        /// <returns>错误集合</returns>
+        public List<Exception> TransactionRetry(Action action,int retry=1, params int[] get_errors)
+        {
+            List<Exception> errors = new List<Exception>();
+            HashSet<int> dict = new HashSet<int>(get_errors);
+            for (int i = 0; i < retry; i+=1)
+            {
+                try
+                {
+                    Transaction(action);
+                    return errors;
+                }
+                catch (Exception ex)
+                {
+                    if (get_errors.Length==0)
+                    {
+                        errors.Add(ex);
+                    }
+                    else if(dict.Contains(i))
+                    {
+                        errors.Add(ex);
+                    }
+                }
+            }
+            return errors;
+        }
+
+
         public void Transaction(Action action)
         {
             //开始事务
