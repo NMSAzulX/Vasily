@@ -10,6 +10,10 @@ namespace Vasily.Core
         {
             _template = new SelectTemplate();
         }
+        public string SelectCount()
+        {
+            return _template.SelectCount(_model);
+        }
         public string SelectAll()
         {
             return _template.SelectAll(_model);
@@ -18,6 +22,10 @@ namespace Vasily.Core
         public string SelectAllByCondition()
         {
             return _template.SelectAllByCondition(_model);
+        }
+        public string SelectCountByCondition()
+        {
+            return _template.SelectCountByCondition(_model);
         }
 
         public string SelectAllByPrimary()

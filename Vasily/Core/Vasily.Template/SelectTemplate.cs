@@ -22,6 +22,22 @@ namespace Vasily.Core
         }
 
         /// <summary>
+        /// 根据model信息生成 SELECT Count(*) FROM [TableName]
+        /// </summary>
+        /// <param name="model">载有生成信息的Model</param>
+        /// <returns>查询字符串结果</returns>
+        public string SelectCount(MakerModel model)
+        {
+            StringBuilder sql = new StringBuilder(16 + model.TableName.Length);
+            sql.Append("SELECT Count(*) FROM ");
+            sql.Append(model.Left);
+            sql.Append(model.TableName);
+            sql.Append(model.Right);
+            return sql.ToString();
+        }
+
+
+        /// <summary>
         /// 根据model信息生成 SELECT * FROM [TableName] WHERE
         /// </summary>
         /// <param name="model">载有生成信息的Model</param>
@@ -33,6 +49,35 @@ namespace Vasily.Core
             sql.Append(" WHERE ");
             return sql.ToString();
         }
+
+        /// <summary>
+        /// 根据model信息生成 SELECT Count(*) FROM [TableName] WHERE
+        /// </summary>
+        /// <param name="model">载有生成信息的Model</param>
+        /// <returns>查询字符串结果</returns>
+        public string SelectCountByCondition(MakerModel model)
+        {
+            StringBuilder sql = new StringBuilder();
+            sql.Append(SelectCount(model));
+            sql.Append(" WHERE ");
+            return sql.ToString();
+        }
+
+        /// <summary>
+        /// 根据model信息生成 SELECT Count(*) WHERE [condition1]=@condition,[condition2]=@condition2.....
+        /// </summary>
+        /// <param name="model">载有生成信息的Model</param>
+        /// <param name="condition_models">需要匹配的成员集合</param>
+        /// <returns>查询字符串结果</returns>
+        public string SelectCountWithCondition(MakerModel model, params MemberInfo[] conditions)
+        {
+            var select = SelectCountByCondition(model);
+            StringBuilder sql = new StringBuilder(select);
+            ConditionTemplate template = new ConditionTemplate();
+            sql.Append(template.Condition(model, conditions));
+            return sql.ToString();
+        }
+
 
 
         /// <summary>

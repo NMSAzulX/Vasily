@@ -41,6 +41,17 @@ namespace System
         public DapperWrapper<T> Normal { get { RequestType = VasilyRequestType.Normal; return this; } }
         public DapperWrapper<T> Complete { get { RequestType = VasilyRequestType.Complete; return this; } }
 
+        public int Count { get { return GetCount(); } }
+
+        /// <summary>
+        /// 返回当前表总数
+        /// </summary>
+        /// <returns></returns>
+        public int GetCount()
+        {
+            return Reader.ExecuteScalar<int>(Sql<T>.SelectCount);
+        }
+
         #region 把下面的Complate和Normal方法都封装一下
         /// <summary>
         /// 使用where id in (1,2,3)的方式，根据主键来获取对象集合，有Normal和Complete区分
@@ -448,6 +459,13 @@ namespace System
         {
 
         }
+
+        public new int Count { get { return GetRelationCount(); } }
+        public virtual int GetRelationCount()
+        {
+            return 0;
+        }
+
 
         #region 内部函数封装
         internal int TableExecute(string sql, params object[] parameters)

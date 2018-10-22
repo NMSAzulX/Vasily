@@ -10,6 +10,9 @@ namespace System
         public static string Primary;
         public static string Table;
 
+        public static string SelectCount;
+        public static string SelectCountByCondition;
+
         public static string SelectAll;
         public static string SelectAllByCondition;
         public static string SelectAllByPrimary;

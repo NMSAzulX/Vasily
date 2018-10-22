@@ -75,6 +75,11 @@ namespace VasilyDemo
             Console.WriteLine(Sql<One>.RepeateId);
             //SELECT [oid] FROM [table_one] WHERE [student_id] = @student_id
 
+            Console.WriteLine(Sql<One>.SelectCount);
+            //SELECT Count(*) FROM [table_one]
+            Console.WriteLine(Sql<One>.SelectCountByCondition);
+            //SELECT  Count(*) FROM [table_one] WHERE
+
 
             //操作对应的是DapperWrapper<One>
             One one = new One();

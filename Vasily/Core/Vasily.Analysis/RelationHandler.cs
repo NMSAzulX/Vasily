@@ -126,7 +126,8 @@ namespace Vasily.Core
                 gs.Set("SourceConditions", sources);
                 gs.Set("TableConditions", table);
                 gs.Set("Getters", getters);
-
+                //public static string CountFromTable
+                gs.Set("CountFromTable", SelectCountByCondition(parameter));
                 //public static string GetFromTable;
                 gs.Set("GetFromTable", SelectString(parameter));
                 //public static string ModifyFromTable;
@@ -138,8 +139,8 @@ namespace Vasily.Core
                 gs.Set("AddFromTable", InsertString(parameter));
 
 
-                
-                
+                //public static string CountFromSource
+                gs.Set("CountFromSource", SelectCountByCondition(parameter, filter));
                 //public static string GetFromSource;
                 gs.Set("GetFromSource", SelectString(parameter, filter));
                 //public static string ModifyFromSource;
@@ -188,6 +189,21 @@ namespace Vasily.Core
             model.LoadMembers(members[0]);
             return _select_template.SelectWithCondition(model, temp);
         }
+
+        /// <summary>
+        /// 获取SELECT Count(*) FROM [TableName] WHERE [member2]=@member2 AND = [member3]=@member3
+        /// </summary>
+        /// <param name="members">成员集合</param>
+        /// <returns>返回条件查询SQL</returns>
+        public string SelectCountByCondition(MemberInfo[] members, Func<MemberInfo, string> filter = null)
+        {
+            var model = _model.CopyInstance();
+            model.FilterFunction = filter;
+            MemberInfo[] temp = new MemberInfo[members.Length - 1];
+            Array.Copy(members, 1, temp, 0, members.Length - 1);
+            return _select_template.SelectCountWithCondition(model,temp);
+        }
+
 
         /// <summary>
         /// 获取更新语句

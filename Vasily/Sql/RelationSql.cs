@@ -10,15 +10,19 @@ namespace System
         public static string Table;
         public static string Primary;
 
+        
+
         public static string[] SourceConditions;
         public static string[] TableConditions;
 
+        public static string CountFromSource;
         public static string GetFromSource;
         public static string ModifyFromSource;
         public static string DeletePreFromSource;
         public static string DeleteAftFromSource;
         public static string AddFromSource;
 
+        public static string CountFromTable;
         public static string GetFromTable;
         public static string ModifyFromTable;
         public static string DeletePreFromTable;
@@ -38,12 +42,14 @@ namespace System
         public static string[] SourceConditions;
         public static string[] TableConditions;
 
+        public static string CountFromSource;
         public static string GetFromSource;
         public static string ModifyFromSource;
         public static string DeletePreFromSource;
         public static string DeleteAftFromSource;
         public static string AddFromSource;
 
+        public static string CountFromTable;
         public static string GetFromTable;
         public static string ModifyFromTable;
         public static string DeletePreFromTable;
@@ -61,12 +67,14 @@ namespace System
         public static string[] SourceConditions;
         public static string[] TableConditions;
 
+        public static string CountFromSource;
         public static string GetFromSource;
         public static string ModifyFromSource;
         public static string DeletePreFromSource;
         public static string DeleteAftFromSource;
         public static string AddFromSource;
 
+        public static string CountFromTable;
         public static string GetFromTable;
         public static string ModifyFromTable;
         public static string DeletePreFromTable;
@@ -83,12 +91,14 @@ namespace System
         public static string[] SourceConditions;
         public static string[] TableConditions;
 
+        public static string CountFromSource;
         public static string GetFromSource;
         public static string ModifyFromSource;
         public static string DeletePreFromSource;
         public static string DeleteAftFromSource;
         public static string AddFromSource;
 
+        public static string CountFromTable;
         public static string GetFromTable;
         public static string ModifyFromTable;
         public static string DeletePreFromTable;
@@ -102,15 +112,18 @@ namespace System
         public static string Table;
         public static string Primary;
 
+
         public static string[] SourceConditions;
         public static string[] TableConditions;
 
+        public static string CountFromSource;
         public static string GetFromSource;
         public static string ModifyFromSource;
         public static string DeletePreFromSource;
         public static string DeleteAftFromSource;
         public static string AddFromSource;
 
+        public static string CountFromTable;
         public static string GetFromTable;
         public static string ModifyFromTable;
         public static string DeletePreFromTable;
@@ -127,12 +140,14 @@ namespace System
         public static string[] SourceConditions;
         public static string[] TableConditions;
 
+        public static string CountFromSource;
         public static string GetFromSource;
         public static string ModifyFromSource;
         public static string DeletePreFromSource;
         public static string DeleteAftFromSource;
         public static string AddFromSource;
 
+        public static string CountFromTable;
         public static string GetFromTable;
         public static string ModifyFromTable;
         public static string DeletePreFromTable;

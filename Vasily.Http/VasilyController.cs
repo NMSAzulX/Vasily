@@ -18,6 +18,28 @@ namespace Microsoft.AspNetCore.Mvc
         {
             SqlHandler = new DapperWrapper<T>(reader, writter);
         }
+
+        /// <summary>
+        /// 分页 - 用布尔类型操作返回值
+        /// </summary>
+        /// <param name="value">true/false代表返回成功与否</param>
+        /// <param name="succeed">正确提示，默认：操作成功！</param>
+        /// <param name="faild">错误提示，默认：操作失败！</param>
+        /// <returns></returns>
+        protected ReturnPageResult PageResult(bool value, int totle, string succeed = "操作成功！", string faild = "操作失败！")
+        {
+            return Result(value, SqlHandler.Count, succeed, faild);
+        }
+        /// <summary>
+        /// 分页 - 返回对象，若对象为空，则返回错误信息
+        /// </summary>
+        /// <param name="value">需要传送的对象</param>
+        /// <param name="msg">错误提示信息</param>
+        /// <returns></returns>
+        protected ReturnPageResult PageResult(object value, string msg = "数据为空！")
+        {
+            return Result(value, SqlHandler.Count, msg);
+        }
     }
 
     public class VasilyController<T, R, S1> : VasilyResultController where T : class
@@ -36,6 +58,27 @@ namespace Microsoft.AspNetCore.Mvc
         {
             SqlHandler = new DapperWrapper<T, R, S1>(reader, writter);
         }
+        /// <summary>
+        /// 分页 - 用布尔类型操作返回值
+        /// </summary>
+        /// <param name="value">true/false代表返回成功与否</param>
+        /// <param name="succeed">正确提示，默认：操作成功！</param>
+        /// <param name="faild">错误提示，默认：操作失败！</param>
+        /// <returns></returns>
+        protected ReturnPageResult PageResult(bool value, int totle, string succeed = "操作成功！", string faild = "操作失败！")
+        {
+            return Result(value, SqlHandler.Count, succeed, faild);
+        }
+        /// <summary>
+        /// 分页 - 返回对象，若对象为空，则返回错误信息
+        /// </summary>
+        /// <param name="value">需要传送的对象</param>
+        /// <param name="msg">错误提示信息</param>
+        /// <returns></returns>
+        protected ReturnPageResult PageResult(object value, string msg = "数据为空！")
+        {
+            return Result(value, SqlHandler.Count, msg);
+        }
     }
     public class VasilyController<T, R, S1, S2> : VasilyResultController where T : class
     {
@@ -52,6 +95,27 @@ namespace Microsoft.AspNetCore.Mvc
         public VasilyController(string reader, string writter)
         {
             SqlHandler = new DapperWrapper<T, R, S1, S2>(reader, writter);
+        }
+        /// <summary>
+        /// 分页 - 用布尔类型操作返回值
+        /// </summary>
+        /// <param name="value">true/false代表返回成功与否</param>
+        /// <param name="succeed">正确提示，默认：操作成功！</param>
+        /// <param name="faild">错误提示，默认：操作失败！</param>
+        /// <returns></returns>
+        protected ReturnPageResult PageResult(bool value, int totle, string succeed = "操作成功！", string faild = "操作失败！")
+        {
+            return Result(value, SqlHandler.Count, succeed, faild);
+        }
+        /// <summary>
+        /// 分页 - 返回对象，若对象为空，则返回错误信息
+        /// </summary>
+        /// <param name="value">需要传送的对象</param>
+        /// <param name="msg">错误提示信息</param>
+        /// <returns></returns>
+        protected ReturnPageResult PageResult(object value, string msg = "数据为空！")
+        {
+            return Result(value, SqlHandler.Count, msg);
         }
     }
 
@@ -71,6 +135,27 @@ namespace Microsoft.AspNetCore.Mvc
         {
             SqlHandler = new DapperWrapper<T, R, S1, S2, S3>(reader, writter);
         }
+        /// <summary>
+        /// 分页 - 用布尔类型操作返回值
+        /// </summary>
+        /// <param name="value">true/false代表返回成功与否</param>
+        /// <param name="succeed">正确提示，默认：操作成功！</param>
+        /// <param name="faild">错误提示，默认：操作失败！</param>
+        /// <returns></returns>
+        protected ReturnPageResult PageResult(bool value, int totle, string succeed = "操作成功！", string faild = "操作失败！")
+        {
+            return Result(value, SqlHandler.Count, succeed, faild);
+        }
+        /// <summary>
+        /// 分页 - 返回对象，若对象为空，则返回错误信息
+        /// </summary>
+        /// <param name="value">需要传送的对象</param>
+        /// <param name="msg">错误提示信息</param>
+        /// <returns></returns>
+        protected ReturnPageResult PageResult(object value, string msg = "数据为空！")
+        {
+            return Result(value, SqlHandler.Count, msg);
+        }
     }
     public class VasilyController<T, R, S1, S2, S3, S4> : VasilyResultController where T : class
     {
@@ -87,6 +172,27 @@ namespace Microsoft.AspNetCore.Mvc
         public VasilyController(string reader, string writter)
         {
             SqlHandler = new DapperWrapper<T, R, S1, S2, S3, S4>(reader, writter);
+        }
+        /// <summary>
+        /// 分页 - 用布尔类型操作返回值
+        /// </summary>
+        /// <param name="value">true/false代表返回成功与否</param>
+        /// <param name="succeed">正确提示，默认：操作成功！</param>
+        /// <param name="faild">错误提示，默认：操作失败！</param>
+        /// <returns></returns>
+        protected ReturnPageResult PageResult(bool value, int totle, string succeed = "操作成功！", string faild = "操作失败！")
+        {
+            return Result(value, SqlHandler.Count, succeed, faild);
+        }
+        /// <summary>
+        /// 分页 - 返回对象，若对象为空，则返回错误信息
+        /// </summary>
+        /// <param name="value">需要传送的对象</param>
+        /// <param name="msg">错误提示信息</param>
+        /// <returns></returns>
+        protected ReturnPageResult PageResult(object value, string msg = "数据为空！")
+        {
+            return Result(value, SqlHandler.Count, msg);
         }
     }
 
@@ -106,6 +212,27 @@ namespace Microsoft.AspNetCore.Mvc
         {
             SqlHandler = new DapperWrapper<T, R, S1, S2, S3, S4, S5>(reader, writter);
         }
+        /// <summary>
+        /// 分页 - 用布尔类型操作返回值
+        /// </summary>
+        /// <param name="value">true/false代表返回成功与否</param>
+        /// <param name="succeed">正确提示，默认：操作成功！</param>
+        /// <param name="faild">错误提示，默认：操作失败！</param>
+        /// <returns></returns>
+        protected ReturnPageResult PageResult(bool value, int totle, string succeed = "操作成功！", string faild = "操作失败！")
+        {
+            return Result(value, SqlHandler.Count, succeed, faild);
+        }
+        /// <summary>
+        /// 分页 - 返回对象，若对象为空，则返回错误信息
+        /// </summary>
+        /// <param name="value">需要传送的对象</param>
+        /// <param name="msg">错误提示信息</param>
+        /// <returns></returns>
+        protected ReturnPageResult PageResult(object value, string msg = "数据为空！")
+        {
+            return Result(value, SqlHandler.Count, msg);
+        }
     }
     public class VasilyController<T, R, S1, S2, S3, S4, S5, S6> : VasilyResultController where T : class
     {
@@ -122,6 +249,27 @@ namespace Microsoft.AspNetCore.Mvc
         public VasilyController(string reader, string writter)
         {
             SqlHandler = new DapperWrapper<T, R, S1, S2, S3, S4, S5, S6>(reader, writter);
+        }
+        /// <summary>
+        /// 分页 - 用布尔类型操作返回值
+        /// </summary>
+        /// <param name="value">true/false代表返回成功与否</param>
+        /// <param name="succeed">正确提示，默认：操作成功！</param>
+        /// <param name="faild">错误提示，默认：操作失败！</param>
+        /// <returns></returns>
+        protected ReturnPageResult PageResult(bool value, int totle, string succeed = "操作成功！", string faild = "操作失败！")
+        {
+            return Result(value, SqlHandler.Count, succeed, faild);
+        }
+        /// <summary>
+        /// 分页 - 返回对象，若对象为空，则返回错误信息
+        /// </summary>
+        /// <param name="value">需要传送的对象</param>
+        /// <param name="msg">错误提示信息</param>
+        /// <returns></returns>
+        protected ReturnPageResult PageResult(object value, string msg = "数据为空！")
+        {
+            return Result(value, SqlHandler.Count, msg);
         }
     }
 

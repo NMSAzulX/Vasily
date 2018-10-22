@@ -68,6 +68,8 @@ namespace Vasily
                 SelectHandler select = new SelectHandler(_splites, _entity_type);
                 gs["Table"] = select._model.TableName;
                 gs["Primary"] = _primary;
+                gs["SelectCount"] = select.SelectCount();
+                gs["SelectCountByCondition"] = select.SelectCountByCondition();
                 gs["SelectAll"] = select.SelectAll();
                 gs["SelectAllByCondition"] = select.SelectAllByCondition();
                 gs["SelectAllByPrimary"] = select.SelectAllByPrimary();

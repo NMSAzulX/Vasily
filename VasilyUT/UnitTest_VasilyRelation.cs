@@ -13,6 +13,19 @@ namespace VasilyUT
             SqlPackage<Relation> package = new SqlPackage<Relation>();
             Assert.Equal("StudentId,Id", string.Join(',', RelationSql<Student, Relation, Relation>.TableConditions));
         }
+
+        [Fact(DisplayName = "A32-总数查询")]
+        public void TestTableCount()
+        {
+            SqlPackage<Relation> package = new SqlPackage<Relation>();
+            Assert.Equal("SELECT Count(*) FROM `关系映射表` WHERE `Id`=@Id",  RelationSql<Student, Relation, Relation>.CountFromTable);
+        }
+        [Fact(DisplayName = "A32-总数查询")]
+        public void TestSourceCount()
+        {
+            SqlPackage<Relation> package = new SqlPackage<Relation>();
+            Assert.Equal("SELECT Count(*) FROM `关系映射表` WHERE `StudentId`=@Sid", RelationSql<Relation, Relation, Student>.CountFromSource);
+        }
         [Fact(DisplayName = "A32-关系数组")]
         public void TestSourceArray()
         {
