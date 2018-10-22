@@ -50,6 +50,10 @@ namespace VasilyDemo
             //UPDATE [table_relation] SET [three_id] = @three_id WHERE [one_id] = @one_id AND [parent_id] = @parent_id
 
 
+            //操作对应的是DapperWrapper<Three, Two, One, Two_Parent>
+            DapperWrapper<Three, Two, One, Two_Parent> dapper = new DapperWrapper<Three, Two, One, Two_Parent>("key");
+
+
         }
     }
 }

@@ -75,6 +75,11 @@ namespace VasilyDemo
             Console.WriteLine(Sql<One>.RepeateId);
             //SELECT [oid] FROM [table_one] WHERE [student_id] = @student_id
 
+
+            //操作对应的是DapperWrapper<One>
+            One one = new One();
+            DapperWrapper<One> dapper = new DapperWrapper<One>("key");
+            dapper.IsRepeat(one);
         }
 
     }

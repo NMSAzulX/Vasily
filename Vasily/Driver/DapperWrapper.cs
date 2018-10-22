@@ -1,21 +1,26 @@
 ﻿using Dapper;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
+using Vasily;
 using Vasily.Core;
 
-namespace Vasily
+namespace System
 {
     public class DapperWrapper
     {
+        public static char WR_Char;
+
+        static DapperWrapper()
+        {
+            WR_Char = '|';
+        }
         public IDbConnection Writter;
         public IDbConnection Reader;
         public VasilyRequestType RequestType;
         public DapperWrapper(string writter, string reader)
         {
-            Writter = Connector.ReadInitor(writter)();
+            Writter = Connector.WriteInitor(writter)();
             Reader = Connector.ReadInitor(reader)();
             RequestType = VasilyRequestType.Complete;
         }
@@ -37,6 +42,11 @@ namespace Vasily
         public DapperWrapper<T> Complete { get { RequestType = VasilyRequestType.Complete; return this; } }
 
         #region 把下面的Complate和Normal方法都封装一下
+        /// <summary>
+        /// 使用where id in (1,2,3)的方式，根据主键来获取对象集合，有Normal和Complete区分
+        /// </summary>
+        /// <param name="range">主键数组</param>
+        /// <returns></returns>
         public IEnumerable<T> GetEntitiesByIn(params int[] range)
         {
             if (RequestType == VasilyRequestType.Complete)
@@ -48,6 +58,11 @@ namespace Vasily
                 return Normal_GetByIn(range);
             }
         }
+        /// <summary>
+        /// 使用where id in (1,2,3)的方式，根据主键来获取对象集合，有Normal和Complete区分
+        /// </summary>
+        /// <param name="range">主键数组</param>
+        /// <returns></returns>
         public IEnumerable<T> GetEntitiesByIn(IEnumerable<int> range)
         {
             if (RequestType == VasilyRequestType.Complete)
@@ -59,7 +74,12 @@ namespace Vasily
                 return Normal_GetByIn(range.ToArray());
             }
         }
-        public T GetEntityByIn(params int[] range)
+        /// <summary>
+        /// 使用where id in (1,2,3)的方式，根据主键来获取一个对象，有Normal和Complete区分
+        /// </summary>
+        /// <param name="range">主键</param>
+        /// <returns></returns>
+        public T GetEntityByIn(int range)
         {
             if (RequestType == VasilyRequestType.Complete)
             {
@@ -74,13 +94,17 @@ namespace Vasily
         {
             if (RequestType == VasilyRequestType.Complete)
             {
-                return Complete_GetByPrimary(range.ToArray());
+                return Complete_GetByPrimary(range.ToArray()[0]);
             }
             else
             {
-                return Normal_GetByPrimary(range.ToArray());
+                return Normal_GetByPrimary(range.ToArray()[0]);
             }
         }
+        /// <summary>
+        /// 获取无条件，整个对象的在数据库的所有数据，有Normal和Complete区分
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<T> GetAll()
         {
             if (RequestType == VasilyRequestType.Complete)
@@ -92,6 +116,11 @@ namespace Vasily
                 return Normal_GetAll();
             }
         }
+        /// <summary>
+        /// 通过主键获取单个实体，有Normal和Complete区分
+        /// </summary>
+        /// <param name="primary">主键</param>
+        /// <returns></returns>
         public T GetByPrimary(object primary)
         {
             if (RequestType == VasilyRequestType.Complete)
@@ -103,6 +132,11 @@ namespace Vasily
                 return Normal_GetByPrimary(primary);
             }
         }
+        /// <summary>
+        /// 更新实体或者实体的集合，有Normal和Complete区分
+        /// </summary>
+        /// <param name="instances">实体类</param>
+        /// <returns></returns>
         public bool UpdateByPrimary(params T[] instances)
         {
             if (RequestType == VasilyRequestType.Complete)
@@ -114,6 +148,11 @@ namespace Vasily
                 return Normal_UpdateByPrimary(instances);
             }
         }
+        /// <summary>
+        /// 插入实体或者实体的集合，有Normal和Complete区分
+        /// </summary>
+        /// <param name="instances">实体类</param>
+        /// <returns></returns>
         public int Insert(params T[] instances)
         {
             if (RequestType == VasilyRequestType.Complete)
@@ -125,7 +164,11 @@ namespace Vasily
                 return Normal_Insert(instances);
             }
         }
-
+        /// <summary>
+        /// 通过查重条件进行不重复插入，有Normal和Complete区分
+        /// </summary>
+        /// <param name="instance">实体类</param>
+        /// <returns></returns>
         public bool NoRepeateInsert(T instance)
         {
             if (!IsRepeat(instance))
@@ -142,7 +185,7 @@ namespace Vasily
             return false;
         }
         /// <summary>
-        /// 先查重，如果没有则插入，再根据插入的实体类通过唯一约束找到主键赋值给实体类
+        /// 先查重，如果没有则插入，再根据插入的实体类通过唯一约束找到主键赋值给实体类，有Normal和Complete区分
         /// </summary>
         /// <typeparam name="S">主键类型</typeparam>
         /// <param name="instance">实体类</param>
@@ -342,7 +385,7 @@ namespace Vasily
             return Reader.Query<T>(Sql<T>.RepeateEntities);
         }
         /// <summary>
-        /// 通过实体类获取当前实体的主键
+        /// 通过实体类获取当前实体的主键，注：只有实体类有NoRepeate条件才能用
         /// </summary>
         /// <typeparam name="S">主键类型</typeparam>
         /// <param name="instance">实体类</param>
@@ -384,6 +427,11 @@ namespace Vasily
 
         public static implicit operator DapperWrapper<T>(string key)
         {
+            if (key.Contains(WR_Char))
+            {
+                string[] result = key.Split(WR_Char);
+                return new DapperWrapper<T>(result[0].Trim(), result[1].Trim());
+            }
             return new DapperWrapper<T>(key);
         }
     }
@@ -492,7 +540,7 @@ namespace Vasily
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public T TableGet_Wrapper(string sql, params object[] parameters)
+        internal T TableGet_Wrapper(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
             for (int i = 0; i < _tables.Length-1; i += 1)
@@ -623,6 +671,11 @@ namespace Vasily
     {
         public static implicit operator DapperWrapper<T, R, C1>(string key)
         {
+            if (key.Contains(WR_Char))
+            {
+                string[] result = key.Split(WR_Char);
+                return new DapperWrapper<T, R, C1>(result[0].Trim(), result[1].Trim());
+            }
             return new DapperWrapper<T, R, C1>(key);
         }
         public new static RelationWrapper<T> UseKey(string key)
@@ -747,6 +800,8 @@ namespace Vasily
         {
             return TableExecute(RelationSql<T, R, C1>.AddFromTable, parameters);
         }
+
+
         /// <summary>
         /// 获取关系-直接传值
         /// </summary>
@@ -765,6 +820,11 @@ namespace Vasily
     {
         public static implicit operator DapperWrapper<T, R, C1, C2>(string key)
         {
+            if (key.Contains(WR_Char))
+            {
+                string[] result = key.Split(WR_Char);
+                return new DapperWrapper<T, R, C1, C2>(result[0].Trim(), result[1].Trim());
+            }
             return new DapperWrapper<T, R, C1, C2>(key);
         }
         public new static RelationWrapper<T> UseKey(string key)
@@ -907,6 +967,11 @@ namespace Vasily
     {
         public static implicit operator DapperWrapper<T, R, C1, C2, C3>(string key)
         {
+            if (key.Contains(WR_Char))
+            {
+                string[] result = key.Split(WR_Char);
+                return new DapperWrapper<T, R, C1, C2, C3>(result[0].Trim(), result[1].Trim());
+            }
             return new DapperWrapper<T, R, C1, C2, C3>(key);
         }
         public new static RelationWrapper<T> UseKey(string key)
@@ -1049,6 +1114,11 @@ namespace Vasily
     {
         public static implicit operator DapperWrapper<T, R, C1, C2, C3, C4>(string key)
         {
+            if (key.Contains(WR_Char))
+            {
+                string[] result = key.Split(WR_Char);
+                return new DapperWrapper<T, R, C1, C2, C3, C4>(result[0].Trim(), result[1].Trim());
+            }
             return new DapperWrapper<T, R, C1, C2, C3, C4>(key);
         }
         public new static RelationWrapper<T> UseKey(string key)
@@ -1191,6 +1261,11 @@ namespace Vasily
     {
         public static implicit operator DapperWrapper<T, R, C1, C2, C3, C4, C5>(string key)
         {
+            if (key.Contains(WR_Char))
+            {
+                string[] result = key.Split(WR_Char);
+                return new DapperWrapper<T, R, C1, C2, C3, C4, C5>(result[0].Trim(), result[1].Trim());
+            }
             return new DapperWrapper<T, R, C1, C2, C3, C4, C5>(key);
         }
         public new static RelationWrapper<T> UseKey(string key)
@@ -1333,6 +1408,11 @@ namespace Vasily
     {
         public static implicit operator DapperWrapper<T, R, C1, C2, C3, C4, C5, C6>(string key)
         {
+            if (key.Contains(WR_Char))
+            {
+                string[] result = key.Split(WR_Char);
+                return new DapperWrapper<T, R, C1, C2, C3, C4, C5, C6>(result[0].Trim(), result[1].Trim());
+            }
             return new DapperWrapper<T, R, C1, C2, C3, C4, C5, C6>(key);
         }
         public new static RelationWrapper<T> UseKey(string key)

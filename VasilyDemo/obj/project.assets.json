@@ -1859,11 +1859,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "I:\\OpenSource\\Vasily\\VasilyDemo\\VasilyDemo.csproj",
+      "projectUniqueName": "D:\\Github\\Vasily\\VasilyDemo\\VasilyDemo.csproj",
       "projectName": "VasilyDemo",
-      "projectPath": "I:\\OpenSource\\Vasily\\VasilyDemo\\VasilyDemo.csproj",
+      "projectPath": "D:\\Github\\Vasily\\VasilyDemo\\VasilyDemo.csproj",
       "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-      "outputPath": "I:\\OpenSource\\Vasily\\VasilyDemo\\obj\\",
+      "outputPath": "D:\\Github\\Vasily\\VasilyDemo\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -1882,8 +1882,8 @@
       "frameworks": {
         "netcoreapp2.1": {
           "projectReferences": {
-            "I:\\OpenSource\\Vasily\\Vasily\\Vasily.csproj": {
-              "projectPath": "I:\\OpenSource\\Vasily\\Vasily\\Vasily.csproj"
+            "D:\\Github\\Vasily\\Vasily\\Vasily.csproj": {
+              "projectPath": "D:\\Github\\Vasily\\Vasily\\Vasily.csproj"
             }
           }
         }

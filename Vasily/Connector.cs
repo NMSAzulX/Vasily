@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using Vasily;
 using Vasily.Core;
 
-namespace Vasily
+namespace System
 {
     public class Connector
     {
