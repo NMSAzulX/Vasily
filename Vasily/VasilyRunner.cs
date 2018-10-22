@@ -11,9 +11,10 @@ namespace System
     public class VasilyRunner
     {
         public static ConcurrentDictionary<string, Type> RelationExtentsionTyps;
-
+        public static bool UseParallel;
         static VasilyRunner()
         {
+            UseParallel = true;
             RelationExtentsionTyps = new ConcurrentDictionary<string, Type>();
         }
         /// <summary>
@@ -51,10 +52,21 @@ namespace System
                     
                 }
             }
-            Parallel.ForEach(types, (element) =>
+            if (UseParallel)
             {
-                SqlPackage package = new SqlPackage(element);
-            });
+                Parallel.ForEach(types, (element) =>
+                {
+                    SqlPackage package = new SqlPackage(element);
+                });
+            }
+            else
+            {
+                foreach (var item in types)
+                {
+                    SqlPackage package = new SqlPackage(item);
+                }
+            }
+            
         }
 
     }
