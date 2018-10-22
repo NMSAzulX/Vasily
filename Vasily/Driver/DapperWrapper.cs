@@ -24,6 +24,26 @@ namespace System
             Reader = Connector.ReadInitor(reader)();
             RequestType = VasilyRequestType.Complete;
         }
+
+        public void Transaction(Action action)
+        {
+            //开始事务
+            using (IDbTransaction transaction = Reader.BeginTransaction())
+            {
+                try
+                {
+                    action?.Invoke();
+                    transaction.Commit();
+                    transaction.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    //出现异常，事务Rollback
+                    transaction.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
     }
     public class DapperWrapper<T> : DapperWrapper
     {
@@ -31,9 +51,9 @@ namespace System
         {
             return new DapperWrapper<T>(key);
         }
-        public static DapperWrapper<T> UseKey(string writter,string reader)
+        public static DapperWrapper<T> UseKey(string writter, string reader)
         {
-            return new DapperWrapper<T>(writter,reader);
+            return new DapperWrapper<T>(writter, reader);
         }
         public DapperWrapper(string key) : base(key, key) { }
         public DapperWrapper(string writter, string reader) : base(writter, reader) { }
@@ -405,7 +425,7 @@ namespace System
         {
             return Reader.ExecuteScalar<S>(Sql<T>.RepeateId, instance);
         }
-        
+
         #endregion
 
         #region 实体类的DELETE函数
@@ -480,7 +500,7 @@ namespace System
         internal int TableAftExecute(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < _tables.Length-1; i += 1)
+            for (int i = 0; i < _tables.Length - 1; i += 1)
             {
                 dynamicParams.Add(_tables[i + 1], parameters[i + 1]);
             }
@@ -498,13 +518,13 @@ namespace System
         internal int SourceAftExecute(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < _sources.Length-1; i += 1)
+            for (int i = 0; i < _sources.Length - 1; i += 1)
             {
                 dynamicParams.Add(_sources[i + 1], _emits[i + 1](parameters[i]));
             }
             return Reader.Execute(sql, dynamicParams);
         }
-       
+
         /// <summary>
         /// 直接查询到实体类
         /// </summary>
@@ -513,7 +533,7 @@ namespace System
         internal IEnumerable<T> SourceGets_Wrapper(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < _sources.Length-1; i += 1)
+            for (int i = 0; i < _sources.Length - 1; i += 1)
             {
                 dynamicParams.Add(_sources[i + 1], _emits[i + 1](parameters[i]));
             }
@@ -529,14 +549,14 @@ namespace System
         internal T SourceGet_Wrapper(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < _sources.Length-1; i += 1)
+            for (int i = 0; i < _sources.Length - 1; i += 1)
             {
                 dynamicParams.Add(_sources[i + 1], _emits[i + 1](parameters[i]));
             }
             var range = Reader.Query<int>(sql, dynamicParams);
             return GetEntityByIn(range);
         }
-       
+
         /// <summary>
         /// 直接查询到实体类
         /// </summary>
@@ -545,7 +565,7 @@ namespace System
         internal IEnumerable<T> TableGets_Wrapper(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < _tables.Length-1; i += 1)
+            for (int i = 0; i < _tables.Length - 1; i += 1)
             {
                 dynamicParams.Add(_tables[i + 1], parameters[i]);
             }
@@ -561,7 +581,7 @@ namespace System
         internal T TableGet_Wrapper(string sql, params object[] parameters)
         {
             var dynamicParams = new DynamicParameters();
-            for (int i = 0; i < _tables.Length-1; i += 1)
+            for (int i = 0; i < _tables.Length - 1; i += 1)
             {
                 dynamicParams.Add(_tables[i + 1], parameters[i]);
             }
