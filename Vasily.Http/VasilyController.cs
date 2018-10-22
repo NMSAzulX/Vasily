@@ -26,9 +26,9 @@ namespace Microsoft.AspNetCore.Mvc
         /// <param name="succeed">正确提示，默认：操作成功！</param>
         /// <param name="faild">错误提示，默认：操作失败！</param>
         /// <returns></returns>
-        protected ReturnPageResult PageResult(bool value, int totle, string succeed = "操作成功！", string faild = "操作失败！")
+        protected ReturnPageResult BoolPageResult(bool value, string succeed = "操作成功！", string faild = "操作失败！")
         {
-            return Result(value, SqlHandler.Count, succeed, faild);
+            return BoolResult(value, SqlHandler.Count, succeed, faild);
         }
         /// <summary>
         /// 分页 - 返回对象，若对象为空，则返回错误信息
@@ -67,7 +67,7 @@ namespace Microsoft.AspNetCore.Mvc
         /// <returns></returns>
         protected ReturnPageResult PageResult(bool value, int totle, string succeed = "操作成功！", string faild = "操作失败！")
         {
-            return Result(value, SqlHandler.Count, succeed, faild);
+            return BoolResult(value, SqlHandler.Count, succeed, faild);
         }
         /// <summary>
         /// 分页 - 返回对象，若对象为空，则返回错误信息
@@ -105,7 +105,7 @@ namespace Microsoft.AspNetCore.Mvc
         /// <returns></returns>
         protected ReturnPageResult PageResult(bool value, int totle, string succeed = "操作成功！", string faild = "操作失败！")
         {
-            return Result(value, SqlHandler.Count, succeed, faild);
+            return BoolResult(value, SqlHandler.Count, succeed, faild);
         }
         /// <summary>
         /// 分页 - 返回对象，若对象为空，则返回错误信息
@@ -144,7 +144,7 @@ namespace Microsoft.AspNetCore.Mvc
         /// <returns></returns>
         protected ReturnPageResult PageResult(bool value, int totle, string succeed = "操作成功！", string faild = "操作失败！")
         {
-            return Result(value, SqlHandler.Count, succeed, faild);
+            return BoolResult(value, SqlHandler.Count, succeed, faild);
         }
         /// <summary>
         /// 分页 - 返回对象，若对象为空，则返回错误信息
@@ -182,7 +182,7 @@ namespace Microsoft.AspNetCore.Mvc
         /// <returns></returns>
         protected ReturnPageResult PageResult(bool value, int totle, string succeed = "操作成功！", string faild = "操作失败！")
         {
-            return Result(value, SqlHandler.Count, succeed, faild);
+            return BoolResult(value, SqlHandler.Count, succeed, faild);
         }
         /// <summary>
         /// 分页 - 返回对象，若对象为空，则返回错误信息
@@ -221,7 +221,7 @@ namespace Microsoft.AspNetCore.Mvc
         /// <returns></returns>
         protected ReturnPageResult PageResult(bool value, int totle, string succeed = "操作成功！", string faild = "操作失败！")
         {
-            return Result(value, SqlHandler.Count, succeed, faild);
+            return BoolResult(value, SqlHandler.Count, succeed, faild);
         }
         /// <summary>
         /// 分页 - 返回对象，若对象为空，则返回错误信息
@@ -259,7 +259,7 @@ namespace Microsoft.AspNetCore.Mvc
         /// <returns></returns>
         protected ReturnPageResult PageResult(bool value, int totle, string succeed = "操作成功！", string faild = "操作失败！")
         {
-            return Result(value, SqlHandler.Count, succeed, faild);
+            return BoolResult(value, SqlHandler.Count, succeed, faild);
         }
         /// <summary>
         /// 分页 - 返回对象，若对象为空，则返回错误信息
@@ -283,7 +283,7 @@ namespace Microsoft.AspNetCore.Mvc
         /// <param name="succeed">正确提示，默认：操作成功！</param>
         /// <param name="faild">错误提示，默认：操作失败！</param>
         /// <returns></returns>
-        protected ReturnPageResult Result(bool value, int totle, string succeed = "操作成功！", string faild = "操作失败！")
+        protected ReturnPageResult BoolResult(bool value, int totle, string succeed = "操作成功！", string faild = "操作失败！")
         {
             ReturnPageResult _result = new ReturnPageResult();
             _result.Totle = totle;
@@ -328,7 +328,7 @@ namespace Microsoft.AspNetCore.Mvc
         /// <param name="succeed">正确提示，默认：操作成功！</param>
         /// <param name="faild">错误提示，默认：操作失败！</param>
         /// <returns></returns>
-        protected ReturnResult Result(bool value, string succeed = "操作成功！", string faild = "操作失败！")
+        protected ReturnResult BoolResult(bool value, string succeed = "操作成功！", string faild = "操作失败！")
         {
             ReturnResult _result = new ReturnResult();
             if (value)
