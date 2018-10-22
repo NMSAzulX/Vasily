@@ -34,7 +34,6 @@ namespace System
                 {
                     action?.Invoke();
                     transaction.Commit();
-                    transaction.Dispose();
                 }
                 catch (Exception ex)
                 {
