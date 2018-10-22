@@ -7,7 +7,7 @@ namespace VasilyDemo
         static void Main(string[] args)
         {
             //Demo_Sql.Start();
-            Demo_RelationSql.Start();
+            //Demo_RelationSql.Start();
             Console.ReadKey();
         }
     }
