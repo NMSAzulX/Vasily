@@ -245,19 +245,19 @@ public class TestRelation:IVasilyRelation
 从结果`RelationSql<TestRelation,TestRelation,TestRelation_Luzishen>.GetFromSource= SELECT rid FROM relation_table WHERE parent_id=@rid`
 可以看到parent_id=@rid，父id与本类的主键建立起了关系。
 
-当然了，如果我们想有个健康的爸爸也可以这样写：
+当然了，也可以这样写：
 ```c#
-public class TestRelation_万寿无疆{
+public class TestRelation_AnyName{
 	[PrimaryKey]
 	public int rid;
 }
 
-[Relation(typeof(TestRelation_万寿无疆))]
+[Relation(typeof(TestRelation_AnyName))]
 public int parent_id{get;set;}
 ``` 
 
 ```c#
-var children = DapperWrapper<TestRelation,TestRelation,TestRelation_万寿无疆>.UseKey("sqlkey").SourceGets(father);
+var children = DapperWrapper<TestRelation,TestRelation,TestRelation_AnyName>.UseKey("sqlkey").SourceGets(father);
 
 ``` 
 
@@ -272,6 +272,8 @@ var children = DapperWrapper<TestRelation,TestRelation,TestRelation_万寿无疆
    - [x] 支持关系操作
 
    - [x] 支持唯一约束安全插入，并获取主键ID
+   
+   - [x] 支持条件查询
 
      ​
 
