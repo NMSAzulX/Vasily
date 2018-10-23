@@ -32,11 +32,11 @@ namespace System
         /// <param name="retry">重试次数</param>
         /// <param name="get_errors">获取指定次数的异常错误</param>
         /// <returns>错误集合</returns>
-        public List<Exception> TransactionRetry(Action action,int retry=1, params int[] get_errors)
+        public List<Exception> TransactionRetry(Action action, int retry = 1, params int[] get_errors)
         {
             List<Exception> errors = new List<Exception>();
             HashSet<int> dict = new HashSet<int>(get_errors);
-            for (int i = 0; i < retry; i+=1)
+            for (int i = 0; i < retry; i += 1)
             {
                 try
                 {
@@ -45,11 +45,11 @@ namespace System
                 }
                 catch (Exception ex)
                 {
-                    if (get_errors.Length==0)
+                    if (get_errors.Length == 0)
                     {
                         errors.Add(ex);
                     }
-                    else if(dict.Contains(i))
+                    else if (dict.Contains(i))
                     {
                         errors.Add(ex);
                     }
@@ -58,6 +58,53 @@ namespace System
             return errors;
         }
 
+        /// <summary>
+        /// 事务重试机制
+        /// </summary>
+        /// <param name="action">事务操作委托</param>
+        /// <param name="retry">重试次数</param>
+        /// <param name="predicate">每次异常获取的逻辑</param>
+        /// <returns>错误集合</returns>
+        public List<Exception> TransactionRetry(Action action, int retry = 1, Predicate<int> predicate = null)
+        {
+            List<Exception> errors = new List<Exception>();
+            if (predicate != null)
+            {
+                for (int i = 0; i < retry; i += 1)
+                {
+                    try
+                    {
+                        Transaction(action);
+                        return errors;
+                    }
+                    catch (Exception ex)
+                    {
+                        if (predicate(i))
+                        {
+                            errors.Add(ex);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < retry; i += 1)
+                {
+                    try
+                    {
+                        Transaction(action);
+                        return errors;
+                    }
+                    catch (Exception ex)
+                    {
+
+                        errors.Add(ex);
+                    }
+                }
+            }
+
+            return errors;
+        }
 
         public void Transaction(Action action)
         {
@@ -77,6 +124,7 @@ namespace System
                 }
             }
         }
+
     }
     public class DapperWrapper<T> : DapperWrapper
     {
@@ -95,6 +143,78 @@ namespace System
         public DapperWrapper<T> Complete { get { RequestType = VasilyRequestType.Complete; return this; } }
 
         public int Count { get { return GetCount(); } }
+
+        /// <summary>
+        /// 根据条件查询单个实体类
+        /// </summary>
+        /// <param name="condition">条件查询</param>
+        /// <param name="instance">条件参数化实例</param>
+        /// <returns></returns>
+        public T SingleQuery(SqlCondition<T> condition, object instance)
+        {
+            if (RequestType == VasilyRequestType.Complete)
+            {
+                return Reader.ExecuteScalar<T>(Sql<T>.SelectAllByCondition + condition.ToString(), instance);
+            }
+            else
+            {
+                return Reader.ExecuteScalar<T>(Sql<T>.SelectByCondition + condition.ToString(), instance);
+            }
+        }
+        /// <summary>
+        /// 根据条件更新实体
+        /// </summary>
+        /// <param name="condition">条件查询</param>
+        /// <param name="instance">更新参数化实例</param>
+        /// <returns></returns>
+        public int Update(SqlCondition<T> condition,object instance)
+        {
+            if (RequestType == VasilyRequestType.Complete)
+            {
+                return Reader.Execute(Sql<T>.UpdateAllByCondition + condition.ToString(), instance);
+            }
+            else
+            {
+                return Reader.Execute(Sql<T>.UpdateByCondition + condition.ToString(), instance);
+            }
+        }
+        /// <summary>
+        /// 根据条件删除实体
+        /// </summary>
+        /// <param name="condition">条件查询</param>
+        /// <param name="instance">删除参数化实例</param>
+        /// <returns></returns>
+        public int Delete(SqlCondition<T> condition,object instance)
+        {
+            return Reader.Execute(Sql<T>.DeleteByCondition + condition.ToString(), instance);
+        }
+        /// <summary>
+        /// 根据条件批量查询
+        /// </summary>
+        /// <param name="condition">条件查询</param>
+        /// <param name="instance">查询参数化实例</param>
+        /// <returns></returns>
+        public IEnumerable<T> Query(SqlCondition<T> condition, object instance)
+        {
+            if (RequestType == VasilyRequestType.Complete)
+            {
+                return Reader.Query<T>(Sql<T>.SelectAllByCondition + condition.ToString(), instance);
+            }
+            else
+            {
+                return Reader.Query<T>(Sql<T>.SelectByCondition + condition.ToString(), instance);
+            }
+        }
+        /// <summary>
+        /// 根据条件批量查询数量
+        /// </summary>
+        /// <param name="condition">条件查询</param>
+        /// <param name="instance">查询参数化实例</param>
+        /// <returns></returns>
+        public int CountWithCondition(SqlCondition<T> condition, object instance)
+        {
+            return Reader.ExecuteScalar<int>(Sql<T>.SelectCountByCondition + condition.ToString(), instance);
+        }
 
         /// <summary>
         /// 返回当前表总数

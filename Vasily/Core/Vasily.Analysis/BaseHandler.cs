@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -53,13 +54,16 @@ namespace Vasily.Core
             }
 
             //列名映射解析
-            Dictionary<MemberInfo, string> _column_mapping = new Dictionary<MemberInfo, string>();
+            ConcurrentDictionary<MemberInfo, string> _column_mapping = new ConcurrentDictionary<MemberInfo, string>();
+            ConcurrentDictionary<string, string> _string_mapping = new ConcurrentDictionary<string, string>();
             var mappings = _handler.Mappings<ColumnAttribute>();
             foreach (var item in mappings)
             {
                 _column_mapping[item.Member] = item.Instance.Name;
+                _string_mapping[item.Member.Name] = item.Instance.Name;
             }
             _model.ColumnMapping = _column_mapping;
+            _model.StringMapping = _string_mapping;
             //填充属性
             _model.LoadMembers(_handler._members);
 
@@ -75,7 +79,8 @@ namespace Vasily.Core
             gs.Set("Right", _model.Right);
             gs.Set("Members", _model.Members);
             gs.Set("ColumnMapping", _column_mapping);
-
+            gs.Set("StringMapping", _string_mapping);
+            
         }
 
         //~HandlerBase()

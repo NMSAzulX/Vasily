@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
@@ -14,7 +15,8 @@ namespace Vasily
         public HashSet<MemberInfo> Members;
         public Func<MemberInfo, string> ColFunction;
         public Func<MemberInfo, string> FilterFunction;
-        public Dictionary<MemberInfo, string> ColumnMapping;
+        public ConcurrentDictionary<MemberInfo, string> ColumnMapping;
+        public ConcurrentDictionary<string, string> StringMapping;
 
         public MakerModel()
         {
@@ -87,6 +89,8 @@ namespace Vasily
                 Right = Right,
                 TableName = TableName,
                 PrimaryKey = PrimaryKey,
+                ColumnMapping = ColumnMapping,
+                StringMapping = StringMapping
             };
             newModel.Members = new HashSet<MemberInfo>(Members);
             return newModel;
@@ -114,7 +118,8 @@ namespace Vasily
         public static HashSet<MemberInfo> Members;
         public static Func<MemberInfo, string> ColFunction;
         public static Func<MemberInfo, string> FilterFunction;
-        public static Dictionary<MemberInfo, string> ColumnMapping;
+        public static ConcurrentDictionary<MemberInfo, string> ColumnMapping;
+        public static ConcurrentDictionary<string, string> StringMapping;
 
         static MakerModel()
         {
@@ -132,6 +137,14 @@ namespace Vasily
                 return ColumnMapping[item];
             }
             return item.Name;
+        }
+        public static string Column(string item)
+        {
+            if (StringMapping.ContainsKey(item))
+            {
+                return StringMapping[item];
+            }
+            return item;
         }
         /// <summary>
         /// 成员集合求并集

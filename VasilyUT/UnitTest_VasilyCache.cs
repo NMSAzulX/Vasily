@@ -14,6 +14,8 @@ namespace VasilyUT
             Assert.Equal('`', MakerModel<Relation>.Left);
             Assert.Equal('`', MakerModel<Relation>.Right);
             Assert.Equal("关系映射表", MakerModel<Relation>.TableName);
+            Assert.NotNull(MakerModel<Relation>.StringMapping);
+            Assert.NotNull(MakerModel<Relation>.ColumnMapping);
         }
     }
 }

@@ -15,7 +15,11 @@ namespace VasilyHttpDemo.Controllers
         [HttpGet]
         public ReturnPageResult GetCount()
         {
-            return BoolPageResult(true);
+            //return BoolPageResult(true, SqlCondition > "id",new { id= 140635 });
+            return PageResult(
+                SqlHandler.Query(SqlCondition > "id", new { id = 142350 }), 
+                SqlCondition > "id", new { id = 140635 }
+                );
         }
     }
 }

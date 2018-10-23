@@ -6,6 +6,7 @@ namespace Microsoft.AspNetCore.Mvc
     public class VasilyController<T> : VasilyResultController where T : class
     {
         protected DapperWrapper<T> SqlHandler;
+        protected SqlCondition<T> SqlCondition;
         public VasilyController()
         {
 
@@ -13,10 +14,38 @@ namespace Microsoft.AspNetCore.Mvc
         public VasilyController(string key)
         {
             SqlHandler = new DapperWrapper<T>(key);
+            SqlCondition = new SqlCondition<T>();
         }
         public VasilyController(string reader, string writter)
         {
             SqlHandler = new DapperWrapper<T>(reader, writter);
+            SqlCondition = new SqlCondition<T>();
+        }
+
+        /// <summary>
+        /// 分页 - 用布尔类型操作返回值
+        /// </summary>
+        /// <param name="value">true/false代表返回成功与否</param>
+        /// <param name="condition">条件查询</param>
+        /// <param name="instance">条件参数化实例</param> 
+        /// <param name="succeed">正确提示，默认：操作成功！</param>
+        /// <param name="faild">错误提示，默认：操作失败！</param>
+        /// <returns></returns>
+        protected ReturnPageResult BoolPageResult(bool value,SqlCondition<T> condition, object instance, string succeed = "操作成功！", string faild = "操作失败！")
+        {
+            return BoolResult(value, SqlHandler.CountWithCondition(condition, instance), succeed, faild);
+        }
+        /// <summary>
+        /// 分页 - 返回对象，若对象为空，则返回错误信息
+        /// </summary>
+        /// <param name="value">需要传送的对象</param>
+        /// <param name="condition">条件查询</param>
+        /// <param name="instance">条件参数化实例</param>
+        /// <param name="msg">错误提示信息</param>
+        /// <returns></returns>
+        protected ReturnPageResult PageResult(object value, SqlCondition<T> condition, object instance, string msg = "数据为空！")
+        {
+            return Result(value, SqlHandler.CountWithCondition(condition, instance), msg);
         }
 
         /// <summary>
