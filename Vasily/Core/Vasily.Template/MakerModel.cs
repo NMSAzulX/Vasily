@@ -17,6 +17,7 @@ namespace Vasily
         public Func<MemberInfo, string> FilterFunction;
         public ConcurrentDictionary<MemberInfo, string> ColumnMapping;
         public ConcurrentDictionary<string, string> StringMapping;
+        public SqlType OperatorType;
 
         public MakerModel()
         {
@@ -90,7 +91,8 @@ namespace Vasily
                 TableName = TableName,
                 PrimaryKey = PrimaryKey,
                 ColumnMapping = ColumnMapping,
-                StringMapping = StringMapping
+                StringMapping = StringMapping,
+                OperatorType = OperatorType
             };
             newModel.Members = new HashSet<MemberInfo>(Members);
             return newModel;
@@ -120,7 +122,7 @@ namespace Vasily
         public static Func<MemberInfo, string> FilterFunction;
         public static ConcurrentDictionary<MemberInfo, string> ColumnMapping;
         public static ConcurrentDictionary<string, string> StringMapping;
-
+        public static SqlType OperatorType;
         static MakerModel()
         {
 
@@ -188,7 +190,9 @@ namespace Vasily
                 Right = Right,
                 TableName = TableName,
                 PrimaryKey = PrimaryKey,
-                Members = Members,
+                ColumnMapping = ColumnMapping,
+                StringMapping = StringMapping,
+                OperatorType = OperatorType
             };
         }
     }

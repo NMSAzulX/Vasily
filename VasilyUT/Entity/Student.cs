@@ -5,7 +5,7 @@ using Vasily;
 
 namespace VasilyUT.Entity
 {
-    [Table("1")]
+    [Table("1",SqlType.MySql)]
     public class Student:IVasilyNormal
     {
         [PrimaryKey]

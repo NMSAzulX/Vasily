@@ -80,7 +80,10 @@ namespace Vasily.Core
             gs.Set("Members", _model.Members);
             gs.Set("ColumnMapping", _column_mapping);
             gs.Set("StringMapping", _string_mapping);
-            
+
+            AttrOperator attr = new AttrOperator(_entity_type);
+            var _sql_type = attr.ClassInstance<TableAttribute>().Type;
+            gs.Set("OperatorType", _sql_type);
         }
 
         //~HandlerBase()

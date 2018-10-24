@@ -30,8 +30,9 @@ namespace Microsoft.AspNetCore.Mvc
         /// <param name="cp">实例与查询条件</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
-        protected ReturnResult ModifyResult(SqlCP cp,string msg="更新失败!")
+        protected ReturnResult ModifyResult(SqlCP cp, string msg = "更新失败!")
         {
+
             return Result(driver.Modify(cp), msg);
         }
         /// <summary>
@@ -40,7 +41,7 @@ namespace Microsoft.AspNetCore.Mvc
         /// <param name="cp">实例与查询条件</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
-        protected ReturnResult DeleteResult(SqlCP cp,string msg="删除失败!")
+        protected ReturnResult DeleteResult(SqlCP cp, string msg = "删除失败!")
         {
             return Result(driver.Delete(cp), msg);
         }
@@ -50,7 +51,7 @@ namespace Microsoft.AspNetCore.Mvc
         /// <param name="instances">实例</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
-        protected ReturnResult AddResult(IEnumerable<T> instances,string msg="添加失败!")
+        protected ReturnResult AddResult(IEnumerable<T> instances, string msg = "添加失败!")
         {
             return Result(driver.Add(instances), msg);
         }
@@ -71,9 +72,9 @@ namespace Microsoft.AspNetCore.Mvc
         /// <param name="cp_count">实例与查询条件</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
-        protected ReturnPageResult GetsResult(SqlCP cp_value, SqlCP cp_count, string msg = "添加失败!")
+        protected ReturnPageResult GetsPageResult(SqlCP cp_value, string msg = "查询失败!")
         {
-            return Result(driver.Gets(cp_value), driver.CountWithCondition(cp_count), msg);
+            return Result(driver.Gets(cp_value), driver.CountWithCondition(cp_value), msg);
         }
         /// <summary>
         /// 用条件查询实例结果
@@ -81,7 +82,7 @@ namespace Microsoft.AspNetCore.Mvc
         /// <param name="cp">实例与查询条件</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
-        protected ReturnResult GetResult(SqlCP cp, string msg = "添加失败!")
+        protected ReturnResult GetResult(SqlCP cp, string msg = "查询失败!")
         {
             return Result(driver.Get(cp), msg);
         }
@@ -92,7 +93,7 @@ namespace Microsoft.AspNetCore.Mvc
         /// <param name="cp">实例与查询条件</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
-        protected ReturnResult GetsResult(SqlCP cp, string msg = "添加失败!")
+        protected ReturnResult GetsResult(SqlCP cp, string msg = "查询失败!")
         {
             return Result(driver.Gets(cp), msg);
         }
@@ -101,7 +102,8 @@ namespace Microsoft.AspNetCore.Mvc
     }
 
 
-    public class VasilyResultController<T> : VasilyResultController where T : class {
+    public class VasilyResultController<T> : VasilyResultController where T : class
+    {
 
         protected RelationWrapper<T> driver;
         protected SqlCondition<T> c;
@@ -113,32 +115,32 @@ namespace Microsoft.AspNetCore.Mvc
         /// <summary>
         /// 更新操作的结果返回
         /// </summary>
-        /// <param name="cp">实例与查询条件</param>
+        /// <param name="value">实例</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
-        protected ReturnResult ModifyResult(SqlCP cp, string msg = "更新失败!")
+        protected ReturnResult ModifyResult(object value, string msg = "更新失败!")
         {
-            return Result(driver.SourceModify(cp), msg);
+            return Result(driver.SourceModify(value), msg);
         }
         /// <summary>
         /// 后置删除操作的结果返回
         /// </summary>
-        /// <param name="cp">实例与查询条件</param>
+        /// <param name="value">实例</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
-        protected ReturnResult DeleteAftResult(SqlCP cp, string msg = "删除失败!")
+        protected ReturnResult DeleteAftResult(object value, string msg = "删除失败!")
         {
-            return Result(driver.SourceAftDelete(cp), msg);
+            return Result(driver.SourceAftDelete(value), msg);
         }
         /// <summary>
         /// 前置删除操作的结果返回
         /// </summary>
-        /// <param name="cp">实例与查询条件</param>
+        /// <param name="value">实例</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
-        protected ReturnResult DeletePreResult(SqlCP cp, string msg = "删除失败!")
+        protected ReturnResult DeletePreResult(object value, string msg = "删除失败!")
         {
-            return Result(driver.SourcePreDelete(cp), msg);
+            return Result(driver.SourcePreDelete(value), msg);
         }
         /// <summary>
         /// 添加操作的结果返回
@@ -153,34 +155,33 @@ namespace Microsoft.AspNetCore.Mvc
         /// <summary>
         /// 用条件查询实例结果集，用条件查询总数
         /// </summary>
-        /// <param name="cp_value">实例与查询条件</param>
-        /// <param name="cp_count">实例与查询条件</param>
+        /// <param name="value">实例</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
-        protected ReturnPageResult GetsResult(SqlCP cp_value, object cp_count, string msg = "添加失败!")
+        protected ReturnPageResult GetsPageResult(object value, string msg = "查询失败!")
         {
-            return Result(driver.SourceGets(cp_value), driver.SourceCount(cp_count), msg);
+            return Result(driver.SourceGets(value), driver.SourceCount(value), msg);
         }
         /// <summary>
         /// 用条件查询实例结果
         /// </summary>
-        /// <param name="cp">实例与查询条件</param>
+        /// <param name="value">实例</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
-        protected ReturnResult GetResult(SqlCP cp, string msg = "添加失败!")
+        protected ReturnResult GetResult(object value, string msg = "查询失败!")
         {
-            return Result(driver.SourceGet(cp), msg);
+            return Result(driver.SourceGet(value), msg);
         }
 
         /// <summary>
         /// 用条件查询实例结果集
         /// </summary>
-        /// <param name="cp">实例与查询条件</param>
+        /// <param name="value">实例</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
-        protected ReturnResult GetsResult(SqlCP cp, string msg = "添加失败!")
+        protected ReturnResult GetsResult(object value, string msg = "查询失败!")
         {
-            return Result(driver.SourceGets(cp), msg);
+            return Result(driver.SourceGets(value), msg);
         }
 
         #endregion
@@ -189,23 +190,23 @@ namespace Microsoft.AspNetCore.Mvc
 
     public class VasilyController<T, R, S1> : VasilyResultController<T> where T : class
     {
-        
+
         public VasilyController()
         {
 
         }
 
-        public VasilyController(string key):base()
+        public VasilyController(string key) : base()
         {
             driver = new DapperWrapper<T, R, S1>(key);
-           
+
         }
-        public VasilyController(string reader, string writter):base()
+        public VasilyController(string reader, string writter) : base()
         {
             driver = new DapperWrapper<T, R, S1>(reader, writter);
         }
 
-        
+
     }
     public class VasilyController<T, R, S1, S2> : VasilyResultController<T> where T : class
     {
@@ -223,7 +224,7 @@ namespace Microsoft.AspNetCore.Mvc
         {
             SqlHandler = new DapperWrapper<T, R, S1, S2>(reader, writter);
         }
-     
+
     }
 
     public class VasilyController<T, R, S1, S2, S3> : VasilyResultController<T> where T : class
@@ -242,7 +243,7 @@ namespace Microsoft.AspNetCore.Mvc
         {
             SqlHandler = new DapperWrapper<T, R, S1, S2, S3>(reader, writter);
         }
-     
+
     }
     public class VasilyController<T, R, S1, S2, S3, S4> : VasilyResultController<T> where T : class
     {
@@ -260,7 +261,7 @@ namespace Microsoft.AspNetCore.Mvc
         {
             SqlHandler = new DapperWrapper<T, R, S1, S2, S3, S4>(reader, writter);
         }
-       
+
     }
 
     public class VasilyController<T, R, S1, S2, S3, S4, S5> : VasilyResultController<T> where T : class
@@ -279,7 +280,7 @@ namespace Microsoft.AspNetCore.Mvc
         {
             SqlHandler = new DapperWrapper<T, R, S1, S2, S3, S4, S5>(reader, writter);
         }
-      
+
     }
     public class VasilyController<T, R, S1, S2, S3, S4, S5, S6> : VasilyResultController<T> where T : class
     {

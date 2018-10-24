@@ -36,5 +36,70 @@ namespace VasilyUT
                        
                 );
         }
+
+        [Fact(DisplayName = "条件拼接+分页测试1")]
+        public void TestPageCondition1()
+        {
+            SqlPackage<Relation2> package = new SqlPackage<Relation2>();
+            SqlCondition<Relation2> c = new SqlCondition<Relation2>();
+
+            var cp = new { StudentId = 1, ClassId = 2, ClassName = "abc" }.
+                Condition(((c > "StudentId" | c == "ClassId") & c != "ClassName")^(2,10));
+            Assert.Equal(
+
+                "((StudentId > @StudentId OR ClassId = @ClassId) AND ClassName <> @ClassName) OFFSET 10 ROW FETCH NEXT 10 rows only",
+
+                cp.ConditionWithPage
+
+                );
+        }
+        [Fact(DisplayName = "条件拼接+分页测试2")]
+        public void TestPageCondition2()
+        {
+            SqlPackage<Student> package = new SqlPackage<Student>();
+            SqlCondition<Student> c = new SqlCondition<Student>();
+
+            var cp = 
+                new { StudentId = 1, ClassId = 2, ClassName = "abc" }.
+                Condition(c > "StudentId" | c == "ClassId" & c != "ClassName" ^ (2, 10));
+
+
+            Assert.Equal(
+
+                "(StudentId > @StudentId OR (ClassId = @ClassId AND ClassName <> @ClassName)) LIMIT 10,10",
+
+                cp.ConditionWithPage
+
+                );
+        }
+        [Fact(DisplayName = "条件拼接+排序测试1")]
+        public void TestOrderCondition2()
+        {
+            SqlPackage<Relation2> package = new SqlPackage<Relation2>();
+            SqlCondition<Relation2> c = new SqlCondition<Relation2>();
+            Assert.Equal(
+
+                "((StudentId > @StudentId OR ClassId = @ClassId) AND ClassName <> @ClassName) ORDER BY StudentId ASC",
+
+                //----------------------------条件----------------排序链接--升序------------
+                //                                                    ↓   ↓
+                ((c > "StudentId" | c == "ClassId") & c != "ClassName" ^ c + "StudentId").ToString()
+
+                );
+        }
+        [Fact(DisplayName = "条件拼接+排序测试2")]
+        public void TestPageCondition3()
+        {
+            SqlPackage<Relation2> package = new SqlPackage<Relation2>();
+            SqlCondition<Relation2> c = new SqlCondition<Relation2>();
+            Assert.Equal(
+
+                "((StudentId > @StudentId OR ClassId = @ClassId) AND ClassName <> @ClassName) ORDER BY StudentId ASC,ClassId DESC",
+                //升序-----------降序-----排序链接-----------------条件----------------------------
+                //↓             ↓          ↓
+                (c + "StudentId" - "ClassId" ^(c > "StudentId" | c == "ClassId") & c != "ClassName").ToString()
+
+                );
+        }
     }
 }

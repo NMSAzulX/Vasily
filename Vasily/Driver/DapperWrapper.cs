@@ -165,11 +165,11 @@ namespace System
         {
             if (RequestType == VasilyRequestType.Complete)
             {
-                return Reader.ExecuteScalar<T>(Sql<T>.SelectAllByCondition + cp.sql, cp.instance);
+                return Reader.ExecuteScalar<T>(Sql<T>.SelectAllByCondition + cp.ConditionWithOutPage, cp.Instance);
             }
             else
             {
-                return Reader.ExecuteScalar<T>(Sql<T>.SelectByCondition + cp.sql, cp.instance);
+                return Reader.ExecuteScalar<T>(Sql<T>.SelectByCondition + cp.ConditionWithOutPage, cp.Instance);
             }
         }
         /// <summary>
@@ -193,11 +193,11 @@ namespace System
         {
             if (RequestType == VasilyRequestType.Complete)
             {
-                return Reader.Execute(Sql<T>.UpdateAllByCondition + cp.sql, cp.instance);
+                return Reader.Execute(Sql<T>.UpdateAllByCondition + cp.ConditionWithPage, cp.Instance);
             }
             else
             {
-                return Reader.Execute(Sql<T>.UpdateByCondition + cp.sql, cp.instance);
+                return Reader.Execute(Sql<T>.UpdateByCondition + cp.ConditionWithPage, cp.Instance);
             }
         }
         /// <summary>
@@ -212,7 +212,7 @@ namespace System
         }
         public int Delete(SqlCP cp)
         {
-            return Reader.Execute(Sql<T>.DeleteByCondition + cp.sql, cp.instance);
+            return Reader.Execute(Sql<T>.DeleteByCondition + cp.ConditionWithPage, cp.Instance);
         }
         /// <summary>
         /// 根据条件批量查询
@@ -235,11 +235,12 @@ namespace System
         {
             if (RequestType == VasilyRequestType.Complete)
             {
-                return Reader.Query<T>(Sql<T>.SelectAllByCondition + cp.sql, cp.instance);
+                Diagnostics.Debug.WriteLine(Sql<T>.SelectAllByCondition + cp.ConditionWithPage);
+                return Reader.Query<T>(Sql<T>.SelectAllByCondition + cp.ConditionWithPage, cp.Instance);
             }
             else
             {
-                return Reader.Query<T>(Sql<T>.SelectByCondition + cp.sql, cp.instance);
+                return Reader.Query<T>(Sql<T>.SelectByCondition + cp.ConditionWithPage, cp.Instance);
             }
         }
         /// <summary>
@@ -254,7 +255,7 @@ namespace System
         }
         public int CountWithCondition(SqlCP cp)
         {
-            return Reader.ExecuteScalar<int>(Sql<T>.SelectCountByCondition + cp.sql, cp.instance);
+            return Reader.ExecuteScalar<int>(Sql<T>.SelectCountByCondition + cp.ConditionWithOutPage, cp.Instance);
         }
 
         /// <summary>

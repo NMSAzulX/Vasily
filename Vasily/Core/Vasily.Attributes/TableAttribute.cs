@@ -31,6 +31,7 @@ namespace Vasily
         MsSql,
         TiDb,
         PgSql,
+        SqlLite,
         None
     }
 }

@@ -15,11 +15,8 @@ namespace VasilyHttpDemo.Controllers
         [HttpGet]
         public ReturnPageResult GetCount()
         {
-            //return BoolPageResult(true, SqlCondition > "id",new { id= 140635 });
-            return GetsResult(
-                new { id = 142350 }.Condition(c>"id"), //按条件查询集合
-                new { id = 140635 }.Condition(c>"id")  //按条件查询总数
-                );
+            //按照id降序排列，取第10页的前10条
+            return GetsPageResult(c.Condition(c - "id" ^(10,10)) );
         }
     }
 }

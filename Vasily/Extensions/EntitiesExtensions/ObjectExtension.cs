@@ -6,8 +6,10 @@ namespace System
         public static SqlCP Condition(this object instance,SqlCondition condition)
         {
             SqlCP cp = default(SqlCP);
-            cp.sql = condition.ToString();
-            cp.instance = instance;
+            cp.Instance = instance;
+            cp.ConditionWithOutPage = condition.GetConditionWithoutPage();
+            cp.ConditionWithPage = condition.GetConditionWithPage();
+            condition.Claer();
             return cp;
         }
     }

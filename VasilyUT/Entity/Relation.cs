@@ -16,7 +16,7 @@ namespace VasilyUT.Entity
         public int ClassId;
     }
 
-    [Table("关系映射表2", SqlType.MySql)]
+    [Table("关系映射表2", SqlType.MsSql)]
     public class Relation2 : IVasilyRelation
     {
         [PrimaryKey]
