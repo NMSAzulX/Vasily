@@ -150,7 +150,7 @@ namespace System
         /// <param name="condition">条件查询</param>
         /// <param name="instance">条件参数化实例</param>
         /// <returns></returns>
-        public T SingleQuery(SqlCondition<T> condition, object instance)
+        public T Get(SqlCondition<T> condition, object instance)
         {
             if (RequestType == VasilyRequestType.Complete)
             {
@@ -161,13 +161,24 @@ namespace System
                 return Reader.ExecuteScalar<T>(Sql<T>.SelectByCondition + condition.ToString(), instance);
             }
         }
+        public T Get(SqlCP cp)
+        {
+            if (RequestType == VasilyRequestType.Complete)
+            {
+                return Reader.ExecuteScalar<T>(Sql<T>.SelectAllByCondition + cp.sql, cp.instance);
+            }
+            else
+            {
+                return Reader.ExecuteScalar<T>(Sql<T>.SelectByCondition + cp.sql, cp.instance);
+            }
+        }
         /// <summary>
         /// 根据条件更新实体
         /// </summary>
         /// <param name="condition">条件查询</param>
         /// <param name="instance">更新参数化实例</param>
         /// <returns></returns>
-        public int Update(SqlCondition<T> condition,object instance)
+        public int Modify(SqlCondition<T> condition,object instance)
         {
             if (RequestType == VasilyRequestType.Complete)
             {
@@ -176,6 +187,17 @@ namespace System
             else
             {
                 return Reader.Execute(Sql<T>.UpdateByCondition + condition.ToString(), instance);
+            }
+        }
+        public int Modify(SqlCP cp)
+        {
+            if (RequestType == VasilyRequestType.Complete)
+            {
+                return Reader.Execute(Sql<T>.UpdateAllByCondition + cp.sql, cp.instance);
+            }
+            else
+            {
+                return Reader.Execute(Sql<T>.UpdateByCondition + cp.sql, cp.instance);
             }
         }
         /// <summary>
@@ -188,13 +210,17 @@ namespace System
         {
             return Reader.Execute(Sql<T>.DeleteByCondition + condition.ToString(), instance);
         }
+        public int Delete(SqlCP cp)
+        {
+            return Reader.Execute(Sql<T>.DeleteByCondition + cp.sql, cp.instance);
+        }
         /// <summary>
         /// 根据条件批量查询
         /// </summary>
         /// <param name="condition">条件查询</param>
         /// <param name="instance">查询参数化实例</param>
         /// <returns></returns>
-        public IEnumerable<T> Query(SqlCondition<T> condition, object instance)
+        public IEnumerable<T> Gets(SqlCondition<T> condition, object instance)
         {
             if (RequestType == VasilyRequestType.Complete)
             {
@@ -203,6 +229,17 @@ namespace System
             else
             {
                 return Reader.Query<T>(Sql<T>.SelectByCondition + condition.ToString(), instance);
+            }
+        }
+        public IEnumerable<T> Gets(SqlCP cp)
+        {
+            if (RequestType == VasilyRequestType.Complete)
+            {
+                return Reader.Query<T>(Sql<T>.SelectAllByCondition + cp.sql, cp.instance);
+            }
+            else
+            {
+                return Reader.Query<T>(Sql<T>.SelectByCondition + cp.sql, cp.instance);
             }
         }
         /// <summary>
@@ -214,6 +251,10 @@ namespace System
         public int CountWithCondition(SqlCondition<T> condition, object instance)
         {
             return Reader.ExecuteScalar<int>(Sql<T>.SelectCountByCondition + condition.ToString(), instance);
+        }
+        public int CountWithCondition(SqlCP cp)
+        {
+            return Reader.ExecuteScalar<int>(Sql<T>.SelectCountByCondition + cp.sql, cp.instance);
         }
 
         /// <summary>
@@ -231,7 +272,7 @@ namespace System
         /// </summary>
         /// <param name="range">主键数组</param>
         /// <returns></returns>
-        public IEnumerable<T> GetEntitiesByIn(params int[] range)
+        public IEnumerable<T> GetsIn(params int[] range)
         {
             if (RequestType == VasilyRequestType.Complete)
             {
@@ -247,7 +288,7 @@ namespace System
         /// </summary>
         /// <param name="range">主键数组</param>
         /// <returns></returns>
-        public IEnumerable<T> GetEntitiesByIn(IEnumerable<int> range)
+        public IEnumerable<T> GetsIn(IEnumerable<int> range)
         {
             if (RequestType == VasilyRequestType.Complete)
             {
@@ -263,7 +304,7 @@ namespace System
         /// </summary>
         /// <param name="range">主键</param>
         /// <returns></returns>
-        public T GetEntityByIn(int range)
+        public T GetIn(int range)
         {
             if (RequestType == VasilyRequestType.Complete)
             {
@@ -274,7 +315,7 @@ namespace System
                 return Normal_GetByPrimary(range);
             }
         }
-        public T GetEntityByIn(IEnumerable<int> range)
+        public T GetIn(IEnumerable<int> range)
         {
             if (RequestType == VasilyRequestType.Complete)
             {
@@ -321,7 +362,7 @@ namespace System
         /// </summary>
         /// <param name="instances">实体类</param>
         /// <returns></returns>
-        public bool UpdateByPrimary(params T[] instances)
+        public bool ModifyByPrimary(params T[] instances)
         {
             if (RequestType == VasilyRequestType.Complete)
             {
@@ -337,7 +378,18 @@ namespace System
         /// </summary>
         /// <param name="instances">实体类</param>
         /// <returns></returns>
-        public int Insert(params T[] instances)
+        public int Add(params T[] instances)
+        {
+            if (RequestType == VasilyRequestType.Complete)
+            {
+                return Complate_Insert(instances);
+            }
+            else
+            {
+                return Normal_Insert(instances);
+            }
+        }
+        public int Add(IEnumerable<T> instances)
         {
             if (RequestType == VasilyRequestType.Complete)
             {
@@ -353,7 +405,7 @@ namespace System
         /// </summary>
         /// <param name="instance">实体类</param>
         /// <returns></returns>
-        public bool NoRepeateInsert(T instance)
+        public bool NoRepeateAdd(T instance)
         {
             if (!IsRepeat(instance))
             {
@@ -374,11 +426,11 @@ namespace System
         /// <typeparam name="S">主键类型</typeparam>
         /// <param name="instance">实体类</param>
         /// <returns></returns>
-        public bool SafeInsert(T instance)
+        public bool SafeAdd(T instance)
         {
             bool result = false;
 
-            if (NoRepeateInsert(instance))
+            if (NoRepeateAdd(instance))
             {
                 result = true;
             }
@@ -389,7 +441,7 @@ namespace System
             return result;
         }
 
-        public bool UpdateByPrimary(IEnumerable<T> instances)
+        public bool ModifyByPrimary(IEnumerable<T> instances)
         {
             if (RequestType == VasilyRequestType.Complete)
             {
@@ -400,17 +452,7 @@ namespace System
                 return Normal_UpdateByPrimary(instances);
             }
         }
-        public int Insert(IEnumerable<T> instances)
-        {
-            if (RequestType == VasilyRequestType.Complete)
-            {
-                return Complate_Insert(instances);
-            }
-            else
-            {
-                return Normal_Insert(instances);
-            }
-        }
+        
         #endregion
 
 
@@ -633,11 +675,6 @@ namespace System
 
         }
 
-        public new int Count { get { return GetRelationCount(); } }
-        public virtual int GetRelationCount()
-        {
-            return 0;
-        }
 
 
         #region 内部函数封装
@@ -691,7 +728,7 @@ namespace System
                 dynamicParams.Add(_sources[i + 1], _emits[i + 1](parameters[i]));
             }
             var range = Reader.Query<int>(sql, dynamicParams);
-            return GetEntitiesByIn(range);
+            return GetsIn(range);
         }
 
         /// <summary>
@@ -707,7 +744,7 @@ namespace System
                 dynamicParams.Add(_sources[i + 1], _emits[i + 1](parameters[i]));
             }
             var range = Reader.Query<int>(sql, dynamicParams);
-            return GetEntityByIn(range);
+            return GetIn(range);
         }
 
         /// <summary>
@@ -723,7 +760,7 @@ namespace System
                 dynamicParams.Add(_tables[i + 1], parameters[i]);
             }
             var range = Reader.Query<int>(sql, dynamicParams);
-            return GetEntitiesByIn(range);
+            return GetsIn(range);
         }
 
         /// <summary>
@@ -739,7 +776,7 @@ namespace System
                 dynamicParams.Add(_tables[i + 1], parameters[i]);
             }
             var range = Reader.Query<int>(sql, dynamicParams);
-            return GetEntityByIn(range);
+            return GetIn(range);
         }
         #endregion
 
@@ -753,12 +790,22 @@ namespace System
         {
             return null;
         }
+        
+        /// <summary>
+        /// 获取集合数量-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public virtual int SourceCount(params object[] parameters)
+        {
+            return 0;
+        }
         /// <summary>
         /// 更新操作-直接传实体类
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public virtual int SourceUpdate(params object[] parameters)
+        public virtual int SourceModify(params object[] parameters)
         {
             return 0;
         }
@@ -785,7 +832,7 @@ namespace System
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public virtual int SourceInsert(params object[] parameters)
+        public virtual int SourceAdd(params object[] parameters)
         {
             return 0;
         }
@@ -811,11 +858,20 @@ namespace System
             return null;
         }
         /// <summary>
+        /// 获取集合数量-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public virtual int TableCount(params object[] parameters)
+        {
+            return 0;
+        }
+        /// <summary>
         /// 更新操作-直接传值
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public virtual int TableUpdate(params object[] parameters)
+        public virtual int TableModify(params object[] parameters)
         {
             return 0;
         }
@@ -842,7 +898,7 @@ namespace System
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public virtual int TableInsert(params object[] parameters)
+        public virtual int TableAdd(params object[] parameters)
         {
             return 0;
         }
@@ -899,11 +955,20 @@ namespace System
             return SourceGets_Wrapper(RelationSql<T, R, C1>.GetFromSource, parameters);
         }
         /// <summary>
+        /// 获取集合数量-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public override int SourceCount(params object[] parameters)
+        {
+            return SourceAftExecute(RelationSql<T, R, C1>.CountFromSource, parameters);
+        }
+        /// <summary>
         /// 更新操作-直接传实体类
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public override int SourceUpdate(params object[] parameters)
+        public override int SourceModify(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1>.ModifyFromSource, parameters);
         }
@@ -930,7 +995,7 @@ namespace System
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public override int SourceInsert(params object[] parameters)
+        public override int SourceAdd(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1>.AddFromSource, 0, parameters);
         }
@@ -956,11 +1021,20 @@ namespace System
             return TableGets_Wrapper(RelationSql<T, R, C1>.GetFromTable, parameters);
         }
         /// <summary>
+        /// 获取集合数量-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public override int TableCount(params object[] parameters)
+        {
+            return SourceAftExecute(RelationSql<T, R, C1>.CountFromTable, parameters);
+        }
+        /// <summary>
         /// 更新操作-直接传值
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public override int TableUpdate(params object[] parameters)
+        public override int TableModify(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1>.ModifyFromTable, parameters);
         }
@@ -987,7 +1061,7 @@ namespace System
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public override int TableInsert(params object[] parameters)
+        public override int TableAdd(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1>.AddFromTable, parameters);
         }
@@ -1048,11 +1122,20 @@ namespace System
             return SourceGets_Wrapper(RelationSql<T, R, C1, C2>.GetFromSource, parameters);
         }
         /// <summary>
+        /// 获取集合数量-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public override int SourceCount(params object[] parameters)
+        {
+            return SourceAftExecute(RelationSql<T, R, C1, C2>.CountFromSource, parameters);
+        }
+        /// <summary>
         /// 更新操作-直接传实体类
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public override int SourceUpdate(params object[] parameters)
+        public override int SourceModify(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2>.ModifyFromSource, parameters);
         }
@@ -1079,7 +1162,7 @@ namespace System
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public override int SourceInsert(params object[] parameters)
+        public override int SourceAdd(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2>.AddFromSource, 0, parameters);
         }
@@ -1105,11 +1188,20 @@ namespace System
             return TableGets_Wrapper(RelationSql<T, R, C1, C2>.GetFromTable, parameters);
         }
         /// <summary>
+        /// 获取集合数量-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public override int TableCount(params object[] parameters)
+        {
+            return SourceAftExecute(RelationSql<T, R, C1, C2>.CountFromTable, parameters);
+        }
+        /// <summary>
         /// 更新操作-直接传值
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public override int TableUpdate(params object[] parameters)
+        public override int TableModify(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2>.ModifyFromTable, parameters);
         }
@@ -1136,7 +1228,7 @@ namespace System
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public override int TableInsert(params object[] parameters)
+        public override int TableAdd(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2>.AddFromTable, parameters);
         }
@@ -1194,12 +1286,23 @@ namespace System
         {
             return SourceGets_Wrapper(RelationSql<T, R, C1, C2, C3>.GetFromSource, parameters);
         }
+        
+        /// <summary>
+        /// 获取集合数量-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public override int SourceCount(params object[] parameters)
+        {
+            return SourceAftExecute(RelationSql<T, R, C1, C2, C3>.CountFromSource, parameters);
+        }
+
         /// <summary>
         /// 更新操作-直接传实体类
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public override int SourceUpdate(params object[] parameters)
+        public override int SourceModify(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3>.ModifyFromSource, parameters);
         }
@@ -1226,7 +1329,7 @@ namespace System
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public override int SourceInsert(params object[] parameters)
+        public override int SourceAdd(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3>.AddFromSource, 0, parameters);
         }
@@ -1252,11 +1355,20 @@ namespace System
             return TableGets_Wrapper(RelationSql<T, R, C1, C2, C3>.GetFromTable, parameters);
         }
         /// <summary>
+        /// 获取集合数量-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public override int TableCount(params object[] parameters)
+        {
+            return SourceAftExecute(RelationSql<T, R, C1, C2, C3>.CountFromTable, parameters);
+        }
+        /// <summary>
         /// 更新操作-直接传值
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public override int TableUpdate(params object[] parameters)
+        public override int TableModify(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3>.ModifyFromTable, parameters);
         }
@@ -1283,7 +1395,7 @@ namespace System
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public override int TableInsert(params object[] parameters)
+        public override int TableAdd(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3>.AddFromTable, parameters);
         }
@@ -1342,11 +1454,20 @@ namespace System
             return SourceGets_Wrapper(RelationSql<T, R, C1, C2, C3, C4>.GetFromSource, parameters);
         }
         /// <summary>
+        /// 获取集合数量-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public override int SourceCount(params object[] parameters)
+        {
+            return SourceAftExecute(RelationSql<T, R, C1, C2, C3, C4>.CountFromSource, parameters);
+        }
+        /// <summary>
         /// 更新操作-直接传实体类
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public override int SourceUpdate(params object[] parameters)
+        public override int SourceModify(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3, C4>.ModifyFromSource, parameters);
         }
@@ -1373,7 +1494,7 @@ namespace System
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public override int SourceInsert(params object[] parameters)
+        public override int SourceAdd(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3, C4>.AddFromSource, 0, parameters);
         }
@@ -1399,11 +1520,20 @@ namespace System
             return TableGets_Wrapper(RelationSql<T, R, C1, C2, C3, C4>.GetFromTable, parameters);
         }
         /// <summary>
+        /// 获取集合数量-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public override int TableCount(params object[] parameters)
+        {
+            return SourceAftExecute(RelationSql<T, R, C1, C2, C3, C4>.CountFromTable, parameters);
+        }
+        /// <summary>
         /// 更新操作-直接传值
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public override int TableUpdate(params object[] parameters)
+        public override int TableModify(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3, C4>.ModifyFromTable, parameters);
         }
@@ -1430,7 +1560,7 @@ namespace System
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public override int TableInsert(params object[] parameters)
+        public override int TableAdd(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3, C4>.AddFromTable, parameters);
         }
@@ -1489,11 +1619,20 @@ namespace System
             return SourceGets_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5>.GetFromSource, parameters);
         }
         /// <summary>
+        /// 获取集合数量-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public override int SourceCount(params object[] parameters)
+        {
+            return SourceAftExecute(RelationSql<T, R, C1, C2, C3, C4,C5>.CountFromSource, parameters);
+        }
+        /// <summary>
         /// 更新操作-直接传实体类
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public override int SourceUpdate(params object[] parameters)
+        public override int SourceModify(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.ModifyFromSource, parameters);
         }
@@ -1520,7 +1659,7 @@ namespace System
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public override int SourceInsert(params object[] parameters)
+        public override int SourceAdd(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.AddFromSource, 0, parameters);
         }
@@ -1546,11 +1685,20 @@ namespace System
             return TableGets_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5>.GetFromTable, parameters);
         }
         /// <summary>
+        /// 获取集合数量-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public override int TableCount(params object[] parameters)
+        {
+            return SourceAftExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.CountFromTable, parameters);
+        }
+        /// <summary>
         /// 更新操作-直接传值
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public override int TableUpdate(params object[] parameters)
+        public override int TableModify(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.ModifyFromTable, parameters);
         }
@@ -1577,7 +1725,7 @@ namespace System
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public override int TableInsert(params object[] parameters)
+        public override int TableAdd(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.AddFromTable, parameters);
         }
@@ -1636,11 +1784,20 @@ namespace System
             return SourceGets_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.GetFromSource, parameters);
         }
         /// <summary>
+        /// 获取集合数量-直接传实体类
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public override int SourceCount(params object[] parameters)
+        {
+            return SourceAftExecute(RelationSql<T, R, C1, C2, C3, C4, C5,C6>.CountFromSource, parameters);
+        }
+        /// <summary>
         /// 更新操作-直接传实体类
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第3个类型起<T,R,C1>的C1,详见F12泛型类型），where c1=@c1</param>
         /// <returns></returns>
-        public override int SourceUpdate(params object[] parameters)
+        public override int SourceModify(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.ModifyFromSource, parameters);
         }
@@ -1667,7 +1824,7 @@ namespace System
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public override int SourceInsert(params object[] parameters)
+        public override int SourceAdd(params object[] parameters)
         {
             return SourceExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.AddFromSource, 0, parameters);
         }
@@ -1693,11 +1850,20 @@ namespace System
             return TableGets_Wrapper(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.GetFromTable, parameters);
         }
         /// <summary>
+        /// 获取集合数量-直接传值
+        /// </summary>
+        /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
+        /// <returns></returns>
+        public override int TableCount(params object[] parameters)
+        {
+            return SourceAftExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.CountFromTable, parameters);
+        }
+        /// <summary>
         /// 更新操作-直接传值
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型），set t=@t where c1=@c1</param>
         /// <returns></returns>
-        public override int TableUpdate(params object[] parameters)
+        public override int TableModify(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.ModifyFromTable, parameters);
         }
@@ -1724,7 +1890,7 @@ namespace System
         /// </summary>
         /// <param name="parameters">参数顺序（泛型类型参数从第1个类型起<T,R,C1>的T,C1,详见F12泛型类型</param>
         /// <returns></returns>
-        public override int TableInsert(params object[] parameters)
+        public override int TableAdd(params object[] parameters)
         {
             return TableExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.AddFromTable, parameters);
         }

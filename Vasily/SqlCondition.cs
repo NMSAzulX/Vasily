@@ -4,18 +4,17 @@ using Vasily;
 
 namespace System
 {
-    public class SqlCondition<T>
-    {
+    public class SqlCondition {
         public StringBuilder SqlResults;
 
         public SqlCondition()
         {
             SqlResults = new StringBuilder();
         }
-        public void Clear()
-        {
-            SqlResults.Clear();
-        }
+    }
+
+    public class SqlCondition<T>:SqlCondition
+    {
 
         //public static SqlCondition<T> operator & (SqlCondition<T> field1, string field2)
         //{
@@ -33,7 +32,7 @@ namespace System
         public static SqlCondition<T> operator &(SqlCondition<T> field1, SqlCondition<T> field2)
         {
             SqlCondition<T> newInstance = new SqlCondition<T>();
-            if (newInstance.SqlResults.Length>0)
+            if (newInstance.SqlResults.Length > 0)
             {
                 newInstance.SqlResults.Append(" AND ");
                 newInstance.SqlResults.Append(field2.SqlResults);
@@ -175,9 +174,18 @@ namespace System
         }
         public override string ToString()
         {
-           string result = SqlResults.ToString();
+            string result = SqlResults.ToString();
             SqlResults.Clear();
             return result;
         }
     }
+
+    public struct SqlCP
+    {
+        public object instance;
+        public string sql;
+    }
+
+    
 }
+

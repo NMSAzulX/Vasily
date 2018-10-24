@@ -16,9 +16,9 @@ namespace VasilyHttpDemo.Controllers
         public ReturnPageResult GetCount()
         {
             //return BoolPageResult(true, SqlCondition > "id",new { id= 140635 });
-            return PageResult(
-                SqlHandler.Query(SqlCondition > "id", new { id = 142350 }), 
-                SqlCondition > "id", new { id = 140635 }
+            return GetsResult(
+                new { id = 142350 }.Condition(c>"id"), //按条件查询集合
+                new { id = 140635 }.Condition(c>"id")  //按条件查询总数
                 );
         }
     }

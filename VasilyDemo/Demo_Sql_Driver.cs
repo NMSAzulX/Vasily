@@ -50,19 +50,19 @@ namespace VasilyDemo
             //获取所有元素
             wrapper.GetAll();
             wrapper.GetByPrimary(one);
-            wrapper.GetEntitiesByIn(1, 2, 3, 4);
-            wrapper.GetEntityByIn(1);
+            wrapper.GetsIn(1, 2, 3, 4);
+            wrapper.GetIn(1);
             wrapper.IsRepeat(one);
-            wrapper.NoRepeateInsert(one);
+            wrapper.NoRepeateAdd(one);
             wrapper.GetNoRepeateId<int>(one);
             wrapper.GetRepeates(one);
-            wrapper.UpdateByPrimary(one,one1,one2);
-            wrapper.Insert(one, one1, one2);
+            wrapper.ModifyByPrimary(one,one1,one2);
+            wrapper.Add(one, one1, one2);
             wrapper.SingleDeleteByPrimary(1);
             wrapper.EntitiesDeleteByPrimary(one, one1, one2);
 
             //SafeInsert = NoRepeateInsert + GetNoRepeateId
-            wrapper.SafeInsert(one);
+            wrapper.SafeAdd(one);
 
 
         }

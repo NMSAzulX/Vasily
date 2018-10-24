@@ -17,10 +17,10 @@ namespace VasilyDemo
 
             dapper1.SourceGet(one, two);
             dapper1.SourceGets(one, two);
-            dapper1.SourceInsert(three, one, two);
+            dapper1.SourceAdd(three, one, two);
             dapper1.SourcePreDelete(three);
             dapper1.SourceAftDelete(one, two);
-            dapper1.SourceUpdate(three, one, two);
+            dapper1.SourceModify(three, one, two);
 
             dapper1.TableGet(one.oid, two.rid);
 
@@ -29,10 +29,10 @@ namespace VasilyDemo
             DapperWrapper<Three, Two, One> dapper2 = new DapperWrapper<Three, Two, One>("key");
             dapper2.TableGet(one.oid);
             dapper2.TableGets(one.oid);
-            dapper2.TableInsert(three.tid,one.oid);
+            dapper2.TableAdd(three.tid,one.oid);
             dapper2.TablePreDelete(three.tid);
             dapper2.TableAftDelete(one.oid);
-            dapper2.TableUpdate(three.tid, one.oid);
+            dapper2.TableModify(three.tid, one.oid);
            
         }
     }

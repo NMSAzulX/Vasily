@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace System
+﻿namespace System
 {
-    public static class DateTimeExtentsion
+    public static class DateTimeExtension
     {
         public static long MillisecondsStamp(this DateTime datetime)
         {
