@@ -265,15 +265,27 @@ var children = DapperWrapper<TestRelation,TestRelation,TestRelation_AnyName>.Use
 
 - ### 项目计划
 
-   - [x] 将支持并发解析操作
+   - [x] 支持并发解析操作
 
-   - [x] 将跟随.NET Core2.1特性进行性能修改
+   - [x] 使用standard兼容
 
    - [x] 支持关系操作
 
    - [x] 支持唯一约束安全插入，并获取主键ID
    
+   - [x] 构建新查询语法操作
+   
    - [x] 支持条件查询
+   
+   - [x] 支持分页查询
+   
+   - [x] 支持排序查询
+   
+   - [x] 支持HTTP，自动分页查询返回
+   
+   - [ ] 支持索引优化分页
+   
+   - [ ] 支持语法树解析
 
      ​
 
