@@ -28,6 +28,27 @@ namespace Microsoft.AspNetCore.Mvc
             return GetsPageResult(vp_instance);
         }
 
+        [HttpGet("vasily")]
+        public ReturnPageResult VasilyGet(SqlVP<T> vp_instance)
+        {
+            return GetsPageResult(vp_instance);
+        }
+        [HttpPost("vasily")]
+        public ReturnResult VasilyModify(params T[] instances)
+        {
+            return ModifyResult(instances);
+        }
+        [HttpPut("vasily")]
+        public ReturnResult VasilyAdd(params T[] instances)
+        {
+            return AddResult(instances);
+        }
+        [HttpDelete("vasily")]
+        public ReturnResult VasilyDelete(params T[] instances)
+        {
+            return DeleteResult(instances);
+        }
+
         #region 信息返回封装
         /// <summary>
         /// 更新操作的结果返回
@@ -43,6 +64,10 @@ namespace Microsoft.AspNetCore.Mvc
         {
             return Result(driver.Modify(cp), msg);
         }
+        protected ReturnResult ModifyResult(T[] instances, string msg = "删除失败!")
+        {
+            return Result(driver.ModifyByPrimary(instances), msg);
+        }
         /// <summary>
         /// 删除操作的结果返回
         /// </summary>
@@ -57,6 +82,10 @@ namespace Microsoft.AspNetCore.Mvc
         {
             return Result(driver.Delete(cp), msg);
         }
+        protected ReturnResult DeleteResult(T[] instances, string msg = "删除失败!")
+        {
+            return Result(driver.EntitiesDeleteByPrimary(instances), msg);
+        }
         /// <summary>
         /// 添加操作的结果返回
         /// </summary>
@@ -64,6 +93,10 @@ namespace Microsoft.AspNetCore.Mvc
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
         protected ReturnResult AddResult(IEnumerable<T> instances, string msg = "添加失败!")
+        {
+            return Result(driver.Add(instances), msg);
+        }
+        protected ReturnResult AddResult(T[] instances, string msg = "添加失败!")
         {
             return Result(driver.Add(instances), msg);
         }
