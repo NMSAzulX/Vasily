@@ -30,10 +30,10 @@ namespace VasilyUT
             SqlCondition<Relation2> c = new SqlCondition<Relation2>();
             Assert.Equal(
 
-                "((StudentId > @StudentId OR ClassId = @ClassId) AND ClassName <> @ClassName)", 
+                "((StudentId > @StudentId OR ClassId = @ClassId) AND ClassName <> @ClassName)",
 
                 ((c > "StudentId" | c == "ClassId") & c != "ClassName").ToString()
-                       
+
                 );
         }
 
