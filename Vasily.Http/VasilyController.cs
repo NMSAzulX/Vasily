@@ -30,9 +30,12 @@ namespace Microsoft.AspNetCore.Mvc
         /// <param name="cp">实例与查询条件</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
+        protected ReturnResult ModifyResult(SqlCP<T> cp, string msg = "更新失败!")
+        {
+            return Result(driver.Modify(cp), msg);
+        }
         protected ReturnResult ModifyResult(SqlCP cp, string msg = "更新失败!")
         {
-
             return Result(driver.Modify(cp), msg);
         }
         /// <summary>
@@ -41,6 +44,10 @@ namespace Microsoft.AspNetCore.Mvc
         /// <param name="cp">实例与查询条件</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
+        protected ReturnResult DeleteResult(SqlCP<T> cp, string msg = "删除失败!")
+        {
+            return Result(driver.Delete(cp), msg);
+        }
         protected ReturnResult DeleteResult(SqlCP cp, string msg = "删除失败!")
         {
             return Result(driver.Delete(cp), msg);
@@ -76,28 +83,38 @@ namespace Microsoft.AspNetCore.Mvc
         {
             return Result(driver.Gets(cp_value), driver.CountWithCondition(cp_value), msg);
         }
+        protected ReturnPageResult GetsPageResult(SqlCP<T> cp_value, string msg = "查询失败!")
+        {
+            return Result(driver.Gets(cp_value), driver.CountWithCondition(cp_value), msg);
+        }
         /// <summary>
         /// 用条件查询实例结果
         /// </summary>
         /// <param name="cp">实例与查询条件</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
+        protected ReturnResult GetResult(SqlCP<T> cp, string msg = "查询失败!")
+        {
+            return Result(driver.Get(cp), msg);
+        }
         protected ReturnResult GetResult(SqlCP cp, string msg = "查询失败!")
         {
             return Result(driver.Get(cp), msg);
         }
-
         /// <summary>
         /// 用条件查询实例结果集
         /// </summary>
         /// <param name="cp">实例与查询条件</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
+        protected ReturnResult GetsResult(SqlCP<T> cp, string msg = "查询失败!")
+        {
+            return Result(driver.Gets(cp), msg);
+        }
         protected ReturnResult GetsResult(SqlCP cp, string msg = "查询失败!")
         {
             return Result(driver.Gets(cp), msg);
         }
-
         #endregion
     }
 
@@ -186,7 +203,6 @@ namespace Microsoft.AspNetCore.Mvc
 
         #endregion
     }
-
 
     public class VasilyController<T, R, S1> : VasilyResultController<T> where T : class
     {
@@ -404,17 +420,7 @@ namespace Microsoft.AspNetCore.Mvc
             return _result;
         }
     }
-    public struct ReturnPageResult
-    {
-        public string Msg;
-        public object Data;
-        public int Status;
-        public int Totle;
-    }
-    public struct ReturnResult
-    {
-        public string Msg;
-        public object Data;
-        public int Status;
-    }
+
+
+
 }

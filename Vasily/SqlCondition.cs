@@ -344,17 +344,7 @@ namespace System
        
     }
 
-    public struct SqlCP
-    {
-        public object Instance;
-        public string ConditionWithPage;
-        public string ConditionWithOutPage;
-       
-        public override string ToString()
-        {
-            return ConditionWithPage;
-        }
-    }
+   
 
 
 }

@@ -56,17 +56,17 @@ namespace VasilyUT
         [Fact(DisplayName = "条件拼接+分页测试2")]
         public void TestPageCondition2()
         {
-            SqlPackage<Student> package = new SqlPackage<Student>();
-            SqlCondition<Student> c = new SqlCondition<Student>();
+            SqlPackage<Relation> package = new SqlPackage<Relation>();
+            SqlCondition<Relation> c = new SqlCondition<Relation>();
 
             var cp = 
                 new { StudentId = 1, ClassId = 2, ClassName = "abc" }.
-                Condition(c > "StudentId" | c == "ClassId" & c != "ClassName" ^ (2, 10));
+                Condition(c > "StudentId" | c == "ClassId" & c != "Id" ^ (2, 10));
 
 
             Assert.Equal(
 
-                "(StudentId > @StudentId OR (ClassId = @ClassId AND ClassName <> @ClassName)) LIMIT 10,10",
+                "(StudentId > @StudentId OR (ClassId = @ClassId AND Id <> @Id)) LIMIT 10,10",
 
                 cp.ConditionWithPage
 

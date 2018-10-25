@@ -52,11 +52,20 @@ namespace Vasily.Core
                 _primary_manually = primary.Instance.IsManually;
                 _primary_member = primary.Member;
             }
+            // 忽略掉Ignore标签的成员
+            var ignores = _handler.Members<IgnoreAttribute>();
+            _model.LoadMembers(_handler._members);
+            _model.AddIgnores(ignores);
 
             //列名映射解析
             ConcurrentDictionary<MemberInfo, string> _column_mapping = new ConcurrentDictionary<MemberInfo, string>();
             ConcurrentDictionary<string, string> _string_mapping = new ConcurrentDictionary<string, string>();
             var mappings = _handler.Mappings<ColumnAttribute>();
+            foreach (var item in _handler._members)
+            {
+                _column_mapping[item] = item.Name;
+                _string_mapping[item.Name] = item.Name;
+            }
             foreach (var item in mappings)
             {
                 _column_mapping[item.Member] = item.Instance.Name;
@@ -65,11 +74,9 @@ namespace Vasily.Core
             _model.ColumnMapping = _column_mapping;
             _model.StringMapping = _string_mapping;
             //填充属性
-            _model.LoadMembers(_handler._members);
+           
 
-            //忽略掉Ignore标签的成员
-            var ignores = _handler.Members<IgnoreAttribute>();
-            _model.AddIgnores(ignores);
+            
 
             //静态sql生成器。例如 MakerModel<Student>
             GsOperator gs = new GsOperator(typeof(MakerModel<>), _entity_type);

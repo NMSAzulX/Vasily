@@ -138,7 +138,7 @@ namespace Vasily
             {
                 return ColumnMapping[item];
             }
-            return item.Name;
+            throw new Exception($"在{typeof(T)}类中找不到属性{item.Name}");
         }
         public static string Column(string item)
         {
@@ -146,7 +146,7 @@ namespace Vasily
             {
                 return StringMapping[item];
             }
-            return item;
+            throw new Exception($"在{typeof(T)}类中找不到属性{item}");
         }
         /// <summary>
         /// 成员集合求并集
