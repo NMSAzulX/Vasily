@@ -22,6 +22,11 @@ namespace Microsoft.AspNetCore.Mvc
             driver = new DapperWrapper<T>(reader, writter);
             c = new SqlCondition<T>();
         }
+        [HttpPost("query-vp")]
+        public ReturnPageResult QueryVP(SqlVP<T> vp_instance)
+        {
+            return GetsPageResult(vp_instance);
+        }
 
         #region 信息返回封装
         /// <summary>
