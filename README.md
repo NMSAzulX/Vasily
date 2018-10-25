@@ -285,7 +285,9 @@ var children = DapperWrapper<TestRelation,TestRelation,TestRelation_AnyName>.Use
    
    - [ ] 支持索引优化分页
    
-   - [ ] 支持语法树解析
+   - [x] 支持语法树解析
+   
+   - [x] 支持前端SqlVP格式安全请求分页数据
 
      ​
 
@@ -296,6 +298,7 @@ var children = DapperWrapper<TestRelation,TestRelation,TestRelation_AnyName>.Use
    - 2018-02-27：发布1.0.2版本，修改部分命名空间，修改Nuget标签信息，增加HttpDemo, 完善Github ReadMe文档.
    - 2018-03-24：支持并发操作，改EString为StringBuilder操作，从而支持Core2.1的性能提升.
    - 2018-10-19：重构Vasily,优化解析引擎，采用排列树支持关系操作，增强注解，解耦解析模板，优化操作体验.
+   - 2018-10-25：支持语法运算生成SQL,支持脚本解析生成SQL.
 
 ~~~
 
