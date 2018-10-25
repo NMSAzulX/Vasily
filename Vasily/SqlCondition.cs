@@ -18,7 +18,7 @@ namespace System
         public SqlCondition()
         {
             HasOrder = false;
-            SqlResults = new StringBuilder();
+            SqlResults = new StringBuilder(20);
             SqlOrders = new StringBuilder();
             SqlPages = new StringBuilder();
         }
