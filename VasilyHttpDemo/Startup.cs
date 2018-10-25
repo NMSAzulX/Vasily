@@ -28,7 +28,7 @@ namespace VasilyHttpDemo
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddVasily(item =>
-            {
+            { 
                 item.Add<MySqlConnection>("key", "Database=tmp_cb;Data Source=192.168.30.225;Port=3306;User Id=root;Password=123321Charset=utf8;SslMode = none;");
 
             });
