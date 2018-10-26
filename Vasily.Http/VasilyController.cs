@@ -10,18 +10,24 @@ namespace Microsoft.AspNetCore.Mvc
         protected SqlCondition<T> c;
         public VasilyController()
         {
-
+            _union_tables = new string[0];
         }
-        public VasilyController(string key)
+        public VasilyController(string key):this()
         {
             driver = new DapperWrapper<T>(key);
             c = new SqlCondition<T>();
         }
-        public VasilyController(string reader, string writter)
+        public VasilyController(string reader, string writter) : this()
         {
             driver = new DapperWrapper<T>(reader, writter);
             c = new SqlCondition<T>();
         }
+        private string[] _union_tables;
+        public void UseUnion(params string[] unions)
+        {
+            driver.Unions = unions;
+        }
+
         [HttpPost("query-vp")]
         public ReturnPageResult QueryVP(SqlVP<T> vp_instance)
         {
@@ -74,13 +80,13 @@ namespace Microsoft.AspNetCore.Mvc
         /// <param name="cp">实例与查询条件</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
-        protected ReturnResult DeleteResult(SqlCP<T> cp, string msg = "删除失败!")
+        protected ReturnResult DeleteResult(SqlCP<T> cp, string msg = "删除失败!", ForceDelete flag = ForceDelete.No )
         {
-            return Result(driver.Delete(cp), msg);
+            return Result(driver.Delete(cp, flag), msg);
         }
-        protected ReturnResult DeleteResult(SqlCP cp, string msg = "删除失败!")
+        protected ReturnResult DeleteResult(SqlCP cp, string msg = "删除失败!", ForceDelete flag = ForceDelete.No)
         {
-            return Result(driver.Delete(cp), msg);
+            return Result(driver.Delete(cp, flag), msg);
         }
         protected ReturnResult DeleteResult(T[] instances, string msg = "删除失败!")
         {
@@ -356,6 +362,7 @@ namespace Microsoft.AspNetCore.Mvc
 
     public class VasilyResultController : ControllerBase
     {
+
         /// <summary>
         /// 分页 - 用布尔类型操作返回值
         /// </summary>

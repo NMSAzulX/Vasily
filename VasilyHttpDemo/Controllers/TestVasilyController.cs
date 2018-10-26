@@ -27,9 +27,14 @@ namespace VasilyHttpDemo.Controllers
             }*/
 
             //模拟POST
+
+            UseUnion("td_success", "td_teacher");
+
+
             SqlVP<TestEntity> vp = new SqlVP<TestEntity>();
-            vp.sql = "c>id ^c - SELECT * FROM USER ^(3,10)";
-            vp.value = new TestEntity() { id=10000 };
+            vp.sql = "c>id ^c - id ^(3,10)";
+            vp.value = new TestEntity() { id=1000 };
+            driver.RequestType = VasilyRequestType.Normal;
 
 
             return GetsPageResult(vp);

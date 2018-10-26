@@ -59,6 +59,29 @@ namespace System
         {
             Debug.WriteLine(value);
         }
+
+        public string ConditionOrder{ get { return GetString(SqlResults, SqlOrders); } }
+        public string Order { get { return SqlOrders.ToString(); } }
+        public string Tails { get { return GetString(SqlOrders, SqlPages); } }
+        public string Full { get {return GetString(SqlResults,SqlOrders,SqlPages);}
+        }
+
+        public string GetString(params StringBuilder[] builders)
+        {
+            int length = 0;
+            for (int i = 0; i < builders.Length; i+=1)
+            {
+                length += builders[i].Length;
+            }
+
+            StringBuilder sb = new StringBuilder(length);
+            //sb.Append(builders);
+            for (int i = 0; i < builders.Length; i += 1)
+            {
+                sb.Append(builders[i]);
+            }
+            return sb.ToString();
+        }
     }
 
     public class SqlCondition<T> : SqlCondition

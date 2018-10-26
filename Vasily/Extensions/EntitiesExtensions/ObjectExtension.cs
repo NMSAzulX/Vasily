@@ -6,8 +6,9 @@
         {
             SqlCP cp = new SqlCP();
             cp.Instance = instance;
-            cp.ConditionWithOutPage = condition.GetConditionWithoutPage();
-            cp.ConditionWithPage = condition.GetConditionWithPage();
+            cp.Condition = condition.SqlResults.ToString();
+            cp.Tails = condition.Tails;
+            cp.Order = condition.Order;
             condition.Claer();
             return cp;
         }
