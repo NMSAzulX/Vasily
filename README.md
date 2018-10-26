@@ -260,8 +260,58 @@ public int parent_id{get;set;}
 var children = DapperWrapper<TestRelation,TestRelation,TestRelation_AnyName>.UseKey("sqlkey").SourceGets(father);
 
 ``` 
+ ​
+
+ ### 语法及脚本
+
+- #### CP (Condition+Parameter)语法：
+ 任何对象都可以.Condition，返回CP对象进行参数化查询，例如：
+
+```c#
+	Student student = new Student();
+	handler.Gets(student.Condition("c>id"));
+	handler.Gets(student.Condition(c>"id"));
+``` 
+
+```c#
+
+//c ：固定的识别变量
+
+//普通操作符
+c>"id"  ==> id>@id 如果采用泛型操作 id可以根据Column注解进行数据库字段的映射
+c!="id" ==> id<>@id
 
 
+//与或操作符
+c>"id" & (c!="id" | c<"id")  ==>  (id>@id AND (id!=@id OR id<@id))
+
+
+//排序操作符
+c +"id" - "age" ==> ORDER BY id ASC, age DESC
+
+
+//分页操作符
+c ^ (2,10) ==> 分页语句，兼容MySql，SqlServer2012以后，PgSql，SqlLite
+
+
+//组合
+c>"id" ^ c -"id" ^ (current_page, size)  ==> id>@id ORDER BY id DESC +分页查询
+
+
+//Vasily可根据语法树解析字符串脚本进而生成SQL语句，如下：
+"c>id ^ c-id ^(2,10)" = >id>@id ORDER BY id DESC +分页查询
+```
+
+- #### VP(VasilyScript +Parameter)格式即:
+
+```c#
+//vp可以隐式转换为cp,进而适配vasily进行查询
+{
+     value:{ id:10000, name:"小明" },
+     sql:"c>id & c==name ^c - id ^(3,10)"
+}
+```
+  sql 已经进行了防注入检测，参数也采用参数化处理
 
 - ### 项目计划
 
