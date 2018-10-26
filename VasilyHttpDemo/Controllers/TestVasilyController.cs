@@ -28,7 +28,7 @@ namespace VasilyHttpDemo.Controllers
 
             //模拟POST
             SqlVP<TestEntity> vp = new SqlVP<TestEntity>();
-            vp.sql = "c>id ^c - id ^(3,10)";
+            vp.sql = "c>id ^c - SELECT * FROM USER ^(3,10)";
             vp.value = new TestEntity() { id=10000 };
 
 
