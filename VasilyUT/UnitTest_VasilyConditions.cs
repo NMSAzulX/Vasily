@@ -49,7 +49,7 @@ namespace VasilyUT
 
                 "((StudentId > @StudentId OR ClassId = @ClassId) AND ClassName <> @ClassName) OFFSET 10 ROW FETCH NEXT 10 rows only",
 
-                cp.ConditionWithPage
+                cp.Full
 
                 );
         }
@@ -68,7 +68,7 @@ namespace VasilyUT
 
                 "(StudentId > @StudentId OR (ClassId = @ClassId AND Id <> @Id)) LIMIT 10,10",
 
-                cp.ConditionWithPage
+                cp.Full
 
                 );
         }
