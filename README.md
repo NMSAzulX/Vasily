@@ -338,6 +338,8 @@ c>"id" ^ c -"id" ^ (current_page, size)  ==> id>@id ORDER BY id DESC +分页查�
    - [x] 支持语法树解析
    
    - [x] 支持前端SqlVP格式安全请求分页数据
+   
+   - [x] 支持多表联合查询
 
      ​
 
@@ -349,6 +351,7 @@ c>"id" ^ c -"id" ^ (current_page, size)  ==> id>@id ORDER BY id DESC +分页查�
    - ~~2018-03-24：支持并发操作，改EString为StringBuilder操作，从而支持Core2.1的性能提升.~~
    - 2018-10-19：重构Vasily,优化解析引擎，采用排列树支持关系操作，增强注解，解耦解析模板，优化操作体验.
    - 2018-10-25：支持语法运算生成SQL,支持脚本解析生成SQL.
+   - 2018-10-26：增加Union支持查询、更新、删除操作.
 
 ~~~
 
