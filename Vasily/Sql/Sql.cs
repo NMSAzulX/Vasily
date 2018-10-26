@@ -1,10 +1,31 @@
-﻿using Vasily.Core;
+﻿using System.Collections.Concurrent;
+using Vasily;
+using Vasily.Core;
 
 namespace System
 {
     
     public class Sql<T>
     {
+        public static ConcurrentDictionary<string, SqlCP> Cache;
+        static Sql()
+        {
+            Cache = new ConcurrentDictionary<string, SqlCP>();
+        }
+        public static SqlCP GetCP(string script)
+        {
+            if (Cache.ContainsKey(script))
+            {
+                return Cache[script].Clone();
+            }
+            else
+            {
+                ASTParser<T> parser = new ASTParser<T>();
+                SqlCP cp = new object().Condition(parser.GetCondition(script));
+                Cache[script] = cp;
+                return cp;
+            }
+        }
 
         public static MemberSetter SetPrimary;
         public static string Primary;

@@ -20,6 +20,15 @@ namespace System
             return ConditionWithPage;
         }
 
+        public SqlCP Clone()
+        {
+            return new SqlCP()
+            {
+                ConditionWithPage = ConditionWithPage,
+                ConditionWithOutPage = ConditionWithOutPage
+            };
+        }
+
     }
 
     public class SqlCP<T> : SqlCP
@@ -30,14 +39,16 @@ namespace System
         }
         public static implicit operator SqlCP<T>(SqlVP<T> key)
         {
-            ASTParser<T> parser = new ASTParser<T>();
-            var condition = parser.GetCondition(key.sql);
-            SqlCP<T> cp = new SqlCP<T>();
-            cp.Instance = key.value;
-            cp.ConditionWithOutPage = condition.GetConditionWithoutPage();
-            cp.ConditionWithPage = condition.GetConditionWithPage();
-            condition.Claer();
-            return cp;
+            if (Sql<T>.Cache.ContainsKey(key.sql))
+            {
+                SqlCP<T> result = (SqlCP<T>)Sql<T>.GetCP(key.sql);
+                result.Instance = key.value;
+                return result;
+            }
+            else
+            {
+                return (SqlCP<T>)(key.value.Condition<T>(key.sql));
+            }
         }
     }
 }
