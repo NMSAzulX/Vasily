@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BenchmarkDotNet.Running;
+using System;
 
 namespace VasilyDemo
 {
@@ -8,6 +9,7 @@ namespace VasilyDemo
         {
             //Demo_Sql.Start();
             //Demo_RelationSql.Start();
+            BenchmarkRunner.Run<Demo_Union>();
             Console.ReadKey();
         }
     }
