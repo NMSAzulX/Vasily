@@ -28,31 +28,10 @@ namespace System
             SqlOrders.Clear();
             SqlPages.Clear();
         }
-        public string GetConditionWithPage()
-        {
-            if (SqlResults.Length == 0)
-            {
-                SqlResults.Append("1=1");
-            }
-            StringBuilder result = new StringBuilder(SqlResults.Length+SqlOrders.Length+ SqlPages.Length);
-            result.Append(SqlResults).Append(SqlOrders).Append(SqlPages);
-            Show("WithPage: "+result.ToString());
-            return result.ToString();
-        }
-        public string GetConditionWithoutPage()
-        {
-            if (SqlResults.Length == 0)
-            {
-                SqlResults.Append("1=1");
-            }
-            StringBuilder result = new StringBuilder(SqlResults.Length);
-            result.Append(SqlResults);
-            Show("NoPage: "+result.ToString());
-            return result.ToString();
-        }
+
         public override string ToString()
         {
-            return GetConditionWithPage();
+            return Full;
         }
         [Conditional("DEBUG")]
         public void Show(string value)
@@ -60,10 +39,25 @@ namespace System
             Debug.WriteLine(value);
         }
 
-        public string ConditionOrder{ get { return GetString(SqlResults, SqlOrders); } }
+        public string ConditionOrder{
+            get {
+                if (SqlResults.Length == 0)
+                {
+                    SqlResults.Append("1=1");
+                }
+                return GetString(SqlResults, SqlOrders);
+            }
+        }
         public string Order { get { return SqlOrders.ToString(); } }
         public string Tails { get { return GetString(SqlOrders, SqlPages); } }
-        public string Full { get {return GetString(SqlResults,SqlOrders,SqlPages);}
+        public string Full {
+            get {
+                if (SqlResults.Length == 0)
+                {
+                    SqlResults.Append("1=1");
+                }
+                return GetString(SqlResults,SqlOrders,SqlPages);
+            }
         }
 
         public string GetString(params StringBuilder[] builders)
