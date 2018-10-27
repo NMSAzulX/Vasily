@@ -10,7 +10,10 @@ namespace Vasily.Core
         {
             _template = new InsertTemplate();
             _model.ColFunction = (item) => { return _model.Column(item); };
-            _model.AddIgnores(_primary_member);
+            if (!_primary_manually)
+            {
+                _model.AddIgnores(_primary_member);
+            }
         }
 
         public string Insert()

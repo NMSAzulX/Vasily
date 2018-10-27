@@ -729,7 +729,6 @@ namespace System
         }
 
 
-
         #region 内部函数封装
         internal int TableExecute(string sql, params object[] parameters)
         {

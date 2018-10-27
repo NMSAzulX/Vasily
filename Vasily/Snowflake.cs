@@ -51,6 +51,10 @@ namespace System
             _datacenter_length = data_center;
             _datanodes_length = data_nodes;
         }
+
+        /// <summary>
+        /// 获取唯一ID
+        /// </summary>
         public static long NextId { get { return GetId(); } }
         public static long GetId()
         {
