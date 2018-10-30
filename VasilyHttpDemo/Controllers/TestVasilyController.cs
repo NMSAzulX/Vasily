@@ -33,8 +33,6 @@ namespace VasilyHttpDemo.Controllers
             vp.value = new TestEntity() { id = 1000 };
             driver.RequestType = VasilyRequestType.Normal;
 
-
-
             UseUnion("td_teacher1", "td_teacher2");
             return GetsPageResult(vp);
         }
