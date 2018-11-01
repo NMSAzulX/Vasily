@@ -292,27 +292,31 @@ namespace System
         /// <returns></returns>
         public int Delete(SqlCondition<T> condition, object instance, ForceDelete flag = ForceDelete.No)
         {
-
+            int result = 0;
             if (flag == ForceDelete.No)
             {
-                return Writter.Execute(Sql<T>.DeleteByCondition + condition.Full, instance);
+                result = Writter.Execute(Sql<T>.DeleteByCondition + condition.Full, instance, transaction: _transcation);
             }
             else
             {
-                return Writter.Execute(SqlUnion<T>.Union(Sql<T>.DeleteByCondition + condition.SqlPages.ToString(), Unions) + condition.Tails, instance);
+                result =  Writter.Execute(SqlUnion<T>.Union(Sql<T>.DeleteByCondition + condition.SqlPages.ToString(), Unions) + condition.Tails, instance, transaction: _transcation);
             }
-
+            _transcation = null;
+            return result;
         }
         public int Delete(SqlCP cp, ForceDelete flag = ForceDelete.No)
         {
+            int result = 0;
             if (flag == ForceDelete.No)
             {
-                return Writter.Execute(Sql<T>.DeleteByCondition + cp.Full, cp.Instance);
+                result= Writter.Execute(Sql<T>.DeleteByCondition + cp.Full, cp.Instance, transaction: _transcation);
             }
             else
             {
-                return Writter.Execute(SqlUnion<T>.Union(Sql<T>.DeleteByCondition + cp.Query, Unions) + cp.Tails, cp.Instance);
+                result =  Writter.Execute(SqlUnion<T>.Union(Sql<T>.DeleteByCondition + cp.Query, Unions) + cp.Tails, cp.Instance, transaction: _transcation);
             }
+            _transcation = null;
+            return result;
         }
         /// <summary>
         /// 根据条件批量查询
@@ -652,6 +656,7 @@ namespace System
         /// <returns>更新结果</returns>
         internal bool Complete_UpdateByPrimary(params T[] instances)
         {
+            bool result = false;
             string sql = null;
             if (Unions == null)
             {
@@ -662,11 +667,13 @@ namespace System
                 sql = SqlUnion<T>.Union(Sql<T>.UpdateAllByPrimary, Unions);
                 Unions = null;
             }
-            return Writter.Execute(sql, instances) == instances.Length;
-
+            result = Writter.Execute(sql, instances, transaction: _transcation) == instances.Length;
+            _transcation = null;
+            return result;
            }
         internal bool Complete_UpdateByPrimary(IEnumerable<T> instances)
         {
+            bool result = false;
             string sql = null;
             if (Unions == null)
             {
@@ -677,7 +684,9 @@ namespace System
                 sql = SqlUnion<T>.Union(Sql<T>.UpdateAllByPrimary, Unions);
                 Unions = null;
             }
-            return Writter.Execute(sql, instances) == instances.Count();;
+            result = Writter.Execute(sql, instances, transaction: _transcation) == instances.Count();
+            _transcation = null;
+            return result;
         }
         #endregion
 
@@ -689,6 +698,7 @@ namespace System
         /// <returns>更新结果</returns>
         internal bool Normal_UpdateByPrimary(params T[] instances)
         {
+            bool result = false;
             string sql = null;
             if (Unions == null)
             {
@@ -699,10 +709,13 @@ namespace System
                 sql = SqlUnion<T>.Union(Sql<T>.UpdateByPrimary, Unions);
                 Unions = null;
             }
-            return Writter.Execute(sql, instances) == instances.Length;
+            result = Writter.Execute(sql, instances, transaction: _transcation) == instances.Length;
+            _transcation = null;
+            return result;
         }
         internal bool Normal_UpdateByPrimary(IEnumerable<T> instances)
         {
+            bool result = false;
             string sql = null;
             if (Unions == null)
             {
@@ -713,7 +726,9 @@ namespace System
                 sql = SqlUnion<T>.Union(Sql<T>.UpdateByPrimary, Unions);
                 Unions = null;
             }
-            return Writter.Execute(sql, instances) == instances.Count();
+            result = Writter.Execute(sql, instances, transaction: _transcation) == instances.Count();
+            _transcation = null;
+            return result;
         }
         #endregion
 
@@ -726,11 +741,17 @@ namespace System
         /// <returns>返回结果</returns>
         internal int Complate_Insert(params T[] instances)
         {
-            return Writter.Execute(Sql<T>.InsertAll, instances);
+            int result = 0;
+            result = Writter.Execute(Sql<T>.InsertAll, instances, transaction: _transcation);
+            _transcation = null;
+            return result;
         }
         internal int Complate_Insert(IEnumerable<T> instances)
         {
-            return Writter.Execute(Sql<T>.InsertAll, instances);
+            int result = 0;
+            result = Writter.Execute(Sql<T>.InsertAll, instances, transaction: _transcation);
+            _transcation = null;
+            return result;
         }
         #endregion
 
@@ -742,11 +763,17 @@ namespace System
         /// <returns>返回结果</returns>
         internal int Normal_Insert(params T[] instances)
         {
-            return Writter.Execute(Sql<T>.Insert, instances);
+            int result = 0;
+            result = Writter.Execute(Sql<T>.Insert, instances, transaction: _transcation);
+            _transcation = null;
+            return result;
         }
         internal int Normal_Insert(IEnumerable<T> instances)
         {
-            return Writter.Execute(Sql<T>.Insert, instances);
+            int result = 0;
+            result = Writter.Execute(Sql<T>.Insert, instances, transaction: _transcation);
+            _transcation = null;
+            return result;
         }
         #endregion
 
@@ -875,12 +902,18 @@ namespace System
         /// <returns>更新结果</returns>
         public bool EntitiesDeleteByPrimary(params T[] instances)
         {
-            return Writter.Execute(Sql<T>.DeleteByPrimary, instances) == instances.Length;
+            bool result = 0;
+            result = Writter.Execute(Sql<T>.DeleteByPrimary, instances, transaction: _transcation) == instances.Length;
+            _transcation = null;
+            return result;
         }
 
         public bool EntitiesDeleteByPrimary(IEnumerable<T> instances)
         {
-            return Writter.Execute(Sql<T>.DeleteByPrimary, instances) == instances.Count();
+            bool result = 0;
+            result = Writter.Execute(Sql<T>.DeleteByPrimary, instances, transaction: _transcation) == instances.Count();
+            _transcation = null;
+            return result;
         }
         #endregion
 
