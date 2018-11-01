@@ -6,7 +6,7 @@
         {
             SqlCP cp = new SqlCP();
             cp.Instance = instance;
-            cp.Condition = condition.SqlResults.ToString();
+            cp.Query = condition.Query;
             cp.Tails = condition.Tails;
             cp.Order = condition.Order;
             condition.Claer();

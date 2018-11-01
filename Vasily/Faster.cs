@@ -15,21 +15,21 @@ namespace System
     public class SqlCP
     {
         public object Instance;
-        public string Condition;
+        public string Query;
         public string Order;
         public string Tails;
 
-        public string Full { get { return Condition + Tails; } }
+        public string Full { get { return Query + Tails; } }
         public override string ToString()
         {
-            return Condition+Tails;
+            return Query+Tails;
         }
 
         public SqlCP Clone()
         {
             return new SqlCP()
             {
-                Condition = Condition,
+                Query = Query,
                 Order = Order,
                 Tails = Tails,
                 Instance = Instance
@@ -40,7 +40,7 @@ namespace System
         {
             return new SqlCP<T>()
             {
-                Condition = Condition,
+                Query = Query,
                 Order = Order,
                 Tails = Tails,
                 Instance = Instance

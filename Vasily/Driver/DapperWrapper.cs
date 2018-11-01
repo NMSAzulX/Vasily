@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using Vasily;
 using Vasily.Core;
 
@@ -40,6 +41,8 @@ namespace System
             return result;
         }
 
+        protected IDbTransaction _transcation;
+
         /// <summary>
         /// 事务重试机制
         /// </summary>
@@ -47,7 +50,7 @@ namespace System
         /// <param name="retry">重试次数</param>
         /// <param name="get_errors">获取指定次数的异常错误</param>
         /// <returns>错误集合</returns>
-        public List<Exception> TransactionRetry(Action action, int retry = 1, params int[] get_errors)
+        public List<Exception> TransactionRetry(Action<IDbConnection, IDbConnection> action, int retry = 1, params int[] get_errors)
         {
             List<Exception> errors = new List<Exception>();
             HashSet<int> dict = new HashSet<int>(get_errors);
@@ -80,7 +83,7 @@ namespace System
         /// <param name="retry">重试次数</param>
         /// <param name="predicate">每次异常获取的逻辑</param>
         /// <returns>错误集合</returns>
-        public List<Exception> TransactionRetry(Action action, int retry = 1, Predicate<int> predicate = null)
+        public List<Exception> TransactionRetry(Action<IDbConnection, IDbConnection> action, int retry = 1, Predicate<int> predicate = null)
         {
             List<Exception> errors = new List<Exception>();
             if (predicate != null)
@@ -121,14 +124,14 @@ namespace System
             return errors;
         }
 
-        public void Transaction(Action action)
+        public void Transaction(Action<IDbConnection, IDbConnection> action)
         {
             //开始事务
             using (IDbTransaction transaction = Reader.BeginTransaction())
             {
                 try
                 {
-                    action?.Invoke();
+                    action?.Invoke(Reader, Writter);
                     transaction.Commit();
                 }
                 catch (Exception ex)
@@ -159,13 +162,48 @@ namespace System
 
         public int Count { get { return GetCount(); } }
 
-        
+
         public DapperWrapper<T> UseUnion(params string[] tables)
         {
             Unions = tables;
             return this;
         }
+        public DapperWrapper<T> UseTransaction()
+        {
+            _transcation = Reader.BeginTransaction();
+            return this;
+        }
 
+
+
+        private string GetRealSqlString(SqlCondition<T> condition, string query)
+        {
+            if (Unions == null)
+            {
+                return query + condition.Full;
+
+            }
+            else
+            {
+                string result = SqlUnion<T>.Union(query + condition.Query, Unions) + condition.Tails;
+                Unions = null;
+                return result;
+            }
+        }
+        private string GetRealSqlString(SqlCP cp, string query)
+        {
+            if (Unions == null)
+            {
+                return query + cp.Full;
+
+            }
+            else
+            {
+                string result = SqlUnion<T>.Union(Sql<T>.SelectAllByCondition + cp.Query, Unions) + cp.Tails;
+                Unions = null;
+                return result;
+            }
+        }
 
         /// <summary>
         /// 根据条件查询单个实体类
@@ -175,53 +213,76 @@ namespace System
         /// <returns></returns>
         public T Get(SqlCondition<T> condition, object instance)
         {
+            string sql = null;
+
             if (RequestType == VasilyRequestType.Complete)
             {
-                return Reader.ExecuteScalar<T>(SqlUnion<T>.Union(Sql<T>.SelectAllByCondition + condition.SqlPages.ToString(), Unions)+ condition.Tails, instance);
+                sql = GetRealSqlString(condition, Sql<T>.SelectAllByCondition);
             }
             else
             {
-                return Reader.ExecuteScalar<T>(SqlUnion<T>.Union(Sql<T>.SelectByCondition + condition.SqlPages.ToString(), Unions)+ condition.Tails, instance);
+                sql = GetRealSqlString(condition, Sql<T>.SelectByCondition);
+                
             }
+            return Reader.QueryFirst<T>(sql, instance);
+
         }
         public T Get(SqlCP cp)
         {
+            string sql = null;
+
             if (RequestType == VasilyRequestType.Complete)
             {
-                return Reader.ExecuteScalar<T>(SqlUnion<T>.Union(Sql<T>.SelectAllByCondition + cp.Condition,Unions), cp.Instance);
+                sql = GetRealSqlString(cp, Sql<T>.SelectAllByCondition);
             }
             else
             {
-                return Reader.ExecuteScalar<T>(SqlUnion<T>.Union(Sql<T>.SelectByCondition + cp.Condition,Unions), cp.Instance);
+                sql = GetRealSqlString(cp, Sql<T>.SelectByCondition);
+
             }
+            return Reader.QueryFirst<T>(sql, cp);
         }
+
+
         /// <summary>
         /// 根据条件更新实体
         /// </summary>
         /// <param name="condition">条件查询</param>
         /// <param name="instance">更新参数化实例</param>
         /// <returns></returns>
-        public int Modify(SqlCondition<T> condition,object instance)
+        public int Modify(SqlCondition<T> condition, object instance)
         {
+            string sql = null;
+
             if (RequestType == VasilyRequestType.Complete)
             {
-                return Reader.Execute(SqlUnion<T>.Union(Sql<T>.UpdateAllByCondition + condition.SqlPages.ToString(), Unions)+ condition.Tails, instance);
+                sql = GetRealSqlString(condition, Sql<T>.UpdateAllByCondition);
             }
             else
             {
-                return Reader.Execute(SqlUnion<T>.Union(Sql<T>.UpdateByCondition + condition.SqlPages.ToString(), Unions)+ condition.Tails, instance);
+                sql = GetRealSqlString(condition, Sql<T>.UpdateByCondition);
             }
+
+            var result = Writter.Execute(sql, instance, transaction: _transcation);
+            _transcation = null;
+            return result;
         }
-        public int Modify(SqlCP cp)
+        public int Modify(SqlCP condition)
         {
+            string sql = null;
+
             if (RequestType == VasilyRequestType.Complete)
             {
-                return Reader.Execute(SqlUnion<T>.Union(Sql<T>.UpdateAllByCondition + cp.Condition,Unions)+cp.Tails, cp.Instance);
+                sql = GetRealSqlString(condition, Sql<T>.UpdateAllByCondition);
             }
             else
             {
-                return Reader.Execute(SqlUnion<T>.Union(Sql<T>.UpdateByCondition + cp.Condition,Unions)+cp.Tails, cp.Instance);
+                sql = GetRealSqlString(condition, Sql<T>.UpdateByCondition);
             }
+
+            var result = Writter.Execute(sql, condition.Instance, transaction: _transcation);
+            _transcation = null;
+            return result;
         }
         /// <summary>
         /// 根据条件删除实体
@@ -229,27 +290,28 @@ namespace System
         /// <param name="condition">条件查询</param>
         /// <param name="instance">删除参数化实例</param>
         /// <returns></returns>
-        public int Delete(SqlCondition<T> condition,object instance, ForceDelete flag= ForceDelete.No)
+        public int Delete(SqlCondition<T> condition, object instance, ForceDelete flag = ForceDelete.No)
         {
+
             if (flag == ForceDelete.No)
             {
-                return Reader.Execute(Sql<T>.DeleteByCondition + condition.Full, instance);
+                return Writter.Execute(Sql<T>.DeleteByCondition + condition.Full, instance);
             }
             else
             {
-                return Reader.Execute(SqlUnion<T>.Union(Sql<T>.DeleteByCondition + condition.SqlPages.ToString(), Unions) + condition.Tails, instance);
+                return Writter.Execute(SqlUnion<T>.Union(Sql<T>.DeleteByCondition + condition.SqlPages.ToString(), Unions) + condition.Tails, instance);
             }
-            
+
         }
         public int Delete(SqlCP cp, ForceDelete flag = ForceDelete.No)
         {
             if (flag == ForceDelete.No)
             {
-                return Reader.Execute(Sql<T>.DeleteByCondition + cp.Full, cp.Instance);
+                return Writter.Execute(Sql<T>.DeleteByCondition + cp.Full, cp.Instance);
             }
             else
             {
-                return Reader.Execute(SqlUnion<T>.Union(Sql<T>.DeleteByCondition + cp.Condition, Unions) + cp.Tails, cp.Instance);
+                return Writter.Execute(SqlUnion<T>.Union(Sql<T>.DeleteByCondition + cp.Query, Unions) + cp.Tails, cp.Instance);
             }
         }
         /// <summary>
@@ -260,27 +322,35 @@ namespace System
         /// <returns></returns>
         public IEnumerable<T> Gets(SqlCondition<T> condition, object instance)
         {
+            string sql = null;
+
             if (RequestType == VasilyRequestType.Complete)
             {
-                return Reader.Query<T>(SqlUnion<T>.Union(Sql<T>.SelectAllByCondition + condition.SqlPages.ToString(), Unions)+ condition.Tails, instance);
+                sql = GetRealSqlString(condition, Sql<T>.SelectAllByCondition);
             }
             else
             {
-                return Reader.Query<T>(SqlUnion<T>.Union(Sql<T>.SelectByCondition + condition.SqlPages.ToString(), Unions)+ condition.Tails, instance);
+                sql = GetRealSqlString(condition, Sql<T>.SelectByCondition);
             }
+
+            return Reader.Query<T>(sql, instance);
         }
-        public IEnumerable<T> Gets(SqlCP cp)
+        public IEnumerable<T> Gets(SqlCP condition)
         {
+
+            string sql = null;
+
             if (RequestType == VasilyRequestType.Complete)
             {
-                Diagnostics.Debug.WriteLine("\r\n\r\n\r\n\r\n"+SqlUnion<T>.Union(Sql<T>.SelectAllByCondition + cp.Condition, Unions) + cp.Tails);
-                return Reader.Query<T>(SqlUnion<T>.Union(Sql<T>.SelectAllByCondition + cp.Condition,Unions)+cp.Tails, cp.Instance);
+                sql = GetRealSqlString(condition, Sql<T>.SelectAllByCondition);
             }
             else
             {
-                Diagnostics.Debug.WriteLine("\r\n\r\n\r\n\r\n" +SqlUnion<T>.Union(Sql<T>.SelectByCondition + cp.Condition, Unions) + cp.Tails);
-                return Reader.Query<T>(SqlUnion<T>.Union(Sql<T>.SelectByCondition + cp.Condition,Unions)+cp.Tails, cp.Instance);
+                sql = GetRealSqlString(condition, Sql<T>.SelectByCondition);
             }
+
+            return Reader.Query<T>(sql, condition.Instance);
+
         }
         /// <summary>
         /// 根据条件批量查询数量
@@ -288,15 +358,31 @@ namespace System
         /// <param name="condition">条件查询</param>
         /// <param name="instance">查询参数化实例</param>
         /// <returns></returns>
+     
         public int CountWithCondition(SqlCondition<T> condition, object instance)
         {
-            var temp = Reader.Query<int>(SqlUnion<T>.Union(Sql<T>.SelectCountByCondition + condition.SqlPages.ToString(), Unions)+ condition.Tails, instance);
-            return Sum(temp);
+            if (Unions==null)
+            {
+                return Reader.ExecuteScalar<int>(Sql<T>.SelectCountByCondition + condition.Full, instance);
+            }
+            else {
+                var temp = Reader.Query<int>(SqlUnion<T>.Union(Sql<T>.SelectCountByCondition + condition.Query, Unions), instance);
+                Unions = null;
+                return Sum(temp);
+            }
         }
-        public int CountWithCondition(SqlCP cp)
+        public int CountWithCondition(SqlCP condition)
         {
-            var temp = Reader.Query<int>(SqlUnion<T>.Union(Sql<T>.SelectCountByCondition + cp.Condition,Unions), cp.Instance);
-            return Sum(temp);
+            if (Unions == null)
+            {
+                return Reader.ExecuteScalar<int>(Sql<T>.SelectCountByCondition + condition.Full, condition.Instance);
+            }
+            else
+            {
+                var temp = Reader.Query<int>(SqlUnion<T>.Union(Sql<T>.SelectCountByCondition + condition.Query, Unions), condition.Instance);
+                Unions = null;
+                return Sum(temp);
+            }
         }
 
         /// <summary>
@@ -305,8 +391,17 @@ namespace System
         /// <returns></returns>
         public int GetCount()
         {
-            var temp = Reader.Query<int>(SqlUnion<T>.Union(Sql<T>.SelectCount, Unions));
-            return Sum(temp);
+
+            if (Unions == null)
+            {
+                return Reader.ExecuteScalar<int>(Sql<T>.SelectCount);
+            }
+            else
+            {
+                var temp = Reader.Query<int>(SqlUnion<T>.Union(Sql<T>.SelectCount, Unions));
+                Unions = null;
+                return Sum(temp);
+            }
         }
 
         #region 把下面的Complate和Normal方法都封装一下
@@ -416,6 +511,17 @@ namespace System
                 return Normal_UpdateByPrimary(instances);
             }
         }
+        public bool ModifyByPrimary(IEnumerable<T> instances)
+        {
+            if (RequestType == VasilyRequestType.Complete)
+            {
+                return Complete_UpdateByPrimary(instances);
+            }
+            else
+            {
+                return Normal_UpdateByPrimary(instances);
+            }
+        }
         /// <summary>
         /// 插入实体或者实体的集合，有Normal和Complete区分
         /// </summary>
@@ -443,20 +549,8 @@ namespace System
                 return Normal_Insert(instances);
             }
         }
-       
 
-        public bool ModifyByPrimary(IEnumerable<T> instances)
-        {
-            if (RequestType == VasilyRequestType.Complete)
-            {
-                return Complete_UpdateByPrimary(instances);
-            }
-            else
-            {
-                return Normal_UpdateByPrimary(instances);
-            }
-        }
-        
+
         #endregion
 
 
@@ -467,7 +561,18 @@ namespace System
         /// <returns>结果集</returns>
         internal IEnumerable<T> Complete_GetAll()
         {
-            return Reader.Query<T>(SqlUnion<T>.Union(Sql<T>.SelectAll, Unions));
+
+            string sql = null;
+            if (Unions==null)
+            {
+                sql = Sql<T>.SelectAll;
+            }
+            else
+            {
+                sql = SqlUnion<T>.Union(Sql<T>.SelectAll, Unions);
+                Unions = null;
+            }
+            return Reader.Query<T>(sql);
         }
         /// <summary>
         /// 根据主键来获取完整的实体类
@@ -477,8 +582,8 @@ namespace System
         internal T Complete_GetByPrimary(object primary)
         {
             var dynamicParams = new DynamicParameters();
-            dynamicParams.Add(SqlUnion<T>.Union(Sql<T>.Primary, Unions), primary);
-            return Reader.QuerySingle<T>(SqlUnion<T>.Union(Sql<T>.SelectAllByPrimary, Unions), dynamicParams);
+            dynamicParams.Add(Sql<T>.Primary, primary);
+            return Reader.QuerySingle<T>(Sql<T>.SelectAllByPrimary, dynamicParams);
         }
         /// <summary>
         /// 获取指定范围主键的完整实体类
@@ -489,7 +594,7 @@ namespace System
         {
             var dynamicParams = new DynamicParameters();
             dynamicParams.Add("keys", range);
-            return Reader.Query<T>(SqlUnion<T>.Union(Sql<T>.SelectAllIn, Unions), dynamicParams);
+            return Reader.Query<T>(Sql<T>.SelectAllIn, dynamicParams);
         }
 
 
@@ -502,7 +607,17 @@ namespace System
         /// <returns></returns>
         internal IEnumerable<T> Normal_GetAll()
         {
-            return Reader.Query<T>(SqlUnion<T>.Union(Sql<T>.Select, Unions));
+            string sql = null;
+            if (Unions == null)
+            {
+                sql = Sql<T>.Select;
+            }
+            else
+            {
+                sql = SqlUnion<T>.Union(Sql<T>.Select, Unions);
+                Unions = null;
+            }
+            return Reader.Query<T>(sql);
         }
         /// <summary>
         /// 根据主键来获取业务相关的实体类(带有select_ignore标签的会被排除)
@@ -512,8 +627,8 @@ namespace System
         internal T Normal_GetByPrimary(object primary)
         {
             var dynamicParams = new DynamicParameters();
-            dynamicParams.Add(SqlUnion<T>.Union(Sql<T>.Primary, Unions), primary);
-            return Reader.QuerySingle<T>(SqlUnion<T>.Union(Sql<T>.SelectByPrimary, Unions), dynamicParams);
+            dynamicParams.Add(Sql<T>.Primary, primary);
+            return Reader.QuerySingle<T>(Sql<T>.SelectByPrimary, dynamicParams);
         }
         /// <summary>
         /// 获取指定范围主键的普通实体类
@@ -524,7 +639,7 @@ namespace System
         {
             var dynamicParams = new DynamicParameters();
             dynamicParams.Add("keys", range);
-            return Reader.Query<T>(SqlUnion<T>.Union(Sql<T>.SelectIn, Unions), dynamicParams);
+            return Reader.Query<T>(Sql<T>.SelectIn, dynamicParams);
         }
         #endregion
 
@@ -537,11 +652,32 @@ namespace System
         /// <returns>更新结果</returns>
         internal bool Complete_UpdateByPrimary(params T[] instances)
         {
-            return Writter.Execute(SqlUnion<T>.Union(Sql<T>.UpdateAllByPrimary,Unions), instances) == instances.Length;
-        }
+            string sql = null;
+            if (Unions == null)
+            {
+                sql = Sql<T>.UpdateAllByPrimary;
+            }
+            else
+            {
+                sql = SqlUnion<T>.Union(Sql<T>.UpdateAllByPrimary, Unions);
+                Unions = null;
+            }
+            return Writter.Execute(sql, instances) == instances.Length;
+
+           }
         internal bool Complete_UpdateByPrimary(IEnumerable<T> instances)
         {
-            return Writter.Execute(SqlUnion<T>.Union(Sql<T>.UpdateAllByPrimary,Unions), instances) == instances.Count();
+            string sql = null;
+            if (Unions == null)
+            {
+                sql = Sql<T>.UpdateAllByPrimary;
+            }
+            else
+            {
+                sql = SqlUnion<T>.Union(Sql<T>.UpdateAllByPrimary, Unions);
+                Unions = null;
+            }
+            return Writter.Execute(sql, instances) == instances.Count();;
         }
         #endregion
 
@@ -553,11 +689,31 @@ namespace System
         /// <returns>更新结果</returns>
         internal bool Normal_UpdateByPrimary(params T[] instances)
         {
-            return Writter.Execute(SqlUnion<T>.Union(Sql<T>.UpdateByPrimary,Unions), instances) == instances.Length;
+            string sql = null;
+            if (Unions == null)
+            {
+                sql = Sql<T>.UpdateByPrimary;
+            }
+            else
+            {
+                sql = SqlUnion<T>.Union(Sql<T>.UpdateByPrimary, Unions);
+                Unions = null;
+            }
+            return Writter.Execute(sql, instances) == instances.Length;
         }
         internal bool Normal_UpdateByPrimary(IEnumerable<T> instances)
         {
-            return Writter.Execute(SqlUnion<T>.Union(Sql<T>.UpdateByPrimary,Unions), instances) == instances.Count();
+            string sql = null;
+            if (Unions == null)
+            {
+                sql = Sql<T>.UpdateByPrimary;
+            }
+            else
+            {
+                sql = SqlUnion<T>.Union(Sql<T>.UpdateByPrimary, Unions);
+                Unions = null;
+            }
+            return Writter.Execute(sql, instances) == instances.Count();
         }
         #endregion
 
@@ -603,8 +759,16 @@ namespace System
         /// <returns>返回结果</returns>
         public bool IsRepeat(T instance)
         {
-            IEnumerable<int> temp = Reader.Query<int>(SqlUnion<T>.Union(Sql<T>.RepeateCount,Unions), instance);
-            return Sum(temp) >0 ;
+            if (Unions == null)
+            {
+                return Reader.ExecuteScalar<int>(Sql<T>.RepeateCount)>0;
+            }
+            else
+            {
+                IEnumerable<int> temp = Reader.Query<int>(SqlUnion<T>.Union(Sql<T>.RepeateCount, Unions), instance);
+                Unions = null;
+                return Sum(temp) > 0;
+            }
         }
         /// <summary>
         /// 通过实体类获取跟其相同唯一约束的集合
@@ -613,7 +777,16 @@ namespace System
         /// <returns>结果集</returns>
         public IEnumerable<T> GetRepeates(T instance)
         {
-            return Reader.Query<T>(SqlUnion<T>.Union(Sql<T>.RepeateEntities, Unions));
+            if (Unions == null)
+            {
+                return Reader.Query<T>(Sql<T>.RepeateEntities);
+            }
+            else
+            {
+                var result = Reader.Query<T>(SqlUnion<T>.Union(Sql<T>.RepeateEntities, Unions));
+                Unions = null;
+                return result;
+            }
         }
         /// <summary>
         /// 通过实体类获取当前实体的主键，注：只有实体类有NoRepeate条件才能用
@@ -623,16 +796,23 @@ namespace System
         /// <returns>主键</returns>
         public S GetNoRepeateId<S>(T instance)
         {
-            var result = Reader.Query<S>(SqlUnion<T>.Union(Sql<T>.RepeateId,Unions), instance);
-
-            foreach (var item in result)
+            if (Unions == null)
             {
-                if (item!=null)
-                {
-                    return item;
-                }
+                return Reader.ExecuteScalar<S>(Sql<T>.RepeateId);
             }
-            return default(S);
+            else
+            {
+                IEnumerable<S> temp = Reader.Query<S>(SqlUnion<T>.Union(Sql<T>.RepeateId, Unions), instance);
+                Unions = null;
+                foreach (var item in temp)
+                {
+                    if (item != null)
+                    {
+                        return item;
+                    }
+                }
+                return default(S);
+            }
         }
         /// <summary>
         /// 通过查重条件进行不重复插入，有Normal和Complete区分
@@ -842,7 +1022,7 @@ namespace System
         {
             return null;
         }
-        
+
         /// <summary>
         /// 获取集合数量-直接传实体类
         /// </summary>
@@ -1338,7 +1518,7 @@ namespace System
         {
             return SourceGets_Wrapper(RelationSql<T, R, C1, C2, C3>.GetFromSource, parameters);
         }
-        
+
         /// <summary>
         /// 获取集合数量-直接传实体类
         /// </summary>
@@ -1677,7 +1857,7 @@ namespace System
         /// <returns></returns>
         public override int SourceCount(params object[] parameters)
         {
-            return SourceAftExecute(RelationSql<T, R, C1, C2, C3, C4,C5>.CountFromSource, parameters);
+            return SourceAftExecute(RelationSql<T, R, C1, C2, C3, C4, C5>.CountFromSource, parameters);
         }
         /// <summary>
         /// 更新操作-直接传实体类
@@ -1842,7 +2022,7 @@ namespace System
         /// <returns></returns>
         public override int SourceCount(params object[] parameters)
         {
-            return SourceAftExecute(RelationSql<T, R, C1, C2, C3, C4, C5,C6>.CountFromSource, parameters);
+            return SourceAftExecute(RelationSql<T, R, C1, C2, C3, C4, C5, C6>.CountFromSource, parameters);
         }
         /// <summary>
         /// 更新操作-直接传实体类

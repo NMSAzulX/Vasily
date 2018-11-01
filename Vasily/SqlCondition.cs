@@ -48,6 +48,13 @@ namespace System
                 return GetString(SqlResults, SqlOrders);
             }
         }
+
+        public string Query { get {
+                if (SqlResults.Length == 0)
+                {
+                    SqlResults.Append("1=1");
+                }
+                return SqlResults.ToString(); } }
         public string Order { get { return SqlOrders.ToString(); } }
         public string Tails { get { return GetString(SqlOrders, SqlPages); } }
         public string Full {
