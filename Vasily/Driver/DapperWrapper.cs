@@ -902,7 +902,7 @@ namespace System
         /// <returns>更新结果</returns>
         public bool EntitiesDeleteByPrimary(params T[] instances)
         {
-            bool result = 0;
+            bool result = false;
             result = Writter.Execute(Sql<T>.DeleteByPrimary, instances, transaction: _transcation) == instances.Length;
             _transcation = null;
             return result;
@@ -910,7 +910,7 @@ namespace System
 
         public bool EntitiesDeleteByPrimary(IEnumerable<T> instances)
         {
-            bool result = 0;
+            bool result = false;
             result = Writter.Execute(Sql<T>.DeleteByPrimary, instances, transaction: _transcation) == instances.Count();
             _transcation = null;
             return result;
