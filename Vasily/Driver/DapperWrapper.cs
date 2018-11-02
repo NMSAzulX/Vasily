@@ -24,7 +24,7 @@ namespace System
             Writter = Connector.WriteInitor(writter)();
             Reader = Connector.ReadInitor(reader)();
             RequestType = VasilyRequestType.Complete;
-            Unions = new string[0];
+            Unions = null;
         }
 
         public int Sum(IEnumerable<int> indexs)

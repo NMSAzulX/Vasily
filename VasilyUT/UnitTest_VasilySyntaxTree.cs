@@ -39,8 +39,33 @@ namespace VasilyUT
         public void TestNormalScript3()
         {
             SqlPackage<Relation2> package = new SqlPackage<Relation2>();
-            string test = "c+Id-ClassId ^c<=Id&(c==StudentName|c!= ClassId)^(3,10)";
+            string test = "c+Id-ClassId ^ c<=Id&(c==StudentName|c!= ClassId)^(3,10)";
             Assert.Equal("(Id <= @Id AND (StudentName = @StudentName OR ClassId <> @ClassId)) ORDER BY Id ASC,ClassId DESC OFFSET 20 ROW FETCH NEXT 10 rows only",
+                test.Condition<Relation2>(test).Full);
+        }
+
+        [Fact(DisplayName = "语法树-模糊查询解析1")]
+        public void TestLikeScript1()
+        {
+            SqlPackage<Relation2> package = new SqlPackage<Relation2>();
+            string test = "c+Id-ClassId ^c<=Id&(c==StudentName|c!= ClassId)^(3,10) & c%StudentName";
+            Assert.Equal("((Id <= @Id AND (StudentName = @StudentName OR ClassId <> @ClassId)) AND StudentName LIKE @StudentName) ORDER BY Id ASC,ClassId DESC OFFSET 20 ROW FETCH NEXT 10 rows only",
+                test.Condition<Relation2>(test).Full);
+        }
+        [Fact(DisplayName = "语法树-模糊查询解析2")]
+        public void TestLikeScript2()
+        {
+            SqlPackage<Relation2> package = new SqlPackage<Relation2>();
+            string test = "c % ClassId ^ c+Id-ClassId & c<=Id&(c==StudentName|c!= ClassId)^(3,10) & c%StudentName";
+            Assert.Equal("(((ClassId LIKE @ClassId AND Id <= @Id) AND (StudentName = @StudentName OR ClassId <> @ClassId)) AND StudentName LIKE @StudentName) ORDER BY Id ASC,ClassId DESC OFFSET 20 ROW FETCH NEXT 10 rows only",
+                test.Condition<Relation2>(test).Full);
+        }
+        [Fact(DisplayName = "语法树-模糊查询解析3")]
+        public void TestLikeScript3()
+        {
+            SqlPackage<Relation2> package = new SqlPackage<Relation2>();
+            string test = "c%StudentName ^ c+Id-ClassId  & c%ClassId ";
+            Assert.Equal("(StudentName LIKE @StudentName AND ClassId LIKE @ClassId) ORDER BY Id ASC,ClassId DESC",
                 test.Condition<Relation2>(test).Full);
         }
     }

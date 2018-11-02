@@ -9,6 +9,21 @@ namespace VasilyUT
 {
     public class UnitTest_VasilyConditions
     {
+
+        [Fact(DisplayName = "条件模糊查询测试1")]
+        public void TestLikeCondition()
+        {
+            SqlPackage<Relation2> package = new SqlPackage<Relation2>();
+            SqlCondition<Relation2> condition = new SqlCondition<Relation2>();
+            Assert.Equal("(StudentId > @StudentId AND StudentId LIKE @StudentId)", (condition > "StudentId" & condition  % "StudentId").ToString());
+        }
+        [Fact(DisplayName = "条件模糊查询测试2")]
+        public void TestLikeCondition2()
+        {
+            SqlPackage<Relation2> package = new SqlPackage<Relation2>();
+            SqlCondition<Relation2> condition = new SqlCondition<Relation2>();
+            Assert.Equal("((StudentId LIKE @StudentId AND StudentId > @StudentId) AND StudentId LIKE @StudentId)", ("StudentId" % condition & condition > "StudentId" & condition % "StudentId").ToString());
+        }
         [Fact(DisplayName = "条件拼接测试1")]
         public void TestCondition()
         {

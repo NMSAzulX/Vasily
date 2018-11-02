@@ -99,6 +99,9 @@ namespace Vasily
                     case "<=":
                         conditions.AddLast(temp <= name);
                         break;
+                    case "%":
+                        conditions.AddLast(temp % name);
+                        break;
                     default:
                         OrderCondition(name);
                         break;

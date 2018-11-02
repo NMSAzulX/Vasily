@@ -20,10 +20,14 @@ namespace VasilyHttpDemo.Controllers
 
             //从前端传过来一个查询JSON格式
             /*{
-             *      value:{
-             *          id:10000
-             *      }
-             *      sql:"c>id ^c - id ^(3,10)"
+                   value:{
+                       id:10000
+                   },
+                   sql:"c>id ^c - id ^(3,10)",
+                   unions:[
+                       "tb_table1",
+                       "tb_table2"
+                   ]
             }*/
 
             //模拟POST
