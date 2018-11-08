@@ -275,7 +275,8 @@ var children = DapperWrapper<TestRelation,TestRelation,TestRelation_AnyName>.Use
 
 ```c#
 
-//c ：固定的识别变量
+//c ：固定的识别变量 
+//或定义SqlCondition<TEntity> c = new SqlCondition<TEntity>();
 
 //普通操作符
 c>"id"  ==> id>@id 如果采用泛型操作 id可以根据Column注解进行数据库字段的映射
@@ -349,7 +350,18 @@ c>"id" ^ c -"id" ^ (current_page, size)  ==> id>@id ORDER BY id DESC +分页查�
    
    - [x] 支持雪花算法生成唯一ID
 
-     ​
+   - [ ]  考虑是否只支持未来.NETStandard2.1 
+
+   - [ ]  添加常用运行时脚本解析，重构底层映射，替换dapper.
+
+
+
+- ### 注意事项
+
+   - 由于dapper的API封装不够灵活，为保证性能以及减少实体类的侵入性，分页语句没有进行Ad-hoc优化，即参数化查询，因此需要手动控制计划缓存的数据库版本，还需要用户注意配置优化选项。
+
+   - 由于dapper的API封装不够灵活，部分参数化操作采用DynamicParameters进行顺序添加，如关系操作的TableAPI系列。
+
 
 - ### 更新日志
 
