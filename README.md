@@ -311,6 +311,12 @@ c>"id" ^ c -"id" ^ (current_page, size)  ==> id>@id ORDER BY id DESC +分页查�
      value:{ id:10000, name:"小明" },
      sql:"c>id & c==name ^c - id ^(3,10)"
 }
+
+//VasilyController中增加了两个默认API：
+//api/[controller]/query-page-vp
+//api/[controoler]/query-vp
+//参数传vp格式即可
+
 ```
   sql 已经进行了防注入检测，参数也采用参数化处理
 
