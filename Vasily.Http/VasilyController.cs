@@ -28,12 +28,22 @@ namespace Microsoft.AspNetCore.Mvc
             driver.Unions = unions;
         }
 
-        [HttpPost("query-vp")]
-        public ReturnPageResult QueryVP(SqlVP<T> vp_instance)
+        [HttpPost("query--page-vp")]
+        public ReturnPageResult QueryPageVP(SqlVP<T> vp_instance)
         {
             return GetsPageResult(vp_instance);
         }
 
+        [HttpPost("query-vp")]
+        public ReturnResult QueryVP(SqlVP<T> vp_instance)
+        {
+            return GetResult(vp_instance);
+        }
+
+
+
+
+        #region NormalQuery
         [HttpGet("vasily")]
         public ReturnPageResult VasilyGet(SqlVP<T> vp_instance)
         {
@@ -54,6 +64,8 @@ namespace Microsoft.AspNetCore.Mvc
         {
             return DeleteResult(instances);
         }
+        #endregion
+
 
         #region 信息返回封装
         /// <summary>

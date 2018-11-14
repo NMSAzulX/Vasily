@@ -69,7 +69,7 @@ namespace Vasily
             {
                 try
                 {
-                    MakerModel<T>.Column(name);
+                    name = MakerModel<T>.Column(name);
                 }
                 catch (Exception ex)
                 {
