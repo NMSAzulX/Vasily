@@ -8,13 +8,34 @@ namespace Vasily.Core
 {
     public abstract class BaseHandler
     {
+        internal static ConcurrentDictionary<Type, MakerModel> _model_cache;
         internal bool _primary_manually;
         internal Type _entity_type;
         internal AttrOperator _handler;
         internal MakerModel _model;
         internal MemberInfo _primary_member;
+
+        static BaseHandler()
+        {
+            _model_cache = new ConcurrentDictionary<Type, MakerModel>();
+        }
+        public BaseHandler() { }
         public BaseHandler(string spiltes,Type entity_type)
         {
+            if (entity_type == null)
+            {
+                return;
+            }
+            _entity_type = entity_type;
+            //创建标签Helper
+            _handler = new AttrOperator(_entity_type);
+
+            if (_model_cache.ContainsKey(entity_type))
+            {
+                _model = _model_cache[entity_type];
+                return;
+            }
+
             _model = new MakerModel();
             if (spiltes == null)
             {
@@ -27,17 +48,7 @@ namespace Vasily.Core
                 _model.Right = spiltes[1];
             }
            
-
-            if (entity_type==null)
-            {
-                return;
-            }
-
             _model.PrimaryKey = null;
-            _entity_type = entity_type;
-
-            //创建标签Helper
-            _handler = new AttrOperator(_entity_type);
 
             //表名解析
             var table = _handler.ClassInstance<TableAttribute>();
@@ -74,9 +85,9 @@ namespace Vasily.Core
             _model.ColumnMapping = _column_mapping;
             _model.StringMapping = _string_mapping;
             //填充属性
-           
+            _model_cache[entity_type] = _model;
 
-            
+
 
             //静态sql生成器。例如 MakerModel<Student>
             GsOperator gs = new GsOperator(typeof(MakerModel<>), _entity_type);

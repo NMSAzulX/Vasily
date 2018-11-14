@@ -1,11 +1,12 @@
 ﻿using System;
 using Vasily.Core;
+using Vasily.Utils;
 
 namespace Vasily
 {
     public class SqlPackage<T> : SqlPackage
     {
-        public SqlPackage(string splites=null) : base(typeof(T), splites)
+        public SqlPackage(string splites = null) : base(typeof(T), splites)
         {
 
         }
@@ -14,52 +15,27 @@ namespace Vasily
     public class SqlPackage
     {
         private Type _entity_type;
-        private SqlType _sql_type;
-        private string _splites;
+        internal string _splites;
         private string _primary;
-        private bool IsRelation;
+        //private bool IsRelation;
         private bool IsNormal;
-        public SqlPackage(Type type,string splites=null)
+        public SqlPackage(Type type, string splites = null)
         {
-            _splites = splites;
             _entity_type = type;
             AttrOperator attr = new AttrOperator(_entity_type);
-            _sql_type = attr.ClassInstance<TableAttribute>().Type;
+            _splites = SqlSpliter.GetSpliter(attr);
             _primary = attr.Mapping<PrimaryKeyAttribute>().Member.Name;
-            IsRelation = type.GetInterface("IVasilyRelation") != null ;
-            IsNormal= type.GetInterface("IVasilyNormal") != null;
+            //IsRelation = type.GetInterface("IVasilyRelation") != null;
+            IsNormal = type.GetInterface("IVasilyNormal") != null;
             Analysis();
         }
-
+        
         public void Analysis()
         {
-            switch (_sql_type)
-            {
-                case SqlType.MySql:
-                    if (_splites == null)
-                    {
-                        _splites = "``";
-                    }
-                    break;
-                case SqlType.MsSql:
-                    if (_splites == null)
-                    {
-                        _splites = "[]";
-                    }
-                    break;
-                case SqlType.TiDb:
-                    break;
-                case SqlType.PgSql:
-                    break;
-                case SqlType.None:
-                    break;
-                default:
-                    break;
-            }
-            if (IsRelation)
-            {
-                RelationHandler relation = new RelationHandler(_splites, _entity_type);
-            }
+            //if (IsRelation)
+            //{
+               // RelationHandler relation = new RelationHandler(_splites, _entity_type);
+            //}
             if (IsNormal)
             {
                 GsOperator gs = new GsOperator(typeof(Sql<>), _entity_type);

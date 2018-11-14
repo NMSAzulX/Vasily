@@ -25,7 +25,7 @@ namespace System
         {
             if (interfaceNames.Length==0)
             {
-                interfaceNames = new string[] { "IVasilyNormal", "IVasilyRelation" };
+                interfaceNames = new string[] { "IVasilyNormal" };
             }
             List<Type> types = new List<Type>();
             Assembly assmbly = Assembly.GetEntryAssembly();

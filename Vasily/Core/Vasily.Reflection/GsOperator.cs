@@ -27,8 +27,6 @@ namespace Vasily.Core
     /// </summary>
     public class GsOperator
     {
-
-        private Type _type;
         private Dictionary<string,FieldInfo> _infos;
         private Dictionary<string, StaticSetter> _dynamic_functions;
 

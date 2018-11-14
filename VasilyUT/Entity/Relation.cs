@@ -4,7 +4,7 @@ using Vasily;
 namespace VasilyUT.Entity
 {
     [Table("关系映射表", SqlType.MySql)]
-    public class Relation : IVasilyRelation
+    public class Relation : IVasilyNormal
     {
         [PrimaryKey]
         [Relation(typeof(Relation), "Id")]
@@ -18,7 +18,7 @@ namespace VasilyUT.Entity
     }
 
     [Table("关系映射表2", SqlType.MsSql)]
-    public class Relation2 : IVasilyRelation
+    public class Relation2 : IVasilyNormal
     {
         [PrimaryKey]
         [Relation(typeof(Relation2), "Id")]

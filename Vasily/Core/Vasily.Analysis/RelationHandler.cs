@@ -8,18 +8,11 @@ namespace Vasily.Core
 {
     public partial class RelationHandler : BaseHandler
     {
-        private ISelect _select_template;
-        private IUpdate _update_template;
-        private IDelete _delete_template;
-        private IInsert _insert_template;
+        private RelationTemplate _relation_template;
         private Dictionary<MemberInfo, RelationAttribute> _mapping;
         public RelationHandler(string splites, Type entity_type) : base(splites, entity_type)
         {
             _mapping = new Dictionary<MemberInfo, RelationAttribute>();
-            _select_template = new SelectTemplate();
-            _update_template = new UpdateTemplate();
-            _delete_template = new DeleteTemplate();
-            _insert_template = new InsertTemplate();
             Store();
         }
 
@@ -119,7 +112,7 @@ namespace Vasily.Core
                     getters[j] = MebOperator.Getter(instance.RelationType, instance.ColumnName);
                    
                 }
-
+                _relation_template = new RelationTemplate(_model, parameter);
                 gs["Table"] = _model.TableName;
                 gs["Primary"] = _model.PrimaryKey;
 
@@ -127,29 +120,29 @@ namespace Vasily.Core
                 gs.Set("TableConditions", table);
                 gs.Set("Getters", getters);
                 //public static string CountFromTable
-                gs.Set("CountFromTable", SelectCountByCondition(parameter));
+                gs.Set("CountFromTable", _relation_template.SelectCountByCondition());
                 //public static string GetFromTable;
-                gs.Set("GetFromTable", SelectString(parameter));
+                gs.Set("GetFromTable", _relation_template.SelectString());
                 //public static string ModifyFromTable;
-                gs.Set("ModifyFromTable", UpdateString(parameter));
+                gs.Set("ModifyFromTable", _relation_template.UpdateString());
                 //public static string DeleteFromTable;
-                gs.Set("DeletePreFromTable", DeletePreString(parameter[0]));
-                gs.Set("DeleteAftFromTable", DeleteAftString(parameter));
+                gs.Set("DeletePreFromTable", _relation_template.DeletePreString());
+                gs.Set("DeleteAftFromTable", _relation_template.DeleteAftString());
                 //public static string AddFromTable;
-                gs.Set("AddFromTable", InsertString(parameter));
+                gs.Set("AddFromTable", _relation_template.InsertString());
 
 
                 //public static string CountFromSource
-                gs.Set("CountFromSource", SelectCountByCondition(parameter, filter));
+                gs.Set("CountFromSource", _relation_template.SelectCountByCondition(filter));
                 //public static string GetFromSource;
-                gs.Set("GetFromSource", SelectString(parameter, filter));
+                gs.Set("GetFromSource", _relation_template.SelectString(filter));
                 //public static string ModifyFromSource;
-                gs.Set("ModifyFromSource", UpdateString(parameter, filter));
+                gs.Set("ModifyFromSource", _relation_template.UpdateString(filter));
                 //public static string DeleteFromSource;
-                gs.Set("DeletePreFromSource", DeletePreString(parameter[0], filter));
-                gs.Set("DeleteAftFromSource", DeleteAftString(parameter, filter));
+                gs.Set("DeletePreFromSource", _relation_template.DeletePreString(filter));
+                gs.Set("DeleteAftFromSource", _relation_template.DeleteAftString(filter));
                 //public static string AddFromSource;
-                gs.Set("AddFromSource", InsertString(parameter,filter));
+                gs.Set("AddFromSource", _relation_template.InsertString(filter));
             }
         }
 
@@ -175,98 +168,98 @@ namespace Vasily.Core
             return types;
         }
 
-        /// <summary>
-        /// 获取SELECT [member1] FROM [TableName] WHERE [member2]=@member2 AND = [member3]=@member3
-        /// </summary>
-        /// <param name="members">成员集合</param>
-        /// <returns>返回条件查询SQL</returns>
-        public string SelectString(MemberInfo[] members, Func<MemberInfo, string> filter = null)
-        {
-            var model = _model.CopyInstance();
-            model.FilterFunction = filter;
-            MemberInfo[] temp = new MemberInfo[members.Length - 1];
-            Array.Copy(members, 1, temp, 0, members.Length - 1);
-            model.LoadMembers(members[0]);
-            return _select_template.SelectWithCondition(model, temp);
-        }
+        ///// <summary>
+        ///// 获取SELECT [member1] FROM [TableName] WHERE [member2]=@member2 AND = [member3]=@member3
+        ///// </summary>
+        ///// <param name="members">成员集合</param>
+        ///// <returns>返回条件查询SQL</returns>
+        //public string SelectString(MemberInfo[] members, Func<MemberInfo, string> filter = null)
+        //{
+        //    var model = _model.CopyInstance();
+        //    model.FilterFunction = filter;
+        //    MemberInfo[] temp = new MemberInfo[members.Length - 1];
+        //    Array.Copy(members, 1, temp, 0, members.Length - 1);
+        //    model.LoadMembers(members[0]);
+        //    return _select_template.SelectWithCondition(model, temp);
+        //}
 
-        /// <summary>
-        /// 获取SELECT Count(*) FROM [TableName] WHERE [member2]=@member2 AND = [member3]=@member3
-        /// </summary>
-        /// <param name="members">成员集合</param>
-        /// <returns>返回条件查询SQL</returns>
-        public string SelectCountByCondition(MemberInfo[] members, Func<MemberInfo, string> filter = null)
-        {
-            var model = _model.CopyInstance();
-            model.FilterFunction = filter;
-            MemberInfo[] temp = new MemberInfo[members.Length - 1];
-            Array.Copy(members, 1, temp, 0, members.Length - 1);
-            return _select_template.SelectCountWithCondition(model,temp);
-        }
+        ///// <summary>
+        ///// 获取SELECT Count(*) FROM [TableName] WHERE [member2]=@member2 AND = [member3]=@member3
+        ///// </summary>
+        ///// <param name="members">成员集合</param>
+        ///// <returns>返回条件查询SQL</returns>
+        //public string SelectCountByCondition(MemberInfo[] members, Func<MemberInfo, string> filter = null)
+        //{
+        //    var model = _model.CopyInstance();
+        //    model.FilterFunction = filter;
+        //    MemberInfo[] temp = new MemberInfo[members.Length - 1];
+        //    Array.Copy(members, 1, temp, 0, members.Length - 1);
+        //    return _select_template.SelectCountWithCondition(model,temp);
+        //}
 
 
-        /// <summary>
-        /// 获取更新语句
-        /// </summary>
-        /// <param name="filter">将参数化映射到标签中类的主键或其他字段上</param>
-        /// <returns></returns>
-        public string UpdateString(MemberInfo[] members, Func<MemberInfo, string> filter = null)
-        {
-            var model = _model.CopyInstance();
-            model.FilterFunction = filter;
-            MemberInfo[] temp = new MemberInfo[members.Length - 1];
-            Array.Copy(members, 1, temp, 0, members.Length-1);
-            model.LoadMembers(members[0]);
-            return _update_template.UpdateWithCondition(model, temp);
-        }
+        ///// <summary>
+        ///// 获取更新语句
+        ///// </summary>
+        ///// <param name="filter">将参数化映射到标签中类的主键或其他字段上</param>
+        ///// <returns></returns>
+        //public string UpdateString(MemberInfo[] members, Func<MemberInfo, string> filter = null)
+        //{
+        //    var model = _model.CopyInstance();
+        //    model.FilterFunction = filter;
+        //    MemberInfo[] temp = new MemberInfo[members.Length - 1];
+        //    Array.Copy(members, 1, temp, 0, members.Length-1);
+        //    model.LoadMembers(members[0]);
+        //    return _update_template.UpdateWithCondition(model, temp);
+        //}
 
-        /// <summary>
-        /// 获取删除语句
-        /// </summary>
-        /// <param name="filter">将参数化映射到标签中类的主键或其他字段上</param>
-        /// <returns></returns>
-        public string DeletePreString(MemberInfo member, Func<MemberInfo, string> filter = null)
-        {
-            if (filter != null)
-            {
-                var model = _model.CopyInstance();
-                model.FilterFunction = filter;
-                return _delete_template.DeleteWithCondition(model, member);
-            }
-            return _delete_template.DeleteWithCondition(_model, member);
-        }
-        /// <summary>
-        /// 获取删除语句
-        /// </summary>
-        /// <param name="filter">将参数化映射到标签中类的主键或其他字段上</param>
-        /// <returns></returns>
-        public string DeleteAftString(MemberInfo[] members, Func<MemberInfo, string> filter = null)
-        {
+        ///// <summary>
+        ///// 获取删除语句
+        ///// </summary>
+        ///// <param name="filter">将参数化映射到标签中类的主键或其他字段上</param>
+        ///// <returns></returns>
+        //public string DeletePreString(MemberInfo member, Func<MemberInfo, string> filter = null)
+        //{
+        //    if (filter != null)
+        //    {
+        //        var model = _model.CopyInstance();
+        //        model.FilterFunction = filter;
+        //        return _delete_template.DeleteWithCondition(model, member);
+        //    }
+        //    return _delete_template.DeleteWithCondition(_model, member);
+        //}
+        ///// <summary>
+        ///// 获取删除语句
+        ///// </summary>
+        ///// <param name="filter">将参数化映射到标签中类的主键或其他字段上</param>
+        ///// <returns></returns>
+        //public string DeleteAftString(MemberInfo[] members, Func<MemberInfo, string> filter = null)
+        //{
 
-            MemberInfo[] temp = new MemberInfo[members.Length - 1];
-            Array.Copy(members, 1, temp, 0, members.Length - 1);
+        //    MemberInfo[] temp = new MemberInfo[members.Length - 1];
+        //    Array.Copy(members, 1, temp, 0, members.Length - 1);
 
-            if (filter != null)
-            {
-                var model = _model.CopyInstance();
-                model.FilterFunction = filter;
-                return _delete_template.DeleteWithCondition(model, temp);
-            }
-            return _delete_template.DeleteWithCondition(_model, temp);
-        }
+        //    if (filter != null)
+        //    {
+        //        var model = _model.CopyInstance();
+        //        model.FilterFunction = filter;
+        //        return _delete_template.DeleteWithCondition(model, temp);
+        //    }
+        //    return _delete_template.DeleteWithCondition(_model, temp);
+        //}
 
-        /// <summary>
-        /// 获取插入语句
-        /// </summary>
-        /// <param name="filter">将参数化映射到标签中类的主键或其他字段上</param>
-        /// <returns></returns>
-        public string InsertString(MemberInfo[] values, Func<MemberInfo, string> filter = null)
-        {
-            var model = _model.CopyInstance();
-            model.FilterFunction = filter;
-            model.LoadMembers(values);
-            return _insert_template.Insert(model);
+        ///// <summary>
+        ///// 获取插入语句
+        ///// </summary>
+        ///// <param name="filter">将参数化映射到标签中类的主键或其他字段上</param>
+        ///// <returns></returns>
+        //public string InsertString(MemberInfo[] values, Func<MemberInfo, string> filter = null)
+        //{
+        //    var model = _model.CopyInstance();
+        //    model.FilterFunction = filter;
+        //    model.LoadMembers(values);
+        //    return _insert_template.Insert(model);
 
-        }
+        //}
     }
 }
