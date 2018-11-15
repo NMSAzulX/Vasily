@@ -135,7 +135,7 @@ public class TestRelation:IVasilyRelation
   ​
 
    
-~~在RelationHandler中，该实体类被扫描处理成一个排列树(以两个元素为最低标准)，上面的类结果如下：  
+ ~~ 在RelationHandler中，该实体类被扫描处理成一个排列树(以两个元素为最低标准)，上面的类结果如下：  
  
  * A32 = 3!/(3-2)! = 6  
 >A32 ： [Student,Class] 、 [Class,Student] 、[Student,TestRelation]、[TestRelation,Student]、[Class,TestRelation]、[TestRelation,Class]  
@@ -143,7 +143,7 @@ public class TestRelation:IVasilyRelation
  * A33 = 3!/0!=6  
 >A33 :   [Student,Class,TestRelation]、 [Class,Student,TestRelation] 、[Student,TestRelation,Class]、[TestRelation,Student,Class]、[Class,TestRelation,Student]、[TestRelation,Class,Student]  
     
-~~
+ ~~
 
   ------  
     
@@ -151,7 +151,7 @@ public class TestRelation:IVasilyRelation
 
       
 
-~~一共12种，为此Vasily将缓存有12种操作关系的静态类。  ~~
+ ~~ 一共12种，为此Vasily将缓存有12种操作关系的静态类。   ~~
 考虑到排列书在关系复杂的时候占用的空间较多，现在已经改为触发式生成缓存，也就是只有当用的时候才会生成缓存。
 
 > RelationSql<Student,TestRelation,Class> 代表属于TestRelation类中的[Student,Class]关系; 
