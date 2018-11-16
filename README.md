@@ -150,6 +150,7 @@ public class TestRelation:IVasilyRelation
       
 
  ~~一共12种，为此Vasily将缓存有12种操作关系的静态类。 ~~  
+ 
  考虑到排列书在关系复杂的时候占用的空间较多，现在已经改为触发式生成缓存，也就是只有当用的时候才会生成缓存。
 
 > RelationSql<Student,TestRelation,Class> 代表属于TestRelation类中的[Student,Class]关系; 
