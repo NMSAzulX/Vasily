@@ -50,9 +50,6 @@ namespace Microsoft.AspNetCore.Mvc
             return GetResult(vp_instance);
         }
 
-
-
-
         #region NormalQuery
         [HttpGet("vasily")]
         public ReturnPageResult VasilyGet(SqlVP<T> vp_instance)
@@ -75,7 +72,6 @@ namespace Microsoft.AspNetCore.Mvc
             return DeleteResult(instances);
         }
         #endregion
-
 
         #region 信息返回封装
         /// <summary>
