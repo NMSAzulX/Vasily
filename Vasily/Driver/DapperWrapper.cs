@@ -287,7 +287,6 @@ namespace System
         /// <returns></returns>
         public int Delete(SqlCondition<T> condition, object instance, ForceDelete flag = ForceDelete.No)
         {
-            int result = 0;
             if (flag == ForceDelete.No)
             {
                 return Writter.Execute(Sql<T>.DeleteByCondition + condition.Full, instance, transaction: _transcation);
@@ -300,15 +299,13 @@ namespace System
         }
         public int Delete(SqlCP condition, ForceDelete flag = ForceDelete.No)
         {
-            int result = 0;
             if (flag == ForceDelete.No)
             {
                 return Writter.Execute(Sql<T>.DeleteByCondition + condition.Full, condition.Instance, transaction: _transcation);
             }
             else
             {
-                string temp = GetRealSqlString(condition, Sql<T>.DeleteByCondition);
-                return Writter.Execute(temp, condition.Instance, transaction: _transcation);
+                return Writter.Execute(GetRealSqlString(condition, Sql<T>.DeleteByCondition), condition.Instance, transaction: _transcation);
             }
         }
         /// <summary>
