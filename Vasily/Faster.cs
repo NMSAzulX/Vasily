@@ -2,7 +2,13 @@
 
 namespace System
 {
-    public class SqlVP {
+    public class SqlPBase {
+        public string Full { get; set; }
+
+    }
+
+    public class SqlVP
+    {
         public object value { get; set; }
         public string sql { get; set; }
     }
@@ -12,14 +18,14 @@ namespace System
         public new T value { get; set; }
     }
 
-    public class SqlCP
+    public class SqlCP : SqlPBase
     {
         public object Instance;
         public string Query;
         public string Order;
         public string Tails;
 
-        public string Full { get { return Query + Tails; } }
+        public new string Full { get { return Query + Tails; } }
         public override string ToString()
         {
             return Query+Tails;

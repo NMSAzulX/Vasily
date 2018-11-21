@@ -6,7 +6,7 @@ using Vasily;
 namespace System
 {
 
-    public class SqlCondition
+    public class SqlCondition:SqlPBase
     {
         public StringBuilder SqlResults;
         public StringBuilder SqlOrders;
@@ -64,7 +64,7 @@ namespace System
         }
         public string Order { get { return SqlOrders.ToString(); } }
         public string Tails { get { return GetString(SqlOrders, SqlPages); } }
-        public string Full
+        public new string Full
         {
             get
             {

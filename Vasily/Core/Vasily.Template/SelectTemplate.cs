@@ -131,7 +131,7 @@ namespace Vasily.Core
                 sql.Append(model.Left);
                 if (model.ColFunction!= null)
                 {
-                    sql.Append(model.ColFunction(item));
+                    sql.Append(model.ColFunction(item)).Append(" AS ").Append(item.Name);
                 }
                 else
                 {

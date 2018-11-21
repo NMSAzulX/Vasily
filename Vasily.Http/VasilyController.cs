@@ -25,7 +25,7 @@ namespace Microsoft.AspNetCore.Mvc
         private string[] _union_tables;
         public void UseUnion(params string[] unions)
         {
-            driver.Unions = unions;
+            driver.Tables = unions;
         }
 
         [HttpPost("query--page-vp")]

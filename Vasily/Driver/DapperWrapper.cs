@@ -11,7 +11,7 @@ namespace System
     public class DapperWrapper
     {
         public static char WR_Char;
-        public string[] Unions;
+        public string[] Tables;
         static DapperWrapper()
         {
             WR_Char = '|';
@@ -24,7 +24,7 @@ namespace System
             Writter = Connector.WriteInitor(writter)();
             Reader = Connector.ReadInitor(reader)();
             RequestType = VasilyRequestType.Complete;
-            Unions = null;
+            Tables = null;
         }
 
         public int Sum(IEnumerable<int> indexs)
@@ -165,7 +165,7 @@ namespace System
 
         public DapperWrapper<T> UseUnion(params string[] tables)
         {
-            Unions = tables;
+            Tables = tables;
             return this;
         }
         public DapperWrapper<T> UseTransaction()
@@ -174,37 +174,37 @@ namespace System
             return this;
         }
 
-
-
-        private string GetRealSqlString(SqlCondition<T> condition, string query)
+        private SqlCollectionType _collection_type;
+        public DapperWrapper<T> UseCollection(SqlCollectionType type,params string[] tables)
         {
-            if (Unions == null)
-            {
-                return query + condition.Full;
-
-            }
-            else
-            {
-                string result = SqlUnion<T>.Union(query + condition.Query, Unions) + condition.Tails;
-                Unions = null;
-                return result;
-            }
-        }
-        private string GetRealSqlString(SqlCP cp, string query)
-        {
-            if (Unions == null)
-            {
-                return query + cp.Full;
-
-            }
-            else
-            {
-                string result = SqlUnion<T>.Union(Sql<T>.SelectAllByCondition + cp.Query, Unions) + cp.Tails;
-                Unions = null;
-                return result;
-            }
+            _collection_type = type;
+            Tables = tables;
+            return this;
         }
 
+
+        private string GetRealSqlString(SqlPBase condition, string query)
+        {
+            if (Tables != null)
+            {
+                string result = SqlCollection<T>.Collection(_collection_type, query + condition==null?"": condition.Full, Tables);
+                Tables = null;
+                _collection_type = SqlCollectionType.None;
+                return result;
+            }
+            return query + condition.Full;
+        }
+        private string GetRealSqlString(string query)
+        {
+            if (Tables != null)
+            {
+                string result = SqlCollection<T>.Collection(_collection_type, query, Tables);
+                Tables = null;
+                _collection_type = SqlCollectionType.None;
+                return result;
+            }
+            return query;
+        }
         /// <summary>
         /// 根据条件查询单个实体类
         /// </summary>
@@ -227,20 +227,20 @@ namespace System
             return Reader.QueryFirst<T>(sql, instance);
 
         }
-        public T Get(SqlCP cp)
+        public T Get(SqlCP condition)
         {
             string sql = null;
 
             if (RequestType == VasilyRequestType.Complete)
             {
-                sql = GetRealSqlString(cp, Sql<T>.SelectAllByCondition);
+                sql = GetRealSqlString(condition, Sql<T>.SelectAllByCondition);
             }
             else
             {
-                sql = GetRealSqlString(cp, Sql<T>.SelectByCondition);
+                sql = GetRealSqlString(condition, Sql<T>.SelectByCondition);
 
             }
-            return Reader.QueryFirst<T>(sql, cp);
+            return Reader.QueryFirst<T>(sql, condition);
         }
 
 
@@ -299,21 +299,23 @@ namespace System
             }
             else
             {
-                result =  Writter.Execute(SqlUnion<T>.Union(Sql<T>.DeleteByCondition + condition.SqlPages.ToString(), Unions) + condition.Tails, instance, transaction: _transcation);
+                string temp = GetRealSqlString(condition, Sql<T>.DeleteByCondition);
+                result =  Writter.Execute(temp, instance, transaction: _transcation);
             }
             _transcation = null;
             return result;
         }
-        public int Delete(SqlCP cp, ForceDelete flag = ForceDelete.No)
+        public int Delete(SqlCP condition, ForceDelete flag = ForceDelete.No)
         {
             int result = 0;
             if (flag == ForceDelete.No)
             {
-                result= Writter.Execute(Sql<T>.DeleteByCondition + cp.Full, cp.Instance, transaction: _transcation);
+                result= Writter.Execute(Sql<T>.DeleteByCondition + condition.Full, condition.Instance, transaction: _transcation);
             }
             else
             {
-                result =  Writter.Execute(SqlUnion<T>.Union(Sql<T>.DeleteByCondition + cp.Query, Unions) + cp.Tails, cp.Instance, transaction: _transcation);
+                string temp = GetRealSqlString(condition, Sql<T>.DeleteByCondition);
+                result =  Writter.Execute(temp, condition.Instance, transaction: _transcation);
             }
             _transcation = null;
             return result;
@@ -365,26 +367,28 @@ namespace System
      
         public int CountWithCondition(SqlCondition<T> condition, object instance)
         {
-            if (Unions==null)
+            if (Tables==null)
             {
                 return Reader.ExecuteScalar<int>(Sql<T>.SelectCountByCondition + condition.Full, instance);
             }
             else {
-                var temp = Reader.Query<int>(SqlUnion<T>.Union(Sql<T>.SelectCountByCondition + condition.Query, Unions), instance);
-                Unions = null;
+                string tempSql = GetRealSqlString(condition, Sql<T>.SelectCountByCondition);
+                var temp = Reader.Query<int>(tempSql, instance);
+                Tables = null;
                 return Sum(temp);
             }
         }
         public int CountWithCondition(SqlCP condition)
         {
-            if (Unions == null)
+            if (Tables == null)
             {
                 return Reader.ExecuteScalar<int>(Sql<T>.SelectCountByCondition + condition.Full, condition.Instance);
             }
             else
             {
-                var temp = Reader.Query<int>(SqlUnion<T>.Union(Sql<T>.SelectCountByCondition + condition.Query, Unions), condition.Instance);
-                Unions = null;
+                string tempSql = GetRealSqlString(condition, Sql<T>.SelectCountByCondition);
+                var temp = Reader.Query<int>(tempSql, condition.Instance);
+                Tables = null;
                 return Sum(temp);
             }
         }
@@ -396,14 +400,15 @@ namespace System
         public int GetCount()
         {
 
-            if (Unions == null)
+            if (Tables == null)
             {
                 return Reader.ExecuteScalar<int>(Sql<T>.SelectCount);
             }
             else
             {
-                var temp = Reader.Query<int>(SqlUnion<T>.Union(Sql<T>.SelectCount, Unions));
-                Unions = null;
+                string tempSql = GetRealSqlString(Sql<T>.SelectCount);
+                var temp = Reader.Query<int>(tempSql);
+                Tables = null;
                 return Sum(temp);
             }
         }
@@ -567,14 +572,14 @@ namespace System
         {
 
             string sql = null;
-            if (Unions==null)
+            if (Tables==null)
             {
                 sql = Sql<T>.SelectAll;
             }
             else
             {
-                sql = SqlUnion<T>.Union(Sql<T>.SelectAll, Unions);
-                Unions = null;
+                sql = GetRealSqlString(Sql<T>.SelectAll);
+                Tables = null;
             }
             return Reader.Query<T>(sql);
         }
@@ -612,14 +617,14 @@ namespace System
         internal IEnumerable<T> Normal_GetAll()
         {
             string sql = null;
-            if (Unions == null)
+            if (Tables == null)
             {
                 sql = Sql<T>.Select;
             }
             else
             {
-                sql = SqlUnion<T>.Union(Sql<T>.Select, Unions);
-                Unions = null;
+                sql = GetRealSqlString(Sql<T>.Select);
+                Tables = null;
             }
             return Reader.Query<T>(sql);
         }
@@ -658,14 +663,14 @@ namespace System
         {
             bool result = false;
             string sql = null;
-            if (Unions == null)
+            if (Tables == null)
             {
                 sql = Sql<T>.UpdateAllByPrimary;
             }
             else
             {
-                sql = SqlUnion<T>.Union(Sql<T>.UpdateAllByPrimary, Unions);
-                Unions = null;
+                sql = GetRealSqlString(Sql<T>.UpdateAllByPrimary);
+                Tables = null;
             }
             result = Writter.Execute(sql, instances, transaction: _transcation) == instances.Length;
             _transcation = null;
@@ -675,14 +680,14 @@ namespace System
         {
             bool result = false;
             string sql = null;
-            if (Unions == null)
+            if (Tables == null)
             {
                 sql = Sql<T>.UpdateAllByPrimary;
             }
             else
             {
-                sql = SqlUnion<T>.Union(Sql<T>.UpdateAllByPrimary, Unions);
-                Unions = null;
+                sql = GetRealSqlString(Sql<T>.UpdateAllByPrimary);
+                Tables = null;
             }
             result = Writter.Execute(sql, instances, transaction: _transcation) == instances.Count();
             _transcation = null;
@@ -700,14 +705,14 @@ namespace System
         {
             bool result = false;
             string sql = null;
-            if (Unions == null)
+            if (Tables == null)
             {
                 sql = Sql<T>.UpdateByPrimary;
             }
             else
             {
-                sql = SqlUnion<T>.Union(Sql<T>.UpdateByPrimary, Unions);
-                Unions = null;
+                sql = GetRealSqlString(Sql<T>.UpdateByPrimary);
+                Tables = null;
             }
             result = Writter.Execute(sql, instances, transaction: _transcation) == instances.Length;
             _transcation = null;
@@ -717,14 +722,14 @@ namespace System
         {
             bool result = false;
             string sql = null;
-            if (Unions == null)
+            if (Tables == null)
             {
                 sql = Sql<T>.UpdateByPrimary;
             }
             else
             {
-                sql = SqlUnion<T>.Union(Sql<T>.UpdateByPrimary, Unions);
-                Unions = null;
+                sql = GetRealSqlString(Sql<T>.UpdateByPrimary);
+                Tables = null;
             }
             result = Writter.Execute(sql, instances, transaction: _transcation) == instances.Count();
             _transcation = null;
@@ -786,14 +791,14 @@ namespace System
         /// <returns>返回结果</returns>
         public bool IsRepeat(T instance)
         {
-            if (Unions == null)
+            if (Tables == null)
             {
                 return Reader.ExecuteScalar<int>(Sql<T>.RepeateCount)>0;
             }
             else
             {
-                IEnumerable<int> temp = Reader.Query<int>(SqlUnion<T>.Union(Sql<T>.RepeateCount, Unions), instance);
-                Unions = null;
+                IEnumerable<int> temp = Reader.Query<int>(GetRealSqlString(Sql<T>.RepeateCount), instance);
+                Tables = null;
                 return Sum(temp) > 0;
             }
         }
@@ -804,14 +809,14 @@ namespace System
         /// <returns>结果集</returns>
         public IEnumerable<T> GetRepeates(T instance)
         {
-            if (Unions == null)
+            if (Tables == null)
             {
                 return Reader.Query<T>(Sql<T>.RepeateEntities);
             }
             else
             {
-                var result = Reader.Query<T>(SqlUnion<T>.Union(Sql<T>.RepeateEntities, Unions));
-                Unions = null;
+                var result = Reader.Query<T>(GetRealSqlString(Sql<T>.RepeateEntities));
+                Tables = null;
                 return result;
             }
         }
@@ -823,14 +828,14 @@ namespace System
         /// <returns>主键</returns>
         public S GetNoRepeateId<S>(T instance)
         {
-            if (Unions == null)
+            if (Tables == null)
             {
                 return Reader.ExecuteScalar<S>(Sql<T>.RepeateId);
             }
             else
             {
-                IEnumerable<S> temp = Reader.Query<S>(SqlUnion<T>.Union(Sql<T>.RepeateId, Unions), instance);
-                Unions = null;
+                IEnumerable<S> temp = Reader.Query<S>(GetRealSqlString(Sql<T>.RepeateId), instance);
+                Tables = null;
                 foreach (var item in temp)
                 {
                     if (item != null)
