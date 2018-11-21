@@ -327,7 +327,7 @@ c>"id" ^ c -"id" ^ (current_page, size)  ==> id>@id ORDER BY id DESC +分页查�
 
    - [x] 使用standard兼容
 
-   - [x] 支持自动解析关系实体操作，采用排列树生成静态无竞争关系SQL语句
+   - [x] 支持触发式解析关系实体操作，触发生成静态关系SQL缓存
    
    - [x] 支持自动解析普通实体操作，生成静态无竞争常用SQL语句
 
@@ -335,13 +335,7 @@ c>"id" ^ c -"id" ^ (current_page, size)  ==> id>@id ORDER BY id DESC +分页查�
    
    - [x] 支持手动控制主键是否参与到更新插入等操作
    
-   - [x] 构建新查询语法操作
-   
-   - [x] 支持条件查询语法及脚本解析
-   
-   - [x] 支持分页查询语法及脚本解析
-   
-   - [x] 支持排序查询语法及脚本解析
+   - [x] 支持条件查询、分页查询、排序查询语法及脚本解析
    
    - [x] 支持HTTP，自动分页查询返回
    
@@ -351,7 +345,7 @@ c>"id" ^ c -"id" ^ (current_page, size)  ==> id>@id ORDER BY id DESC +分页查�
    
    - [x] 支持前端SqlVP格式安全请求分页数据
    
-   - [x] 支持多表联合查询
+   - [x] 支持数据库集合操作，包括Union,Intersect,Except,UnionAll
    
    - [x] 支持多模糊查询语法及脚本解析
    
@@ -380,6 +374,7 @@ c>"id" ^ c -"id" ^ (current_page, size)  ==> id>@id ORDER BY id DESC +分页查�
    - 2018-10-25：支持语法运算生成SQL,支持脚本解析生成SQL.
    - 2018-10-26：增加Union支持查询、更新、删除操作.
    - 2018-11-02：修复Union逻辑封装，优化运行时运算符重载逻辑，增加模糊查询，运行时%符号重载，以及脚本解析.
+   - 2018-11-21：增加Union、Intersect、Except、UnionAll集合查询.
 
 ~~~
 

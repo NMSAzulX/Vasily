@@ -10,7 +10,6 @@ namespace Microsoft.AspNetCore.Mvc
         protected SqlCondition<T> c;
         public VasilyController()
         {
-            _union_tables = new string[0];
         }
         public VasilyController(string key):this()
         {
@@ -22,10 +21,21 @@ namespace Microsoft.AspNetCore.Mvc
             driver = new DapperWrapper<T>(reader, writter);
             c = new SqlCondition<T>();
         }
-        private string[] _union_tables;
-        public void UseUnion(params string[] unions)
+        public void UseUnion(params string[] tables)
         {
-            driver.Tables = unions;
+            driver.UseCollection(Vasily.Core.SqlCollectionType.Union, tables);
+        }
+        public void UseExcept(params string[] tables)
+        {
+            driver.UseCollection(Vasily.Core.SqlCollectionType.Except, tables);
+        }
+        public void UseIntersect(params string[] tables)
+        {
+            driver.UseCollection(Vasily.Core.SqlCollectionType.Intersect, tables);
+        }
+        public void UseUnionAll(params string[] tables)
+        {
+            driver.UseCollection(Vasily.Core.SqlCollectionType.UnionAll, tables);
         }
 
         [HttpPost("query--page-vp")]
