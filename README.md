@@ -104,7 +104,7 @@ public class TestRelation:IVasilyRelation
 
 
       stuTable  as  V_stuTable_TA         inner join 
-relation_table  as  V_relation_table_TB    ON  
+relation_table  as  V_relation_table_TB   ON  
 
 
     V_stuTable_TA.[student_id]
