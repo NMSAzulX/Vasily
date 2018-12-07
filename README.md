@@ -103,19 +103,22 @@ public class TestRelation:IVasilyRelation
   ```sql
                 select * from 
 
+
         stuTable       as   V_stuTable_TA 
-
-                    inner join 
-
+                  inner join 
         relation_table as   V_relation_table_TB
 
+
                        ON  
+
 
             V_stuTable_TA.[student_id]
                         = 
           V_relation_table_TB.[student_id] 
 
+
                        and 
+
 
          V_relation_table_TB.[class_id]
                         =
@@ -126,19 +129,22 @@ public class TestRelation:IVasilyRelation
 ```sql
                 select * from 
 
+
         stuTable       as   V_stuTable_TA 
-
                     inner join 
-
         relation_table as   V_relation_table_TB
 
+
                        ON  
+
 
             V_stuTable_TA.[student_id]
                         = 
           V_relation_table_TB.[student_id] 
 
+
                        and 
+
 
          V_relation_table_TB.[class_id]
                         =
