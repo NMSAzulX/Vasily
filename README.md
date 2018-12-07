@@ -145,21 +145,20 @@ public class TestRelation:IVasilyRelation
                     [@cid]   <----
 ```
 
->>第一种，后面查询条件为 @class_id，该字段属于表本身的字段，对应的封装dapper后的操作为操作为TableGets、TableUpdate等等
+第一种，后面查询条件为 @class_id，该字段属于表本身的字段，对应的封装dapper后的操作为操作为TableGets、TableUpdate等等
 
 >>用法是直接传值，如TableGets(1)
 
->>第二种，后面查询条件为 @cid, 这个是[Relation(typeof(Class))]中，Class类里面的字段, 而且cid被标记成了[PrimaryKey], 这种属于隐式的操作.  还有一种显式的操作：[Relation(typeof(Class),"cid")] 直接传入。它们对应的API操作为SourceGet,SourceXXX等等
+第二种，后面查询条件为 @cid, 这个是[Relation(typeof(Class))]中，Class类里面的字段, 而且cid被标记成了[PrimaryKey], 这种属于隐式的操作.  还有一种显式的操作：[Relation(typeof(Class),"cid")] 直接传入。它们对应的API操作为SourceGet,SourceXXX等等
 
 >>用法：这类函数传参直接传对象，如SourceGets(myClassInstance); 
 
->>>>这里myClassInstane会通过emit缓存方法获取cid的值。 
+>>>这里myClassInstane会通过emit缓存方法获取cid的值。 
    
   ​
  ------  
   ​
-
- 刚开始Vasily采用了排列树进行预热操作，考虑到排列书在关系复杂的时候占用的空间较多，现在已经改为触发式生成缓存，也就是只有当用的时候才会生成缓存。
+ 起初Vasily采用了排列树进行预热操作，考虑到排列书在关系复杂的时候占用的空间较多，现在已经改为触发式生成缓存，也就是只有当用的时候才会生成缓存。
 
 > RelationSql<Student,TestRelation,Class> 代表属于TestRelation类中的[Student,Class]关系; 
 >>业务上来讲，是通过class获取studnet。  
@@ -177,7 +176,7 @@ public class TestRelation:IVasilyRelation
  * 第三个泛型以后代表了条件;  
  
    ​
-其他更多的例子可以看看UT测试的代码  
+>>其他更多的例子可以看看UT测试的代码  
 
 ------  
   ​  
@@ -219,7 +218,6 @@ public class TestRelation:IVasilyRelation
 
 首先我们以TestRelation_为前缀创建一个类，当Vasily在解析`[Relation(typeof(TestRelation_Luzishen),"rid")]`的时候，会按照TestRelation类，rid字段生成EMIT映射操作，另外也让RelationSql<>的关系更加清晰。
 
-parent_id=@rid，父id与本类的主键建立起了关系。
 
 当然了，也可以这样写：
 ```c#
@@ -238,7 +236,7 @@ var children = DapperWrapper<TestRelation,TestRelation,TestRelation_AnyName>.Use
 ``` 
  ​
 
- ##语法封装以及脚本查询
+##语法封装以及脚本查询
 
  ### 语法及脚本
 
