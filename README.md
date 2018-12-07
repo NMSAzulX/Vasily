@@ -95,7 +95,11 @@ public class TestRelation:IVasilyRelation
  * Parameter2: 参数是为了区分操作，Vasily提供了两种关系操作;  
  
 
-  >先看其中一项的结果：  
+
+  >先看其中一项的结果： 
+
+  - 第一种
+
   ```sql
                 select * from 
 
@@ -117,6 +121,7 @@ public class TestRelation:IVasilyRelation
                         =
                     [@class_id]   <----
 ```  
+  - 第二种
 
 ```sql
                 select * from 
@@ -151,29 +156,10 @@ public class TestRelation:IVasilyRelation
 >>>>这里myClassInstane会通过emit缓存方法获取cid的值。 
    
   ​
-   
  ------  
   ​
 
-   
- ~~在RelationHandler中，该实体类被扫描处理成一个排列树(以两个元素为最低标准)，上面的类结果如下：~~  
- 
- * A32 = 3!/(3-2)! = 6  
->A32 ： [Student,Class] 、 [Class,Student] 、[Student,TestRelation]、[TestRelation,Student]、[Class,TestRelation]、[TestRelation,Class]  
-
- * A33 = 3!/0!=6  
->A33 :   [Student,Class,TestRelation]、 [Class,Student,TestRelation] 、[Student,TestRelation,Class]、[TestRelation,Student,Class]、[Class,TestRelation,Student]、[TestRelation,Class,Student]  
-    
-  ------  
-    
-   ​
-
-      
-
- ~~一共12种，为此Vasily将缓存有12种操作关系的静态类。 ：~~  
- 
-
- 考虑到排列书在关系复杂的时候占用的空间较多，现在已经改为触发式生成缓存，也就是只有当用的时候才会生成缓存。
+ 刚开始Vasily采用了排列树进行预热操作，考虑到排列书在关系复杂的时候占用的空间较多，现在已经改为触发式生成缓存，也就是只有当用的时候才会生成缓存。
 
 > RelationSql<Student,TestRelation,Class> 代表属于TestRelation类中的[Student,Class]关系; 
 >>业务上来讲，是通过class获取studnet。  
@@ -191,41 +177,10 @@ public class TestRelation:IVasilyRelation
  * 第三个泛型以后代表了条件;  
  
    ​
-
-------  
-  ​  
-  
-  
-下面我们看一下以上实体的处理结果：  
-```
-RelationSql<Student,TestRelation,Class>.GetFromTable  = SELECT `student_id` FROM `relation_table` WHERE `class_id`=@class_id
-RelationSql<Student,TestRelation,Class>.GetFromSource = SELECT `student_id` FROM `relation_table` WHERE `class_id`=@cid
-```  
-
-```
-RelationSql<Student,TestRelation,Class>.ModifyFromTable  = UPDATE `relation_table` SET `student_id`=@student_id WHERE `class_id`=@class_id
-RelationSql<Student,TestRelation,Class>ModifyFromSource   = UPDATE `relation_table` SET `student_id`=@sid WHERE`class_id`=@cid
-```  
-
-
-```
-RelationSql<Student, Relation, Class>.AddFromTable = INSERT INTO `relation_table` (`student_id`,`class_id`)VALUES(@student_id,@class_id)
-RelationSql<Student, Relation, Class>.AddFromSource = INSERT INTO `relation_table` (`student_id`,`class_id`)VALUES(@sid,@cid)
-```  
-
-```
-//前置删除
-RelationSql<Student, Relation, Class>.DeletePreFromTable = "DELETE FROM `relation_table` WHERE `StudentId`=@StudentId"
-//后置删除
-RelationSql<Student, Relation, Class, Relation>.DeleteAftFromSource = "DELETE FROM `relation_table` WHERE`class_id`=@cid AND `id`=@id
-```  
-
 其他更多的例子可以看看UT测试的代码  
 
-  ​  
-  
 ------  
-  ​
+  ​  
 
 #### 关系拓展
 
@@ -264,8 +219,7 @@ public class TestRelation:IVasilyRelation
 
 首先我们以TestRelation_为前缀创建一个类，当Vasily在解析`[Relation(typeof(TestRelation_Luzishen),"rid")]`的时候，会按照TestRelation类，rid字段生成EMIT映射操作，另外也让RelationSql<>的关系更加清晰。
 
-从结果`RelationSql<TestRelation,TestRelation,TestRelation_Luzishen>.GetFromSource= SELECT rid FROM relation_table WHERE parent_id=@rid`
-可以看到parent_id=@rid，父id与本类的主键建立起了关系。
+parent_id=@rid，父id与本类的主键建立起了关系。
 
 当然了，也可以这样写：
 ```c#
@@ -284,48 +238,53 @@ var children = DapperWrapper<TestRelation,TestRelation,TestRelation_AnyName>.Use
 ``` 
  ​
 
+ ##语法封装以及脚本查询
+
  ### 语法及脚本
 
-- #### CP (Condition+Parameter)语法：
- 任何对象都可以.Condition，返回CP对象进行参数化查询，例如：
-
-```c#
-	Student student = new Student();
-	handler.Gets(student.Condition("c>id"));
-	handler.Gets(student.Condition(c>"id"));
-``` 
+ - #### SqlCondition 语法封装：
 
 ```c#
 
-//c ：固定的识别变量 
-//或定义SqlCondition<TEntity> c = new SqlCondition<TEntity>();
+SqlCondition<TEntity> c = new SqlCondition<TEntity>();
 
 //普通操作符
 c>"id"  ==> id>@id 如果采用泛型操作 id可以根据Column注解进行数据库字段的映射
 c!="id" ==> id<>@id
 
-
 //与或操作符
 c>"id" & (c!="id" | c<"id")  ==>  (id>@id AND (id!=@id OR id<@id))
-
 
 //排序操作符
 c +"id" - "age" ==> ORDER BY id ASC, age DESC
 
-
 //分页操作符
 c ^ (2,10) ==> 分页语句，兼容MySql，SqlServer2012以后，PgSql，SqlLite
 
-
 //组合
 c>"id" ^ c -"id" ^ (current_page, size)  ==> id>@id ORDER BY id DESC +分页查询
-
 
 //Vasily可根据语法树解析字符串脚本进而生成SQL语句，如下：
 "c>id ^ c-id ^(2,10)" = >id>@id ORDER BY id DESC +分页查询
 ```
 
+- #### CP (Condition+Parameter)语法：
+ Vasily提供了一个简单的语法封装，以便于CURD排序分页等简单业务
+ 任何对象都可以.Condition，返回CP对象进行参数化查询，例如：
+
+
+```c#
+	Student student = new Student();
+  SqlCondition<student> c = new SqlCondition<student>();
+	handler.Gets(student.Condition("c>id"));
+	handler.Gets(student.Condition(c>"id"));
+``` 
+
+
+
 - #### VP(VasilyScript +Parameter)格式即:
+
+Vasily提供了一个可来自前端的协议对象操作，按照以下格式通过AJAX即可完成自定义查询
 
 ```c#
 //vp可以隐式转换为cp,进而适配vasily进行查询
@@ -340,6 +299,7 @@ c>"id" ^ c -"id" ^ (current_page, size)  ==> id>@id ORDER BY id DESC +分页查�
 //参数传vp格式即可
 
 ```
+
   sql 已经进行了防注入检测，参数也采用参数化处理
 
 - ### 项目计划
@@ -396,6 +356,7 @@ c>"id" ^ c -"id" ^ (current_page, size)  ==> id>@id ORDER BY id DESC +分页查�
    - 2018-10-26：增加Union支持查询、更新、删除操作.
    - 2018-11-02：修复Union逻辑封装，优化运行时运算符重载逻辑，增加模糊查询，运行时%符号重载，以及脚本解析.
    - 2018-11-21：增加Union、Intersect、Except、UnionAll集合查询.
+   - 2018-12-07：重构关系操作，采用INNER JOIN, 优化引擎架构，提高复用性。
 
 ~~~
 
