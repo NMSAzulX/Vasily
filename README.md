@@ -218,7 +218,6 @@ public class TestRelation:IVasilyRelation
 
 首先我们以TestRelation_为前缀创建一个类，当Vasily在解析`[Relation(typeof(TestRelation_Luzishen),"rid")]`的时候，会按照TestRelation类，rid字段生成EMIT映射操作，另外也让RelationSql<>的关系更加清晰。
 
-
 当然了，也可以这样写：
 ```c#
 public class TestRelation_AnyName{
@@ -234,11 +233,8 @@ public int parent_id{get;set;}
 var children = DapperWrapper<TestRelation,TestRelation,TestRelation_AnyName>.UseKey("sqlkey").SourceGets(father);
 
 ``` 
- ​
 
-##语法封装以及脚本查询
-
- ### 语法及脚本
+ ### 语法封装以及脚本查询
 
  - #### SqlCondition 语法封装：
 
