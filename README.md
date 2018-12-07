@@ -100,46 +100,46 @@ public class TestRelation:IVasilyRelation
   - 第一种
 
   ```sql
-                select * from 
+         select * from 
 
 
       stuTable  as  V_stuTable_TA         inner join 
 relation_table  as  V_relation_table_TB    ON  
 
 
-            V_stuTable_TA.[student_id]
-                        = 
-          V_relation_table_TB.[student_id] 
+    V_stuTable_TA.[student_id]
+                = 
+    V_relation_table_TB.[student_id] 
 
 
-                       and 
+               and 
 
 
-         V_relation_table_TB.[class_id]
-                        =
-                    [@class_id]   <----
+    V_relation_table_TB.[class_id]
+                =
+           [@class_id]   <----
 ```  
   - 第二种
 
 ```sql
-                select * from 
+         select * from 
 
 
       stuTable  as  V_stuTable_TA         inner join 
 relation_table  as  V_relation_table_TB   ON  
 
 
-            V_stuTable_TA.[student_id]
-                        = 
-          V_relation_table_TB.[student_id] 
+    V_stuTable_TA.[student_id]
+                = 
+    V_relation_table_TB.[student_id] 
 
 
-                       and 
+               and 
 
 
-         V_relation_table_TB.[class_id]
-                        =
-                    [@cid]   <----
+    V_relation_table_TB.[class_id]
+                =
+              [@cid]   <----
 ```
 
 第一种，后面查询条件为 @class_id，该字段属于表本身的字段，对应的封装dapper后的操作为操作为TableGets、TableUpdate等等
