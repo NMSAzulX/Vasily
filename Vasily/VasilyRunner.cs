@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Vasily;
+using Vasily.Core;
 
 namespace System
 {
@@ -56,14 +57,22 @@ namespace System
             {
                 Parallel.ForEach(types, (element) =>
                 {
-                    SqlPackage package = new SqlPackage(element);
+                    bool IsNormal = element.GetInterface("IVasilyNormal") != null;
+                    if (IsNormal)
+                    {
+                        NormalAnalysis analysis = new NormalAnalysis(element);
+                    }
                 });
             }
             else
             {
                 foreach (var item in types)
                 {
-                    SqlPackage package = new SqlPackage(item);
+                    bool IsNormal = item.GetInterface("IVasilyNormal") != null;
+                    if (IsNormal)
+                    {
+                        NormalAnalysis analysis = new NormalAnalysis(item);
+                    }
                 }
             }
             

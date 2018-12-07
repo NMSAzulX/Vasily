@@ -2,6 +2,12 @@
 
 namespace Vasily.Core
 {
+    public class NormalAnalysis<T> : NormalAnalysis
+    {
+        public NormalAnalysis(string splite = null) : base(typeof(T), splite) { }
+
+    }
+
     public class NormalAnalysis
     {
         public NormalAnalysis(Type type,string splite=null)

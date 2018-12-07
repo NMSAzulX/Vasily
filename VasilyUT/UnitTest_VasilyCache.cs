@@ -1,4 +1,5 @@
 ﻿using Vasily;
+using Vasily.Core;
 using VasilyUT.Entity;
 using Xunit;
 
@@ -9,7 +10,7 @@ namespace VasilyUT
         [Fact(DisplayName = "缓存-SQL生成器Model测试")]
         public void TestSelectRelation32()
         {
-            SqlPackage<Relation> package = new SqlPackage<Relation>();
+            NormalAnalysis<Relation> package = new NormalAnalysis<Relation>();
             Assert.Equal("Id", SqlModel<Relation>.PrimaryKey);
             Assert.Equal('`', SqlModel<Relation>.Left);
             Assert.Equal('`', SqlModel<Relation>.Right);
