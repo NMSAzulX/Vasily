@@ -8,7 +8,7 @@ namespace Vasily.Core
     public class AttrOperator
     {
         private static ConcurrentDictionary<Type, MemberInfo[]> _member_cache;
-        private Type _type;
+        internal Type _type;
         internal MemberInfo[] _members;
 
         static AttrOperator()
@@ -17,6 +17,11 @@ namespace Vasily.Core
         }
         public AttrOperator(Type type)
         {
+            if (type==null)
+            {
+                return;
+            }
+
             List<MemberInfo> cache = new List<MemberInfo>();
             _type = type;
             if (!_member_cache.ContainsKey(type))

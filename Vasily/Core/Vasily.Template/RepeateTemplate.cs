@@ -1,17 +1,16 @@
 ﻿using System.Linq;
 using System.Text;
-using Vasily.Standard;
 
 namespace Vasily.Core
 {
-    public class RepeateTemplate:IRepeate
+    public class RepeateTemplate
     {
         /// <summary>
         /// 根据model信息生成 SELECT COUNT(*) FROM [TableName] WHERE [Member1]=@Member1 AND [Member2]=@Member2 ....
         /// </summary>
         /// <param name="model">载有生成信息的Model</param>
         /// <returns>查重字符串结果</returns>
-        public string RepeateCount(MakerModel model)
+        public string RepeateCount(SqlModel model)
         {
             StringBuilder sql = new StringBuilder(40);
             sql.Append("SELECT COUNT(*) FROM ");
@@ -31,7 +30,7 @@ namespace Vasily.Core
         /// </summary>
         /// <param name="model">载有生成信息的Model</param>
         /// <returns>查重字符串结果</returns>
-        public string RepeateId(MakerModel model)
+        public string RepeateId(SqlModel model)
         {
             StringBuilder sql = new StringBuilder(40);
             sql.Append("SELECT ");
@@ -55,7 +54,7 @@ namespace Vasily.Core
         /// </summary>
         /// <param name="model">载有生成信息的Model</param>
         /// <returns>查重字符串结果</returns>
-        public string RepeateEntities(MakerModel model)
+        public string RepeateEntities(SqlModel model)
         {
             StringBuilder sql = new StringBuilder(40);
             sql.Append("SELECT * FROM ");

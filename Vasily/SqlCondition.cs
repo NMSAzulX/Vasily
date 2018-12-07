@@ -97,9 +97,9 @@ namespace System
     {
         public SqlCondition()
         {
-            PrimaryKey = MakerModel<T>.PrimaryKey;
-            Table = MakerModel<T>.TableName;
-            OperatorType = MakerModel<T>.OperatorType;
+            PrimaryKey = SqlModel<T>.PrimaryKey;
+            Table = SqlModel<T>.TableName;
+            OperatorType = SqlModel<T>.OperatorType;
         }
         //public static SqlCondition<T> operator & (SqlCondition<T> field1, string field2)
         //{
@@ -211,7 +211,7 @@ namespace System
         public SqlCondition<T> GetParameterString(string operators, string field2)
         {
             SqlCondition<T> newInstance = new SqlCondition<T>();
-            newInstance.SqlResults.Append(MakerModel<T>.Column(field2)).Append($" {operators} @").Append(field2);
+            newInstance.SqlResults.Append(SqlModel<T>.Column(field2)).Append($" {operators} @").Append(field2);
             return newInstance;
         }
         public static SqlCondition<T> operator >=(SqlCondition<T> field1, string field2)
@@ -266,12 +266,12 @@ namespace System
         {
             if (field1.HasOrder)
             {
-                field1.SqlOrders.Append($",{MakerModel<T>.Column(field2)} ASC");
+                field1.SqlOrders.Append($",{SqlModel<T>.Column(field2)} ASC");
             }
             else
             {
                 field1.HasOrder = true;
-                field1.SqlOrders.Append($" ORDER BY {MakerModel<T>.Column(field2)} ASC");
+                field1.SqlOrders.Append($" ORDER BY {SqlModel<T>.Column(field2)} ASC");
             }
             return field1;
         }
@@ -279,12 +279,12 @@ namespace System
         {
             if (field1.HasOrder)
             {
-                field1.SqlOrders.Append($",{MakerModel<T>.Column(field2)} ASC");
+                field1.SqlOrders.Append($",{SqlModel<T>.Column(field2)} ASC");
             }
             else
             {
                 field1.HasOrder = true;
-                field1.SqlOrders.Append($" ORDER BY {MakerModel<T>.Column(field2)} ASC");
+                field1.SqlOrders.Append($" ORDER BY {SqlModel<T>.Column(field2)} ASC");
             }
             return field1;
         }
@@ -292,12 +292,12 @@ namespace System
         {
             if (field1.HasOrder)
             {
-                field1.SqlOrders.Append($",{MakerModel<T>.Column(field2)} DESC");
+                field1.SqlOrders.Append($",{SqlModel<T>.Column(field2)} DESC");
             }
             else
             {
                 field1.HasOrder = true;
-                field1.SqlOrders.Append($" ORDER BY {MakerModel<T>.Column(field2)} DESC");
+                field1.SqlOrders.Append($" ORDER BY {SqlModel<T>.Column(field2)} DESC");
             }
             return field1;
         }
@@ -305,12 +305,12 @@ namespace System
         {
             if (field1.HasOrder)
             {
-                field1.SqlOrders.Append($",{MakerModel<T>.Column(field2)} DESC");
+                field1.SqlOrders.Append($",{SqlModel<T>.Column(field2)} DESC");
             }
             else
             {
                 field1.HasOrder = true;
-                field1.SqlOrders.Append($" ORDER BY {MakerModel<T>.Column(field2)} DESC");
+                field1.SqlOrders.Append($" ORDER BY {SqlModel<T>.Column(field2)} DESC");
             }
             return field1;
         }

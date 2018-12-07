@@ -10,12 +10,11 @@ namespace VasilyUT
         public void TestSelectRelation32()
         {
             SqlPackage<Relation> package = new SqlPackage<Relation>();
-            Assert.Equal("Id", MakerModel<Relation>.PrimaryKey);
-            Assert.Equal('`', MakerModel<Relation>.Left);
-            Assert.Equal('`', MakerModel<Relation>.Right);
-            Assert.Equal("关系映射表", MakerModel<Relation>.TableName);
-            Assert.NotNull(MakerModel<Relation>.StringMapping);
-            Assert.NotNull(MakerModel<Relation>.ColumnMapping);
+            Assert.Equal("Id", SqlModel<Relation>.PrimaryKey);
+            Assert.Equal('`', SqlModel<Relation>.Left);
+            Assert.Equal('`', SqlModel<Relation>.Right);
+            Assert.Equal("关系映射表", SqlModel<Relation>.TableName);
+            Assert.NotNull(SqlModel<Relation>.ColumnMapping);
         }
     }
 }

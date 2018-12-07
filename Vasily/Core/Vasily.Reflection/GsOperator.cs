@@ -40,8 +40,12 @@ namespace Vasily.Core
         {
             _infos = new Dictionary<string, FieldInfo>();
             _dynamic_functions = new Dictionary<string, StaticSetter>();
-
-            Type _type = g_type.MakeGenericType(c_type);
+            Type _type = g_type;
+            if (c_type.Length!=0)
+            {
+                _type = g_type.MakeGenericType(c_type);
+            }
+            
             FieldInfo[] infos = _type.GetFields(BindingFlags.Static | BindingFlags.Public);
 
             for (int i = 0; i < infos.Length; i+=1)

@@ -5,7 +5,7 @@ using Vasily;
 using Vasily.Core;
 using VasilyUT.Entity;
 using Xunit;
-using Vasily.Extensions.ReflectionExtensions;
+using Vasily.Extensions;
 
 namespace VasilyUT
 {

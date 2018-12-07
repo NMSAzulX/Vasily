@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Vasily.Core
+namespace Vasily
 {
     public class SqlCollection
     {
@@ -109,19 +109,19 @@ namespace Vasily.Core
 
         public static string TableUnion(string source_sql, params string[] tables)
         {
-            return TableUnion(MakerModel<T>.TableName, source_sql, tables);
+            return TableUnion(SqlModel<T>.TableName, source_sql, tables);
         }
         public static string TableUnionAll(string source_sql, params string[] tables)
         {
-            return TableUnionAll(MakerModel<T>.TableName, source_sql, tables);
+            return TableUnionAll(SqlModel<T>.TableName, source_sql, tables);
         }
         public static string TableExcept(string source_sql, params string[] tables)
         {
-            return TableExcept(MakerModel<T>.TableName, source_sql, tables);
+            return TableExcept(SqlModel<T>.TableName, source_sql, tables);
         }
         public static string TableIntersect(string source_sql, params string[] tables)
         {
-            return TableIntersect(MakerModel<T>.TableName, source_sql, tables);
+            return TableIntersect(SqlModel<T>.TableName, source_sql, tables);
         }
         public static string Collection(SqlCollectionType type, string source_sql, params string[] tables)
         {

@@ -1,15 +1,14 @@
 ﻿using Vasily.Core;
-using Vasily.Standard;
 
 namespace Vasily
 {
     public static class SqlTemplate
     {
-        public static ISelect Select;
-        public static IUpdate Update;
-        public static IDelete Delete;
-        public static IInsert Insert;
-        public static IRepeate Repeate;
+        public static SelectTemplate Select;
+        public static UpdateTemplate Update;
+        public static DeleteTemplate Delete;
+        public static InsertTemplate Insert;
+        public static RepeateTemplate Repeate;
         static SqlTemplate()
         {
             Select = new SelectTemplate();
@@ -19,9 +18,4 @@ namespace Vasily
             Repeate = new RepeateTemplate();
         }
     }
-
-    
-
-    
-
 }

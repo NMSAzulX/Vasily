@@ -26,7 +26,7 @@ namespace VasilyDemo
             Console.WriteLine(Sql<One>.SelectAllIn);
             //SELECT * FROM [table_one] WHERE [oid] IN @keys
 
-            Console.WriteLine(Sql<One>.SelectAllByCondition);
+            Console.WriteLine(Sql<One>.SelectAllWhere);
             //SELECT * FROM [table_one] WHERE
 
 
@@ -39,25 +39,25 @@ namespace VasilyDemo
             Console.WriteLine(Sql<One>.SelectIn);
             //SELECT [oid],[name],[create_time],[update_time],[age],[student_id] FROM [table_one] WHERE [oid] IN @keys
 
-            Console.WriteLine(Sql<One>.SelectByCondition);
+            Console.WriteLine(Sql<One>.SelectWhere);
             //SELECT [oid],[name],[create_time],[update_time],[age],[student_id] FROM [table_one] WHERE
 
             Console.WriteLine(Sql<One>.UpdateAllByPrimary);
             //UPDATE [table_one] SET [name]=@name,[create_time]=@create_time,[update_time]=@update_time,[age]=@age,[student_id]=@student_id WHERE [oid]=@oid
 
-            Console.WriteLine(Sql<One>.UpdateAllByCondition);
+            Console.WriteLine(Sql<One>.UpdateAllWhere);
             //UPDATE [table_one] SET [name]=@name,[create_time]=@create_time,[update_time]=@update_time,[age]=@age,[student_id]=@student_id WHERE
 
             Console.WriteLine(Sql<One>.UpdateByPrimary);
             //UPDATE [table_one] SET [name]=@name,[update_time]=@update_time,[age]=@age,[student_id]=@student_id WHERE [oid]=@oid
 
-            Console.WriteLine(Sql<One>.UpdateByCondition);
+            Console.WriteLine(Sql<One>.UpdateWhere);
             //UPDATE [table_one] SET [name]=@name,[update_time]=@update_time,[age]=@age,[student_id]=@student_id WHERE
 
             Console.WriteLine(Sql<One>.DeleteByPrimary);
             //DELETE FROM [table_one] WHERE [oid] = @oid
 
-            Console.WriteLine(Sql<One>.DeleteByCondition);
+            Console.WriteLine(Sql<One>.DeleteWhere);
             //DELETE FROM [table_one] WHERE
 
 
@@ -77,7 +77,7 @@ namespace VasilyDemo
 
             Console.WriteLine(Sql<One>.SelectCount);
             //SELECT Count(*) FROM [table_one]
-            Console.WriteLine(Sql<One>.SelectCountByCondition);
+            Console.WriteLine(Sql<One>.SelectCountWhere);
             //SELECT  Count(*) FROM [table_one] WHERE
 
 

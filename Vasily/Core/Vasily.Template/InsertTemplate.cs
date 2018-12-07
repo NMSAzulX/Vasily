@@ -1,17 +1,22 @@
 ﻿using System.Text;
-using Vasily.Standard;
 
 namespace Vasily.Core
 {
-    public class InsertTemplate:IInsert
+    public class InsertTemplate
     {
         /// <summary>
         /// 根据model信息生成 INSERT INTO [TableName] ([member1],[member2]...) VALUES (@member1,@member2...)
         /// </summary>
         /// <param name="model">载有生成信息的Model</param>
         /// <returns>插入字符串的结果</returns>
-        public string Insert(MakerModel model)
+        public string Insert(SqlModel parameter_model)
         {
+            var model = parameter_model;
+            if (!parameter_model.PrimaryManually)
+            {
+                model = parameter_model.ModelWithoutPrimary();
+                model.FilterFunction = parameter_model.FilterFunction;
+            }
 
             StringBuilder pre_str = new StringBuilder(20);
             StringBuilder aft_str = new StringBuilder(20);
@@ -27,7 +32,7 @@ namespace Vasily.Core
                 }
                 else
                 {
-                    pre_str.Append(item.Name);
+                    pre_str.Append(item);
                 }
 
                 pre_str.Append(model.Right);
@@ -40,7 +45,7 @@ namespace Vasily.Core
                 }
                 else
                 {
-                    aft_str.Append(item.Name);
+                    aft_str.Append(item);
                 }
                 aft_str.Append(',');
             }

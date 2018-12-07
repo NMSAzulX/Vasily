@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Vasily;
 
 namespace Microsoft.AspNetCore.Mvc
 {
@@ -23,19 +24,19 @@ namespace Microsoft.AspNetCore.Mvc
         }
         public void UseUnion(params string[] tables)
         {
-            driver.UseCollection(Vasily.Core.SqlCollectionType.Union, tables);
+            driver.UseCollection(SqlCollectionType.Union, tables);
         }
         public void UseExcept(params string[] tables)
         {
-            driver.UseCollection(Vasily.Core.SqlCollectionType.Except, tables);
+            driver.UseCollection(SqlCollectionType.Except, tables);
         }
         public void UseIntersect(params string[] tables)
         {
-            driver.UseCollection(Vasily.Core.SqlCollectionType.Intersect, tables);
+            driver.UseCollection(SqlCollectionType.Intersect, tables);
         }
         public void UseUnionAll(params string[] tables)
         {
-            driver.UseCollection(Vasily.Core.SqlCollectionType.UnionAll, tables);
+            driver.UseCollection(SqlCollectionType.UnionAll, tables);
         }
 
         [HttpPost("query--page-vp")]

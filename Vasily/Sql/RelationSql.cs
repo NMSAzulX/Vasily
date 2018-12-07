@@ -7,31 +7,7 @@ namespace System
     {
         static RelationSql()
         {
-            RelationTriggerHandler template = new RelationTriggerHandler(typeof(RelationSql<T, Relation, C1>));
-            var filter = template._filter;
-            var handler = template.Handler;
-            Table = template._model.TableName;
-            Primary = template._model.PrimaryKey;
-            SourceConditions = template.Sources;
-            TableConditions = template.Tables;
-            Getters = template.Getters;
-
-           
-
-            CountFromTable = handler.SelectCountByCondition();
-            GetFromTable = handler.SelectString();
-            ModifyFromTable = handler.UpdateString();
-            DeletePreFromTable = handler.DeletePreString();
-            DeleteAftFromTable = handler.DeleteAftString();
-            AddFromTable = handler.InsertString();
-
-            CountFromSource = handler.SelectCountByCondition(filter);
-            GetFromSource = handler.SelectString(filter);
-            ModifyFromSource = handler.UpdateString(filter);
-            DeletePreFromSource = handler.DeletePreString(filter);
-            DeleteAftFromSource = handler.DeleteAftString(filter);
-            AddFromSource = handler.InsertString(filter);
-
+            RelationAnalysis analysis = new RelationAnalysis(typeof(RelationSql<T, Relation, C1>));
         }
 
         public static MemberGetter[] Getters;
@@ -39,7 +15,7 @@ namespace System
         public static string Table;
         public static string Primary;
 
-        
+
 
         public static string[] SourceConditions;
         public static string[] TableConditions;
@@ -65,30 +41,8 @@ namespace System
     {
         static RelationSql()
         {
-            RelationTriggerHandler template = new RelationTriggerHandler(typeof(RelationSql<T, Relation, C1,C2>));
-            var filter = template._filter;
-            var handler = template.Handler;
-            Table = template._model.TableName;
-            Primary = template._model.PrimaryKey;
-            SourceConditions = template.Sources;
-            TableConditions = template.Tables;
-            Getters = template.Getters;
+            RelationAnalysis analysis = new RelationAnalysis(typeof(RelationSql<T, Relation, C1, C2>));
 
-
-
-            CountFromTable = handler.SelectCountByCondition();
-            GetFromTable = handler.SelectString();
-            ModifyFromTable = handler.UpdateString();
-            DeletePreFromTable = handler.DeletePreString();
-            DeleteAftFromTable = handler.DeleteAftString();
-            AddFromTable = handler.InsertString();
-
-            CountFromSource = handler.SelectCountByCondition(filter);
-            GetFromSource = handler.SelectString(filter);
-            ModifyFromSource = handler.UpdateString(filter);
-            DeletePreFromSource = handler.DeletePreString(filter);
-            DeleteAftFromSource = handler.DeleteAftString(filter);
-            AddFromSource = handler.InsertString(filter);
         }
         public static MemberGetter[] Getters;
 
@@ -117,30 +71,7 @@ namespace System
     {
         static RelationSql()
         {
-            RelationTriggerHandler template = new RelationTriggerHandler(typeof(RelationSql<T, Relation, C1, C2, C3>));
-            var filter = template._filter;
-            var handler = template.Handler;
-            Table = template._model.TableName;
-            Primary = template._model.PrimaryKey;
-            SourceConditions = template.Sources;
-            TableConditions = template.Tables;
-            Getters = template.Getters;
-
-
-
-            CountFromTable = handler.SelectCountByCondition();
-            GetFromTable = handler.SelectString();
-            ModifyFromTable = handler.UpdateString();
-            DeletePreFromTable = handler.DeletePreString();
-            DeleteAftFromTable = handler.DeleteAftString();
-            AddFromTable = handler.InsertString();
-
-            CountFromSource = handler.SelectCountByCondition(filter);
-            GetFromSource = handler.SelectString(filter);
-            ModifyFromSource = handler.UpdateString(filter);
-            DeletePreFromSource = handler.DeletePreString(filter);
-            DeleteAftFromSource = handler.DeleteAftString(filter);
-            AddFromSource = handler.InsertString(filter);
+            RelationAnalysis analysis = new RelationAnalysis(typeof(RelationSql<T, Relation, C1, C2, C3>));
         }
         public static MemberGetter[] Getters;
 
@@ -168,30 +99,7 @@ namespace System
     {
         static RelationSql()
         {
-            RelationTriggerHandler template = new RelationTriggerHandler(typeof(RelationSql<T, Relation, C1, C2, C3, C4>));
-            var filter = template._filter;
-            var handler = template.Handler;
-            Table = template._model.TableName;
-            Primary = template._model.PrimaryKey;
-            SourceConditions = template.Sources;
-            TableConditions = template.Tables;
-            Getters = template.Getters;
-
-
-
-            CountFromTable = handler.SelectCountByCondition();
-            GetFromTable = handler.SelectString();
-            ModifyFromTable = handler.UpdateString();
-            DeletePreFromTable = handler.DeletePreString();
-            DeleteAftFromTable = handler.DeleteAftString();
-            AddFromTable = handler.InsertString();
-
-            CountFromSource = handler.SelectCountByCondition(filter);
-            GetFromSource = handler.SelectString(filter);
-            ModifyFromSource = handler.UpdateString(filter);
-            DeletePreFromSource = handler.DeletePreString(filter);
-            DeleteAftFromSource = handler.DeleteAftString(filter);
-            AddFromSource = handler.InsertString(filter);
+            RelationAnalysis analysis = new RelationAnalysis(typeof(RelationSql<T, Relation, C1, C2, C3, C4>));
         }
         public static MemberGetter[] Getters;
 
@@ -219,30 +127,7 @@ namespace System
     {
         static RelationSql()
         {
-            RelationTriggerHandler template = new RelationTriggerHandler(typeof(RelationSql<T, Relation, C1, C2, C3, C4, C5>));
-            var filter = template._filter;
-            var handler = template.Handler;
-            Table = template._model.TableName;
-            Primary = template._model.PrimaryKey;
-            SourceConditions = template.Sources;
-            TableConditions = template.Tables;
-            Getters = template.Getters;
-
-
-
-            CountFromTable = handler.SelectCountByCondition();
-            GetFromTable = handler.SelectString();
-            ModifyFromTable = handler.UpdateString();
-            DeletePreFromTable = handler.DeletePreString();
-            DeleteAftFromTable = handler.DeleteAftString();
-            AddFromTable = handler.InsertString();
-
-            CountFromSource = handler.SelectCountByCondition(filter);
-            GetFromSource = handler.SelectString(filter);
-            ModifyFromSource = handler.UpdateString(filter);
-            DeletePreFromSource = handler.DeletePreString(filter);
-            DeleteAftFromSource = handler.DeleteAftString(filter);
-            AddFromSource = handler.InsertString(filter);
+            RelationAnalysis analysis = new RelationAnalysis(typeof(RelationSql<T, Relation, C1, C2, C3, C4, C5>));
         }
         public static MemberGetter[] Getters;
 
@@ -271,30 +156,8 @@ namespace System
     {
         static RelationSql()
         {
-            RelationTriggerHandler template = new RelationTriggerHandler(typeof(RelationSql<T, Relation, C1, C2, C3, C4, C5, C6>));
-            var filter = template._filter;
-            var handler = template.Handler;
-            Table = template._model.TableName;
-            Primary = template._model.PrimaryKey;
-            SourceConditions = template.Sources;
-            TableConditions = template.Tables;
-            Getters = template.Getters;
+            RelationAnalysis analysis = new RelationAnalysis(typeof(RelationSql<T, Relation, C1, C2, C3, C4, C5, C6>));
 
-
-
-            CountFromTable = handler.SelectCountByCondition();
-            GetFromTable = handler.SelectString();
-            ModifyFromTable = handler.UpdateString();
-            DeletePreFromTable = handler.DeletePreString();
-            DeleteAftFromTable = handler.DeleteAftString();
-            AddFromTable = handler.InsertString();
-
-            CountFromSource = handler.SelectCountByCondition(filter);
-            GetFromSource = handler.SelectString(filter);
-            ModifyFromSource = handler.UpdateString(filter);
-            DeletePreFromSource = handler.DeletePreString(filter);
-            DeleteAftFromSource = handler.DeleteAftString(filter);
-            AddFromSource = handler.InsertString(filter);
         }
         public static MemberGetter[] Getters;
 

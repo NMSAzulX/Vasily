@@ -50,7 +50,6 @@ namespace VasilyUT
             Class1 myClass = new Class1();
             Sql<Class1>.SetPrimary(myClass, "abc");
             Assert.Equal("abc", (string)RelationSql<Class1, Relation2, Student1, Class, Student>.Getters[0](myClass));
-
         }
     }
 }

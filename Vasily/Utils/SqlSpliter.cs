@@ -55,5 +55,27 @@ namespace Vasily.Utils
             }
             return result;
         }
+        public static string GetSpliter(SqlType type)
+        {
+            string result = "  ";
+            switch (type)
+            {
+                case SqlType.MySql:
+                    result = "``";
+                    break;
+                case SqlType.MsSql:
+                    result = "[]";
+                    break;
+                case SqlType.TiDb:
+                    break;
+                case SqlType.PgSql:
+                    break;
+                case SqlType.None:
+                    break;
+                default:
+                    break;
+            }
+            return result;
+        }
     }
 }

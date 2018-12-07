@@ -32,25 +32,25 @@ namespace System
         public static string Table;
 
         public static string SelectCount;
-        public static string SelectCountByCondition;
+        public static string SelectCountWhere;
 
         public static string SelectAll;
-        public static string SelectAllByCondition;
+        public static string SelectAllWhere;
         public static string SelectAllByPrimary;
         public static string SelectAllIn;
 
         public static string Select;
-        public static string SelectByCondition;
+        public static string SelectWhere;
         public static string SelectByPrimary;
         public static string SelectIn;
 
-        public static string UpdateByCondition;
+        public static string UpdateWhere;
         public static string UpdateByPrimary;
 
-        public static string UpdateAllByCondition;
+        public static string UpdateAllWhere;
         public static string UpdateAllByPrimary;
 
-        public static string DeleteByCondition;
+        public static string DeleteWhere;
         public static string DeleteByPrimary;
 
         public static string InsertAll;

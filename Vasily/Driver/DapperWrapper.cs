@@ -217,11 +217,11 @@ namespace System
 
             if (RequestType == VasilyRequestType.Complete)
             {
-                sql = GetRealSqlString(condition, Sql<T>.SelectAllByCondition);
+                sql = GetRealSqlString(condition, Sql<T>.SelectAllWhere);
             }
             else
             {
-                sql = GetRealSqlString(condition, Sql<T>.SelectByCondition);
+                sql = GetRealSqlString(condition, Sql<T>.SelectWhere);
                 
             }
             return Reader.QueryFirst<T>(sql, instance);
@@ -233,11 +233,11 @@ namespace System
 
             if (RequestType == VasilyRequestType.Complete)
             {
-                sql = GetRealSqlString(condition, Sql<T>.SelectAllByCondition);
+                sql = GetRealSqlString(condition, Sql<T>.SelectAllWhere);
             }
             else
             {
-                sql = GetRealSqlString(condition, Sql<T>.SelectByCondition);
+                sql = GetRealSqlString(condition, Sql<T>.SelectWhere);
 
             }
             return Reader.QueryFirst<T>(sql, condition);
@@ -256,11 +256,11 @@ namespace System
 
             if (RequestType == VasilyRequestType.Complete)
             {
-                sql = GetRealSqlString(condition, Sql<T>.UpdateAllByCondition);
+                sql = GetRealSqlString(condition, Sql<T>.UpdateAllWhere);
             }
             else
             {
-                sql = GetRealSqlString(condition, Sql<T>.UpdateByCondition);
+                sql = GetRealSqlString(condition, Sql<T>.UpdateWhere);
             }
             return Writter.Execute(sql, instance, transaction: _transcation);
         }
@@ -270,11 +270,11 @@ namespace System
 
             if (RequestType == VasilyRequestType.Complete)
             {
-                sql = GetRealSqlString(condition, Sql<T>.UpdateAllByCondition);
+                sql = GetRealSqlString(condition, Sql<T>.UpdateAllWhere);
             }
             else
             {
-                sql = GetRealSqlString(condition, Sql<T>.UpdateByCondition);
+                sql = GetRealSqlString(condition, Sql<T>.UpdateWhere);
             }
 
             return Writter.Execute(sql, condition.Instance, transaction: _transcation);
@@ -289,11 +289,11 @@ namespace System
         {
             if (flag == ForceDelete.No)
             {
-                return Writter.Execute(Sql<T>.DeleteByCondition + condition.Full, instance, transaction: _transcation);
+                return Writter.Execute(Sql<T>.DeleteWhere + condition.Full, instance, transaction: _transcation);
             }
             else
             {
-                string temp = GetRealSqlString(condition, Sql<T>.DeleteByCondition);
+                string temp = GetRealSqlString(condition, Sql<T>.DeleteWhere);
                 return Writter.Execute(temp, instance, transaction: _transcation);
             }
         }
@@ -301,11 +301,11 @@ namespace System
         {
             if (flag == ForceDelete.No)
             {
-                return Writter.Execute(Sql<T>.DeleteByCondition + condition.Full, condition.Instance, transaction: _transcation);
+                return Writter.Execute(Sql<T>.DeleteWhere + condition.Full, condition.Instance, transaction: _transcation);
             }
             else
             {
-                return Writter.Execute(GetRealSqlString(condition, Sql<T>.DeleteByCondition), condition.Instance, transaction: _transcation);
+                return Writter.Execute(GetRealSqlString(condition, Sql<T>.DeleteWhere), condition.Instance, transaction: _transcation);
             }
         }
         /// <summary>
@@ -320,11 +320,11 @@ namespace System
 
             if (RequestType == VasilyRequestType.Complete)
             {
-                sql = GetRealSqlString(condition, Sql<T>.SelectAllByCondition);
+                sql = GetRealSqlString(condition, Sql<T>.SelectAllWhere);
             }
             else
             {
-                sql = GetRealSqlString(condition, Sql<T>.SelectByCondition);
+                sql = GetRealSqlString(condition, Sql<T>.SelectWhere);
             }
 
             return Reader.Query<T>(sql, instance);
@@ -336,11 +336,11 @@ namespace System
 
             if (RequestType == VasilyRequestType.Complete)
             {
-                sql = GetRealSqlString(condition, Sql<T>.SelectAllByCondition);
+                sql = GetRealSqlString(condition, Sql<T>.SelectAllWhere);
             }
             else
             {
-                sql = GetRealSqlString(condition, Sql<T>.SelectByCondition);
+                sql = GetRealSqlString(condition, Sql<T>.SelectWhere);
             }
 
             return Reader.Query<T>(sql, condition.Instance);
@@ -357,10 +357,10 @@ namespace System
         {
             if (Tables==null)
             {
-                return Reader.ExecuteScalar<int>(Sql<T>.SelectCountByCondition + condition.Full, instance);
+                return Reader.ExecuteScalar<int>(Sql<T>.SelectCountWhere + condition.Full, instance);
             }
             else {
-                string tempSql = GetRealSqlString(condition, Sql<T>.SelectCountByCondition);
+                string tempSql = GetRealSqlString(condition, Sql<T>.SelectCountWhere);
                 var temp = Reader.Query<int>(tempSql, instance);
                 Tables = null;
                 return Sum(temp);
@@ -370,11 +370,11 @@ namespace System
         {
             if (Tables == null)
             {
-                return Reader.ExecuteScalar<int>(Sql<T>.SelectCountByCondition + condition.Full, condition.Instance);
+                return Reader.ExecuteScalar<int>(Sql<T>.SelectCountWhere + condition.Full, condition.Instance);
             }
             else
             {
-                string tempSql = GetRealSqlString(condition, Sql<T>.SelectCountByCondition);
+                string tempSql = GetRealSqlString(condition, Sql<T>.SelectCountWhere);
                 var temp = Reader.Query<int>(tempSql, condition.Instance);
                 Tables = null;
                 return Sum(temp);
@@ -880,7 +880,7 @@ namespace System
             var dynamicParams = new DynamicParameters();
             for (int i = 0; i < _tables.Length - 1; i += 1)
             {
-                dynamicParams.Add(_tables[i + 1], parameters[i + 1]);
+                dynamicParams.Add(_tables[i + 1], parameters[i]);
             }
             return Reader.Execute(sql, dynamicParams);
         }
@@ -915,8 +915,7 @@ namespace System
             {
                 dynamicParams.Add(_sources[i + 1], _emits[i + 1](parameters[i]));
             }
-            var range = Reader.Query<int>(sql, dynamicParams);
-            return GetsIn(range);
+            return Reader.Query<T>(sql, dynamicParams);
         }
 
         /// <summary>
@@ -931,8 +930,7 @@ namespace System
             {
                 dynamicParams.Add(_sources[i + 1], _emits[i + 1](parameters[i]));
             }
-            var range = Reader.Query<int>(sql, dynamicParams);
-            return GetIn(range);
+            return Reader.QuerySingle<T>(sql, dynamicParams);
         }
 
         /// <summary>
@@ -947,8 +945,7 @@ namespace System
             {
                 dynamicParams.Add(_tables[i + 1], parameters[i]);
             }
-            var range = Reader.Query<int>(sql, dynamicParams);
-            return GetsIn(range);
+            return Reader.Query<T>(sql, dynamicParams);
         }
 
         /// <summary>
@@ -963,8 +960,7 @@ namespace System
             {
                 dynamicParams.Add(_tables[i + 1], parameters[i]);
             }
-            var range = Reader.Query<int>(sql, dynamicParams);
-            return GetIn(range);
+            return Reader.QuerySingle<T>(sql, dynamicParams);
         }
         #endregion
 

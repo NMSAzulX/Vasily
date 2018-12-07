@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Vasily.Extensions.ReflectionExtensions
+namespace Vasily.Extensions
 {
     public static class TypeExtension
     {

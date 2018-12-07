@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 
-namespace Vasily.Extensions.ReflectionExtensions
+namespace Vasily.Extensions
 {
     public static class MemberInfoExtension
     {
@@ -22,4 +23,6 @@ namespace Vasily.Extensions.ReflectionExtensions
             return null;
         }
     }
+
+   
 }
