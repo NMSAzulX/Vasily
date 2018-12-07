@@ -14,7 +14,7 @@ namespace Vasily.Core
         {
             var model = SqlMaker.Create(type);
             
-            GsOperator gs = new GsOperator(typeof(Sql<>), type);
+            GsOperator gs = new GsOperator(typeof(SqlEntity<>), type);
             gs["SetPrimary"] = MebOperator.Setter(type, model.PrimaryKey);
             gs["Table"] = model.TableName;
             gs["Primary"] = model.PrimaryKey;
