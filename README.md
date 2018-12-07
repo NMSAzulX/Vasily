@@ -20,7 +20,7 @@
 
 - ### 引擎结构
   ​
-  ![VasilyEngine](https://github.com/NMSAzulX/Vasily/blob/master/Image/VasilyEngine.png)
+  ![VasilyEngine](https://github.com/NMSAzulX/Vasily/blob/master/Image/Runtime.png)
 
 > 1. 引擎的入口VasilyRunner会扫描整个项目，挑选出实现IVasilyNormal接口或实现IVasilyRelation接口的类。
 
