@@ -22,36 +22,16 @@
   ​
   ![VasilyEngine](https://github.com/NMSAzulX/Vasily/blob/master/Image/Runtime.png)
 
-> 1. 引擎的入口VasilyRunner会扫描整个项目，挑选出实现IVasilyNormal接口或实现IVasilyRelation接口的类。
+> 1. 引擎的入口VasilyRunner会扫描整个项目，挑选出实现IVasilyNormal接口的类。
 
-> 2. 将扫描结果切片并发交由SqlPackage处理。SqlPackage是引擎外壳，其核心部分是由不同的Handler组成的，包括SelectHandler,UpdateHandler,InsertHandler,RepeateHandler,DeleteHandler,RelationHandler.
+> 2. 将扫描结果切片并发交由NormalAnalysis类处理。NormalAnalysis心部分是由SqlMaker以及Template组成，包括SelectTemplate,UpdateTemplate,InsertTemplate,RepeateTemplate,DeleteTemplate,RelationTemplate,CountTemplate.
 
-> 3. SqlPackage通过区分接口来决定扫描结果交由哪个Handler类处理。
+> 3. NormalAnalysis通过SqlMaker将实体类解析为SqlModel以便Template生成逻辑，SqlModel 和 Template 可以在运行时复用。
 
->&emsp;&emsp;     实现IVasilyNormal接口的实体类将被Select、Update、Insert、Delete、Repeate5个Handler处理。
+> 4. 关系操作采用静态泛型调用，例如SqlRelation<T,R,C1,C2>.. 第一次静态调用将触发RelationAnalysis,同NormalAnalysis一样，核心部分由一个Maker和各种Template构成，产物SqlRelationModel以及Template可复用.
 
->&emsp;&emsp;     实现IVasilyRelation接口的实体类将被RelationHandler单独处理。
+> 5. SQL语句生成完毕后，将被DapperWrapper封装，与Dapper结合使用.
 
-> 4. Handler拿到实体类之后，将由两部分进行处理。即父类BaseHandler,以及SQL生成模板Template.
-
-> 5. BaseHandler接过实体类之后将会拆解、过滤、重组成MakerModel,  同时进行静态化处理, 生成MakerModel&lt;TEntityType&gt;.
-
-> 6. Template用上一步得到的MakerModel自动生成SQL语句。由于MakerModel和Template均可以在重用，因此并没有直接内聚在Handler中，而是解耦出来。至于RelationHandler是没有Template的，因为目前还没有看到重用的价值。  
- 
-  * MakerModel注释
-  ```c#
-    /// <summary>
-    /// 当初始化MakerModel的时候，会产生静态泛型副本，以便后续直接用模板处理
-    /// 其中Left,Right,TableName,PrimaryKey,Members会被复制
-    /// Left,Right为SQL内置关键字分隔符
-    /// TableName为表名
-    /// PrimaryKey主键名
-    /// Members成员信息
-    /// ColFunction 为组建SQL语句时用到的过滤函数
-    /// FilterFunction 为组建@参数时用到的过滤函数
-    /// ColumnMapping 为Column的映射的缓存
-    /// </summary>
- ```  
  
   ​
 
@@ -61,10 +41,9 @@
 |    序号    |    流程    |    中间产出物    |    可用产出物    | 
 | :----: | :-----------------------------: | :-----------: | :--------------------------: |
 | 0 |	—— | —— |	Template |
-| 1 |	VasilyRunner + IVasilyNorml/IVasilyRelation |	TEntityType |	—— |
-| 2 |	TEntityType + BaseHandler | MakerModel |	MakerModel&lt;TEntityType&gt; |
-| 3 |	MakerModel + Tempalte |	—— | Sql&lt;TEntityType&gt; / DapperWrapper&lt;TEntityType&gt; |
-| 4 |	MakerModel + RelationHandler | ——	| RelationSql&lt;T,R,S....&gt; / DapperWrapper&lt;T,R,S....&gt; |
+| 1 |	VasilyRunner + IVasilyNorml |	TEntityType |	—— |
+| 2 |	TEntityType + NormalAnalaysis | SqlModel |	SqlEntity&lt;TEntityType&gt; |
+| 4 |	REntityType + RelationAnalaysis | SqlRelationModel	| SqlRelation&lt;T,REntityTypeR,S....&gt; / DapperWrapper&lt;T,REntityType,S....&gt; |
 
 
  
@@ -116,9 +95,42 @@ public class TestRelation:IVasilyRelation
  * Parameter2: 参数是为了区分操作，Vasily提供了两种关系操作;  
  
 
-  >先看生成结果：  
-  >> 1、select student_id from [table] where class_id=@class_id  
-  >> 2、select student_id from [table] where class_id=@cid
+  >先看其中一项的结果：  
+  >> 1、select * from 
+
+        stuTable       as V_stuTable_TA 
+
+      inner join 
+
+        relation_table as V_relation_table_TB
+
+      ON  
+
+        V_stuTable_TA.student_id 
+        = 
+        V_relation_table_TB.student_id 
+      and 
+         V_relation_table_TB.class_id
+         =
+         @class_id   <----
+
+  >> 2、select * from 
+
+        stuTable       as V_stuTable_TA 
+
+      inner join 
+
+        relation_table as V_relation_table_TB
+
+      ON  
+
+        V_stuTable_TA.student_id 
+        = 
+        V_relation_table_TB.student_id 
+      and 
+         V_relation_table_TB.class_id
+         =
+         @cid  <----
 
 >>第一种@class_id就是关系表本身的字段，对应的API操作为TableGets、TableUpdate等等
 这类函数传参直接传值，如TableGets(1)
