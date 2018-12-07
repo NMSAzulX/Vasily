@@ -147,11 +147,11 @@ public class TestRelation:IVasilyRelation
 
 第一种，后面查询条件为 @class_id，该字段属于表本身的字段，对应的封装dapper后的操作为操作为TableGets、TableUpdate等等
 
->>用法是直接传值，如TableGets(1)
+>用法：是直接传值，如TableGets(1)
 
 第二种，后面查询条件为 @cid, 这个是[Relation(typeof(Class))]中，Class类里面的字段, 而且cid被标记成了[PrimaryKey], 这种属于隐式的操作.  还有一种显式的操作：[Relation(typeof(Class),"cid")] 直接传入。它们对应的API操作为SourceGet,SourceXXX等等
 
->>用法：这类函数传参直接传对象，如SourceGets(myClassInstance); 
+>用法：这类函数传参直接传对象，如SourceGets(myClassInstance); 
 
 >>>这里myClassInstane会通过emit缓存方法获取cid的值。 
    
