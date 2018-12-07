@@ -96,50 +96,58 @@ public class TestRelation:IVasilyRelation
  
 
   >先看其中一项的结果：  
-  >> 1、select * from 
+  ```sql
+                select * from 
 
-        stuTable       as V_stuTable_TA 
+        stuTable       as   V_stuTable_TA 
 
-      inner join 
+                    inner join 
 
-        relation_table as V_relation_table_TB
+        relation_table as   V_relation_table_TB
 
-      ON  
+                       ON  
 
-        V_stuTable_TA.student_id 
-        = 
-        V_relation_table_TB.student_id 
-      and 
-         V_relation_table_TB.class_id
-         =
-         @class_id   <----
+            V_stuTable_TA.[student_id]
+                        = 
+          V_relation_table_TB.[student_id] 
 
-  >> 2、select * from 
+                       and 
 
-        stuTable       as V_stuTable_TA 
+         V_relation_table_TB.[class_id]
+                        =
+                    [@class_id]   <----
+```  
 
-      inner join 
+```sql
+                select * from 
 
-        relation_table as V_relation_table_TB
+        stuTable       as   V_stuTable_TA 
 
-      ON  
+                    inner join 
 
-        V_stuTable_TA.student_id 
-        = 
-        V_relation_table_TB.student_id 
-      and 
-         V_relation_table_TB.class_id
-         =
-         @cid  <----
+        relation_table as   V_relation_table_TB
 
->>第一种@class_id就是关系表本身的字段，对应的API操作为TableGets、TableUpdate等等
-这类函数传参直接传值，如TableGets(1)
+                       ON  
 
->>第二种@cid, 明显关系表中没有这个cid, 实际上它的来源只有一种就是Class这个类里面有个字段是cid，而且被标记成了[PrimaryKey],这种是隐式的操作.  
->>还有一种显式的操作：[Relation(typeof(Class),"cid")] 直接传入。
-它们对应的API操作为SourceGet,SourceXXX等等
-这类函数传参直接传对象，如SourceGets(myClassInstance); 
-这里myClassInstane会通过emit缓存方法获取cid的值。 
+            V_stuTable_TA.[student_id]
+                        = 
+          V_relation_table_TB.[student_id] 
+
+                       and 
+
+         V_relation_table_TB.[class_id]
+                        =
+                    [@cid]   <----
+```
+
+>>第一种，后面查询条件为 @class_id，该字段属于表本身的字段，对应的封装dapper后的操作为操作为TableGets、TableUpdate等等
+
+用法是直接传值，如TableGets(1)
+
+>>第二种，后面查询条件为 @cid, 这个是[Relation(typeof(Class))]中，Class类里面的字段, 而且cid被标记成了[PrimaryKey], 这种属于隐式的操作.  还有一种显式的操作：[Relation(typeof(Class),"cid")] 直接传入。它们对应的API操作为SourceGet,SourceXXX等等
+
+用法：这类函数传参直接传对象，如SourceGets(myClassInstance); 
+>>>>这里myClassInstane会通过emit缓存方法获取cid的值。 
    
   ​
    
