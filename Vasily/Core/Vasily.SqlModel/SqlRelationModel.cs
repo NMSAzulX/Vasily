@@ -151,7 +151,7 @@ namespace Vasily.Core
 
             //缓存关系注解映射
             ConcurrentDictionary<string, string> _source_mapping = new ConcurrentDictionary<string, string>();
-            var relations = handler.Mappings<RelationAttribute>();
+            var relations = handler.AttrsAndMembers<RelationAttribute>();
             foreach (var item in relations)
             {
                 mappings[item.Instance.RelationType] = item;
@@ -192,7 +192,7 @@ namespace Vasily.Core
             }
             ConcurrentDictionary<string, string> _column_mapping = new ConcurrentDictionary<string, string>();
            
-            var mappings = handler.Mappings<ColumnAttribute>();
+            var mappings = handler.AttrsAndMembers<ColumnAttribute>();
             foreach (var item in handler._members)
             {
                 _column_mapping[item.Name] = item.Name;
@@ -211,7 +211,7 @@ namespace Vasily.Core
             {
                 handler = _handler;
             }
-            var table = handler.ClassInstance<TableAttribute>();
+            var table = handler.Instance<TableAttribute>();
             if (table == null)
             {
                 throw new NullReferenceException($"{handler._type}类不存在Table注解，请检查实体类！");

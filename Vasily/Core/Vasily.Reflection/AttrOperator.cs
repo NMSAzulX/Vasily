@@ -67,7 +67,6 @@ namespace Vasily.Core
         /// <returns>符合条件的成员</returns>
         public MemberInfo Member(Type attributeType)
         {
-            List<MemberInfo> memberInfos = new List<MemberInfo>();
             for (int i = 0; i < _members.Length; i += 1)
             {
                 Attribute result = _members[i].GetCustomAttribute(attributeType);
@@ -87,7 +86,7 @@ namespace Vasily.Core
         /// </summary>
         /// <typeparam name="T">标签类型</typeparam>
         /// <returns>实例与成员字键值对结果集</returns>
-        public List<(T Instance, MemberInfo Member)> Mappings<T>() where T : Attribute
+        public List<(T Instance, MemberInfo Member)> AttrsAndMembers<T>() where T : Attribute
         {
             List<(T Instance, MemberInfo Member)> memberInfos = new List<(T Instance, MemberInfo Member)>();
             Type findType = typeof(T);
@@ -108,7 +107,7 @@ namespace Vasily.Core
         /// </summary>
         /// <typeparam name="T">标签类型</typeparam>
         /// <returns>实例与成员键值对</returns>
-        public (T Instance, MemberInfo Member) Mapping<T>() where T : Attribute
+        public (T Instance, MemberInfo Member) AttrAndMember<T>() where T : Attribute
         {
             for (int i = 0; i < _members.Length; i += 1)
             {
@@ -128,7 +127,7 @@ namespace Vasily.Core
         /// </summary>
         /// <typeparam name="T">标签类型</typeparam>
         /// <returns>标签实例</returns>
-        public T ClassInstance<T>() where T : Attribute
+        public T Instance<T>() where T : Attribute
         {
             T instance = _type.GetCustomAttribute<T>();
             return instance;
@@ -139,7 +138,7 @@ namespace Vasily.Core
         /// </summary>
         /// <typeparam name="T">标签类型</typeparam>
         /// <returns>标签实例</returns>
-        public IEnumerable<T> ClassInstances<T>() where T : Attribute
+        public IEnumerable<T> Instances<T>() where T : Attribute
         {
             IEnumerable<T> instances = _type.GetCustomAttributes<T>();
             return instances;

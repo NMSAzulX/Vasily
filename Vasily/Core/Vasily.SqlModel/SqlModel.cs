@@ -99,7 +99,7 @@ namespace Vasily
             {
                 handler = _handler;
             }
-            var table = handler.ClassInstance<TableAttribute>();
+            var table = handler.Instance<TableAttribute>();
             if (table==null)
             {
                 throw new NullReferenceException($"{handler._type}类不存在Table注解，请检查实体类！");
@@ -122,7 +122,7 @@ namespace Vasily
             {
                 handler = _handler;
             }
-            var primary = handler.Mapping<PrimaryKeyAttribute>();
+            var primary = handler.AttrAndMember<PrimaryKeyAttribute>();
 
             if (primary.Instance != null)
             {
@@ -168,7 +168,7 @@ namespace Vasily
                 handler = _handler;
             }
             ConcurrentDictionary<string, string> _column_mapping = new ConcurrentDictionary<string, string>();
-            var mappings = handler.Mappings<ColumnAttribute>();
+            var mappings = handler.AttrsAndMembers<ColumnAttribute>();
             foreach (var item in handler._members)
             {
                 _column_mapping[item.Name] = item.Name;

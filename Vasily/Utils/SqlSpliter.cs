@@ -10,7 +10,7 @@ namespace Vasily.Utils
         public static string GetSpliter(Type type)
         {
             AttrOperator attr = new AttrOperator(type);
-            var _sql_type = attr.ClassInstance<TableAttribute>().Type;
+            var _sql_type = attr.Instance<TableAttribute>().Type;
             string result = "  ";
             switch (_sql_type)
             {
@@ -34,7 +34,7 @@ namespace Vasily.Utils
 
         public static string GetSpliter(AttrOperator attr)
         {
-            var _sql_type = attr.ClassInstance<TableAttribute>().Type;
+            var _sql_type = attr.Instance<TableAttribute>().Type;
             string result = "  ";
             switch (_sql_type)
             {

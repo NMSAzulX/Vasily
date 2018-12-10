@@ -32,7 +32,7 @@ namespace VasilyUT
         public void TestSaSiSm()
         {
             AttrOperator reflector = new AttrOperator(typeof(Test));
-            var result = reflector.Mapping<PrimaryKeyAttribute>();
+            var result = reflector.AttrAndMember<PrimaryKeyAttribute>();
             Assert.NotNull(result.Instance);
             Assert.Equal(result.Member, typeof(Test).GetMember("Id")[0]);
         }
@@ -51,7 +51,7 @@ namespace VasilyUT
         public void TestSaSi()
         {
             AttrOperator reflector = new AttrOperator(typeof(Test));
-            var result = reflector.ClassInstance<TableAttribute>();
+            var result = reflector.Instance<TableAttribute>();
             Assert.Equal("Table",result.Name);
         }
 
