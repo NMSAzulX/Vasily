@@ -5,10 +5,10 @@ using Vasily.Core;
 namespace System
 {
     
-    public class Sql<T>
+    public class SqlEntity<T>
     {
         public static ConcurrentDictionary<string, SqlCP> Cache;
-        static Sql()
+        static SqlEntity()
         {
             Cache = new ConcurrentDictionary<string, SqlCP>();
         }

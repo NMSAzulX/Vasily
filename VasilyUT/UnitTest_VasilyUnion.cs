@@ -15,7 +15,7 @@ namespace VasilyUT
         {
             NormalAnalysis<Student> package = new NormalAnalysis<Student>();
             SqlCondition<Student> condition = new SqlCondition<Student>();
-            var result = SqlCollection<Student>.TableUnion(Sql<Student>.SelectAllWhere + (condition > "Sid").Full, "table1", "table2", "table3");
+            var result = SqlCollection<Student>.TableUnion(SqlEntity<Student>.SelectAllWhere + (condition > "Sid").Full, "table1", "table2", "table3");
             Assert.Equal("(SELECT * FROM `table1` WHERE Sid > @Sid) UNION (SELECT * FROM `table2` WHERE Sid > @Sid) UNION (SELECT * FROM `table3` WHERE Sid > @Sid)", result);
          }
         [Fact(DisplayName = "条件+联合语句测试2")]
@@ -23,7 +23,7 @@ namespace VasilyUT
         {
             NormalAnalysis<Student> package = new NormalAnalysis<Student>();
             SqlCondition<Student> condition = new SqlCondition<Student>();
-            var result = SqlCollection<Student>.Union(Sql<Student>.SelectAllWhere + (condition > "Sid").Full);
+            var result = SqlCollection<Student>.Union(SqlEntity<Student>.SelectAllWhere + (condition > "Sid").Full);
             Assert.Equal("(SELECT * FROM `1` WHERE Sid > @Sid)", result);
         }
         [Fact(DisplayName = "条件+联合语句测试3")]
@@ -31,7 +31,7 @@ namespace VasilyUT
         {
             NormalAnalysis<Student> package = new NormalAnalysis<Student>();
             SqlCondition<Student> condition = new SqlCondition<Student>();
-            var result = SqlCollection<Student>.TableIntersect(Sql<Student>.SelectAllWhere + (condition > "Sid").Full, "table1", "table2", "table3");
+            var result = SqlCollection<Student>.TableIntersect(SqlEntity<Student>.SelectAllWhere + (condition > "Sid").Full, "table1", "table2", "table3");
             Assert.Equal("(SELECT * FROM `table1` WHERE Sid > @Sid) INTERSECT (SELECT * FROM `table2` WHERE Sid > @Sid) INTERSECT (SELECT * FROM `table3` WHERE Sid > @Sid)", result);
         }
     }

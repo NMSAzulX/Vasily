@@ -217,11 +217,11 @@ namespace System
 
             if (RequestType == VasilyRequestType.Complete)
             {
-                sql = GetRealSqlString(condition, Sql<T>.SelectAllWhere);
+                sql = GetRealSqlString(condition, SqlEntity<T>.SelectAllWhere);
             }
             else
             {
-                sql = GetRealSqlString(condition, Sql<T>.SelectWhere);
+                sql = GetRealSqlString(condition, SqlEntity<T>.SelectWhere);
                 
             }
             return Reader.QueryFirst<T>(sql, instance);
@@ -233,11 +233,11 @@ namespace System
 
             if (RequestType == VasilyRequestType.Complete)
             {
-                sql = GetRealSqlString(condition, Sql<T>.SelectAllWhere);
+                sql = GetRealSqlString(condition, SqlEntity<T>.SelectAllWhere);
             }
             else
             {
-                sql = GetRealSqlString(condition, Sql<T>.SelectWhere);
+                sql = GetRealSqlString(condition, SqlEntity<T>.SelectWhere);
 
             }
             return Reader.QueryFirst<T>(sql, condition);
@@ -256,11 +256,11 @@ namespace System
 
             if (RequestType == VasilyRequestType.Complete)
             {
-                sql = GetRealSqlString(condition, Sql<T>.UpdateAllWhere);
+                sql = GetRealSqlString(condition, SqlEntity<T>.UpdateAllWhere);
             }
             else
             {
-                sql = GetRealSqlString(condition, Sql<T>.UpdateWhere);
+                sql = GetRealSqlString(condition, SqlEntity<T>.UpdateWhere);
             }
             return Writter.Execute(sql, instance, transaction: _transcation);
         }
@@ -270,11 +270,11 @@ namespace System
 
             if (RequestType == VasilyRequestType.Complete)
             {
-                sql = GetRealSqlString(condition, Sql<T>.UpdateAllWhere);
+                sql = GetRealSqlString(condition, SqlEntity<T>.UpdateAllWhere);
             }
             else
             {
-                sql = GetRealSqlString(condition, Sql<T>.UpdateWhere);
+                sql = GetRealSqlString(condition, SqlEntity<T>.UpdateWhere);
             }
 
             return Writter.Execute(sql, condition.Instance, transaction: _transcation);
@@ -289,11 +289,11 @@ namespace System
         {
             if (flag == ForceDelete.No)
             {
-                return Writter.Execute(Sql<T>.DeleteWhere + condition.Full, instance, transaction: _transcation);
+                return Writter.Execute(SqlEntity<T>.DeleteWhere + condition.Full, instance, transaction: _transcation);
             }
             else
             {
-                string temp = GetRealSqlString(condition, Sql<T>.DeleteWhere);
+                string temp = GetRealSqlString(condition, SqlEntity<T>.DeleteWhere);
                 return Writter.Execute(temp, instance, transaction: _transcation);
             }
         }
@@ -301,11 +301,11 @@ namespace System
         {
             if (flag == ForceDelete.No)
             {
-                return Writter.Execute(Sql<T>.DeleteWhere + condition.Full, condition.Instance, transaction: _transcation);
+                return Writter.Execute(SqlEntity<T>.DeleteWhere + condition.Full, condition.Instance, transaction: _transcation);
             }
             else
             {
-                return Writter.Execute(GetRealSqlString(condition, Sql<T>.DeleteWhere), condition.Instance, transaction: _transcation);
+                return Writter.Execute(GetRealSqlString(condition, SqlEntity<T>.DeleteWhere), condition.Instance, transaction: _transcation);
             }
         }
         /// <summary>
@@ -320,11 +320,11 @@ namespace System
 
             if (RequestType == VasilyRequestType.Complete)
             {
-                sql = GetRealSqlString(condition, Sql<T>.SelectAllWhere);
+                sql = GetRealSqlString(condition, SqlEntity<T>.SelectAllWhere);
             }
             else
             {
-                sql = GetRealSqlString(condition, Sql<T>.SelectWhere);
+                sql = GetRealSqlString(condition, SqlEntity<T>.SelectWhere);
             }
 
             return Reader.Query<T>(sql, instance);
@@ -336,11 +336,11 @@ namespace System
 
             if (RequestType == VasilyRequestType.Complete)
             {
-                sql = GetRealSqlString(condition, Sql<T>.SelectAllWhere);
+                sql = GetRealSqlString(condition, SqlEntity<T>.SelectAllWhere);
             }
             else
             {
-                sql = GetRealSqlString(condition, Sql<T>.SelectWhere);
+                sql = GetRealSqlString(condition, SqlEntity<T>.SelectWhere);
             }
 
             return Reader.Query<T>(sql, condition.Instance);
@@ -357,10 +357,10 @@ namespace System
         {
             if (Tables==null)
             {
-                return Reader.ExecuteScalar<int>(Sql<T>.SelectCountWhere + condition.Full, instance);
+                return Reader.ExecuteScalar<int>(SqlEntity<T>.SelectCountWhere + condition.Full, instance);
             }
             else {
-                string tempSql = GetRealSqlString(condition, Sql<T>.SelectCountWhere);
+                string tempSql = GetRealSqlString(condition, SqlEntity<T>.SelectCountWhere);
                 var temp = Reader.Query<int>(tempSql, instance);
                 Tables = null;
                 return Sum(temp);
@@ -370,11 +370,11 @@ namespace System
         {
             if (Tables == null)
             {
-                return Reader.ExecuteScalar<int>(Sql<T>.SelectCountWhere + condition.Full, condition.Instance);
+                return Reader.ExecuteScalar<int>(SqlEntity<T>.SelectCountWhere + condition.Full, condition.Instance);
             }
             else
             {
-                string tempSql = GetRealSqlString(condition, Sql<T>.SelectCountWhere);
+                string tempSql = GetRealSqlString(condition, SqlEntity<T>.SelectCountWhere);
                 var temp = Reader.Query<int>(tempSql, condition.Instance);
                 Tables = null;
                 return Sum(temp);
@@ -390,11 +390,11 @@ namespace System
 
             if (Tables == null)
             {
-                return Reader.ExecuteScalar<int>(Sql<T>.SelectCount);
+                return Reader.ExecuteScalar<int>(SqlEntity<T>.SelectCount);
             }
             else
             {
-                string tempSql = GetRealSqlString(Sql<T>.SelectCount);
+                string tempSql = GetRealSqlString(SqlEntity<T>.SelectCount);
                 var temp = Reader.Query<int>(tempSql);
                 Tables = null;
                 return Sum(temp);
@@ -562,11 +562,11 @@ namespace System
             string sql = null;
             if (Tables==null)
             {
-                sql = Sql<T>.SelectAll;
+                sql = SqlEntity<T>.SelectAll;
             }
             else
             {
-                sql = GetRealSqlString(Sql<T>.SelectAll);
+                sql = GetRealSqlString(SqlEntity<T>.SelectAll);
                 Tables = null;
             }
             return Reader.Query<T>(sql);
@@ -579,8 +579,8 @@ namespace System
         internal T Complete_GetByPrimary(object primary)
         {
             var dynamicParams = new DynamicParameters();
-            dynamicParams.Add(Sql<T>.Primary, primary);
-            return Reader.QuerySingle<T>(Sql<T>.SelectAllByPrimary, dynamicParams);
+            dynamicParams.Add(SqlEntity<T>.Primary, primary);
+            return Reader.QuerySingle<T>(SqlEntity<T>.SelectAllByPrimary, dynamicParams);
         }
         /// <summary>
         /// 获取指定范围主键的完整实体类
@@ -591,7 +591,7 @@ namespace System
         {
             var dynamicParams = new DynamicParameters();
             dynamicParams.Add("keys", range);
-            return Reader.Query<T>(Sql<T>.SelectAllIn, dynamicParams);
+            return Reader.Query<T>(SqlEntity<T>.SelectAllIn, dynamicParams);
         }
 
 
@@ -607,11 +607,11 @@ namespace System
             string sql = null;
             if (Tables == null)
             {
-                sql = Sql<T>.Select;
+                sql = SqlEntity<T>.Select;
             }
             else
             {
-                sql = GetRealSqlString(Sql<T>.Select);
+                sql = GetRealSqlString(SqlEntity<T>.Select);
                 Tables = null;
             }
             return Reader.Query<T>(sql);
@@ -624,8 +624,8 @@ namespace System
         internal T Normal_GetByPrimary(object primary)
         {
             var dynamicParams = new DynamicParameters();
-            dynamicParams.Add(Sql<T>.Primary, primary);
-            return Reader.QuerySingle<T>(Sql<T>.SelectByPrimary, dynamicParams);
+            dynamicParams.Add(SqlEntity<T>.Primary, primary);
+            return Reader.QuerySingle<T>(SqlEntity<T>.SelectByPrimary, dynamicParams);
         }
         /// <summary>
         /// 获取指定范围主键的普通实体类
@@ -636,7 +636,7 @@ namespace System
         {
             var dynamicParams = new DynamicParameters();
             dynamicParams.Add("keys", range);
-            return Reader.Query<T>(Sql<T>.SelectIn, dynamicParams);
+            return Reader.Query<T>(SqlEntity<T>.SelectIn, dynamicParams);
         }
         #endregion
 
@@ -649,11 +649,11 @@ namespace System
         /// <returns>更新结果</returns>
         internal bool Complete_UpdateByPrimary(params T[] instances)
         {
-            return Writter.Execute(GetRealSqlString(Sql<T>.UpdateAllByPrimary), instances, transaction: _transcation) == instances.Length;
+            return Writter.Execute(GetRealSqlString(SqlEntity<T>.UpdateAllByPrimary), instances, transaction: _transcation) == instances.Length;
         }
         internal bool Complete_UpdateByPrimary(IEnumerable<T> instances)
         {
-            return Writter.Execute(GetRealSqlString(Sql<T>.UpdateAllByPrimary), instances, transaction: _transcation) == instances.Count();
+            return Writter.Execute(GetRealSqlString(SqlEntity<T>.UpdateAllByPrimary), instances, transaction: _transcation) == instances.Count();
         }
         #endregion
 
@@ -665,11 +665,11 @@ namespace System
         /// <returns>更新结果</returns>
         internal bool Normal_UpdateByPrimary(params T[] instances)
         {
-            return Writter.Execute(GetRealSqlString(Sql<T>.UpdateByPrimary), instances, transaction: _transcation) == instances.Length;
+            return Writter.Execute(GetRealSqlString(SqlEntity<T>.UpdateByPrimary), instances, transaction: _transcation) == instances.Length;
         }
         internal bool Normal_UpdateByPrimary(IEnumerable<T> instances)
         {
-            return Writter.Execute(GetRealSqlString(Sql<T>.UpdateByPrimary), instances, transaction: _transcation) == instances.Count();
+            return Writter.Execute(GetRealSqlString(SqlEntity<T>.UpdateByPrimary), instances, transaction: _transcation) == instances.Count();
         }
         #endregion
 
@@ -682,11 +682,11 @@ namespace System
         /// <returns>返回结果</returns>
         internal int Complate_Insert(params T[] instances)
         {
-            return Writter.Execute(Sql<T>.InsertAll, instances, transaction: _transcation);
+            return Writter.Execute(SqlEntity<T>.InsertAll, instances, transaction: _transcation);
         }
         internal int Complate_Insert(IEnumerable<T> instances)
         {
-            return Writter.Execute(Sql<T>.InsertAll, instances, transaction: _transcation);
+            return Writter.Execute(SqlEntity<T>.InsertAll, instances, transaction: _transcation);
         }
         #endregion
 
@@ -698,11 +698,11 @@ namespace System
         /// <returns>返回结果</returns>
         internal int Normal_Insert(params T[] instances)
         {
-            return Writter.Execute(Sql<T>.Insert, instances, transaction: _transcation);
+            return Writter.Execute(SqlEntity<T>.Insert, instances, transaction: _transcation);
         }
         internal int Normal_Insert(IEnumerable<T> instances)
         {
-            return Writter.Execute(Sql<T>.Insert, instances, transaction: _transcation);
+            return Writter.Execute(SqlEntity<T>.Insert, instances, transaction: _transcation);
         }
         #endregion
 
@@ -717,11 +717,11 @@ namespace System
         {
             if (Tables == null)
             {
-                return Reader.ExecuteScalar<int>(Sql<T>.RepeateCount)>0;
+                return Reader.ExecuteScalar<int>(SqlEntity<T>.RepeateCount)>0;
             }
             else
             {
-                IEnumerable<int> temp = Reader.Query<int>(GetRealSqlString(Sql<T>.RepeateCount), instance);
+                IEnumerable<int> temp = Reader.Query<int>(GetRealSqlString(SqlEntity<T>.RepeateCount), instance);
                 Tables = null;
                 return Sum(temp) > 0;
             }
@@ -735,11 +735,11 @@ namespace System
         {
             if (Tables == null)
             {
-                return Reader.Query<T>(Sql<T>.RepeateEntities);
+                return Reader.Query<T>(SqlEntity<T>.RepeateEntities);
             }
             else
             {
-                var result = Reader.Query<T>(GetRealSqlString(Sql<T>.RepeateEntities));
+                var result = Reader.Query<T>(GetRealSqlString(SqlEntity<T>.RepeateEntities));
                 Tables = null;
                 return result;
             }
@@ -754,11 +754,11 @@ namespace System
         {
             if (Tables == null)
             {
-                return Reader.ExecuteScalar<S>(Sql<T>.RepeateId);
+                return Reader.ExecuteScalar<S>(SqlEntity<T>.RepeateId);
             }
             else
             {
-                IEnumerable<S> temp = Reader.Query<S>(GetRealSqlString(Sql<T>.RepeateId), instance);
+                IEnumerable<S> temp = Reader.Query<S>(GetRealSqlString(SqlEntity<T>.RepeateId), instance);
                 Tables = null;
                 foreach (var item in temp)
                 {
@@ -805,8 +805,8 @@ namespace System
                 result = true;
             }
 
-            object obj = Reader.ExecuteScalar<object>(Sql<T>.RepeateId, instance);
-            Sql<T>.SetPrimary(instance, obj);
+            object obj = Reader.ExecuteScalar<object>(SqlEntity<T>.RepeateId, instance);
+            SqlEntity<T>.SetPrimary(instance, obj);
 
             return result;
         }
@@ -821,8 +821,8 @@ namespace System
         public bool SingleDeleteByPrimary(object primary)
         {
             var dynamicParams = new DynamicParameters();
-            dynamicParams.Add(Sql<T>.Primary, primary);
-            return Writter.Execute(Sql<T>.DeleteByPrimary, dynamicParams) == 1;
+            dynamicParams.Add(SqlEntity<T>.Primary, primary);
+            return Writter.Execute(SqlEntity<T>.DeleteByPrimary, dynamicParams) == 1;
         }
         /// <summary>
         /// 根据主键删除
@@ -831,12 +831,12 @@ namespace System
         /// <returns>更新结果</returns>
         public bool EntitiesDeleteByPrimary(params T[] instances)
         {
-            return Writter.Execute(Sql<T>.DeleteByPrimary, instances, transaction: _transcation) == instances.Length;
+            return Writter.Execute(SqlEntity<T>.DeleteByPrimary, instances, transaction: _transcation) == instances.Length;
         }
 
         public bool EntitiesDeleteByPrimary(IEnumerable<T> instances)
         {
-            return Writter.Execute(Sql<T>.DeleteByPrimary, instances, transaction: _transcation) == instances.Count();
+            return Writter.Execute(SqlEntity<T>.DeleteByPrimary, instances, transaction: _transcation) == instances.Count();
         }
         #endregion
 

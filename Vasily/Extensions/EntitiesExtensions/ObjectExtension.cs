@@ -14,7 +14,7 @@
         }
         public static SqlCP Condition<T>(this object instance, string condition)
         {
-            var result = Sql<T>.GetCP(condition);
+            var result = SqlEntity<T>.GetCP(condition);
             result.Instance = instance;
             return result;
         }

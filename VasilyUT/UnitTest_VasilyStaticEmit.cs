@@ -11,45 +11,45 @@ namespace VasilyUT
         [Fact(DisplayName = "无泛型的Operator")]
         public void TesZeroStatic()
         {
-            var operator1 = new GsOperator(typeof(Sql<>),typeof(int));
+            var operator1 = new GsOperator(typeof(SqlEntity<>),typeof(int));
             operator1.Set("SelectAll", "MsSqlOne");
 
 
-            var operator2 = new GsOperator(typeof(Sql<>),typeof(string));
+            var operator2 = new GsOperator(typeof(SqlEntity<>),typeof(string));
             operator2.Set("Insert", "MySqlOne");
 
 
-            Assert.Equal("MsSqlOne", Sql<int>.SelectAll);
-            Assert.Equal("MySqlOne", Sql<string>.Insert);
+            Assert.Equal("MsSqlOne", SqlEntity<int>.SelectAll);
+            Assert.Equal("MySqlOne", SqlEntity<string>.Insert);
         }
         [Fact(DisplayName = "一个泛型的Operator")]
         public void TestOneStatic()
         {
-            var operator1 = new GsOperator<Sql<GenericType>>(typeof(int));
+            var operator1 = new GsOperator<SqlEntity<GenericType>>(typeof(int));
             operator1.Set("SelectAll", "MsSqlOne");
 
             
-            var operator2 = new GsOperator<Sql<GenericType>>(typeof(string));
+            var operator2 = new GsOperator<SqlEntity<GenericType>>(typeof(string));
             operator2.Set("SelectAll", "MySqlOne1");
 
 
-            Assert.Equal("MsSqlOne", Sql<int>.SelectAll);
-            Assert.Equal("MySqlOne1", Sql<string>.SelectAll);
+            Assert.Equal("MsSqlOne", SqlEntity<int>.SelectAll);
+            Assert.Equal("MySqlOne1", SqlEntity<string>.SelectAll);
         }
 
         [Fact(DisplayName = "两个泛型的Operator")]
         public void TestTwoStatic()
         {
-            var operator1 = new GsOperator<Sql<GenericType>,int>();
+            var operator1 = new GsOperator<SqlEntity<GenericType>,int>();
             operator1.Set("SelectAll", "MsSqlOne");
 
            
-            var operator2 = new GsOperator<Sql<GenericType>, string>();
+            var operator2 = new GsOperator<SqlEntity<GenericType>, string>();
             operator2.Set("Insert", "MySqlOne");
 
 
-            Assert.Equal("MsSqlOne", Sql<int>.SelectAll);
-            Assert.Equal("MySqlOne", Sql<string>.Insert);
+            Assert.Equal("MsSqlOne", SqlEntity<int>.SelectAll);
+            Assert.Equal("MySqlOne", SqlEntity<string>.Insert);
         }
     }
 }

@@ -11,73 +11,73 @@ namespace VasilyDemo
         {
             VasilyRunner.Run();
 
-            Console.WriteLine(Sql<One>.Table);
+            Console.WriteLine(SqlEntity<One>.Table);
             //table_one
 
-            Console.WriteLine(Sql<One>.Primary);
+            Console.WriteLine(SqlEntity<One>.Primary);
             //oid
 
-            Console.WriteLine(Sql<One>.SelectAll);
+            Console.WriteLine(SqlEntity<One>.SelectAll);
             //SELECT * FROM [table_one]
 
-            Console.WriteLine(Sql<One>.SelectAllByPrimary);
+            Console.WriteLine(SqlEntity<One>.SelectAllByPrimary);
             //SELECT * FROM [table_one] WHERE [oid] = @oid
 
-            Console.WriteLine(Sql<One>.SelectAllIn);
+            Console.WriteLine(SqlEntity<One>.SelectAllIn);
             //SELECT * FROM [table_one] WHERE [oid] IN @keys
 
-            Console.WriteLine(Sql<One>.SelectAllWhere);
+            Console.WriteLine(SqlEntity<One>.SelectAllWhere);
             //SELECT * FROM [table_one] WHERE
 
 
-            Console.WriteLine(Sql<One>.Select);
+            Console.WriteLine(SqlEntity<One>.Select);
             //SELECT [oid],[name],[create_time],[update_time],[age],[student_id] FROM [table_one]
 
-            Console.WriteLine(Sql<One>.SelectByPrimary);
+            Console.WriteLine(SqlEntity<One>.SelectByPrimary);
             //SELECT [oid],[name],[create_time],[update_time],[age],[student_id] FROM [table_one] WHERE [oid]=@oid
 
-            Console.WriteLine(Sql<One>.SelectIn);
+            Console.WriteLine(SqlEntity<One>.SelectIn);
             //SELECT [oid],[name],[create_time],[update_time],[age],[student_id] FROM [table_one] WHERE [oid] IN @keys
 
-            Console.WriteLine(Sql<One>.SelectWhere);
+            Console.WriteLine(SqlEntity<One>.SelectWhere);
             //SELECT [oid],[name],[create_time],[update_time],[age],[student_id] FROM [table_one] WHERE
 
-            Console.WriteLine(Sql<One>.UpdateAllByPrimary);
+            Console.WriteLine(SqlEntity<One>.UpdateAllByPrimary);
             //UPDATE [table_one] SET [name]=@name,[create_time]=@create_time,[update_time]=@update_time,[age]=@age,[student_id]=@student_id WHERE [oid]=@oid
 
-            Console.WriteLine(Sql<One>.UpdateAllWhere);
+            Console.WriteLine(SqlEntity<One>.UpdateAllWhere);
             //UPDATE [table_one] SET [name]=@name,[create_time]=@create_time,[update_time]=@update_time,[age]=@age,[student_id]=@student_id WHERE
 
-            Console.WriteLine(Sql<One>.UpdateByPrimary);
+            Console.WriteLine(SqlEntity<One>.UpdateByPrimary);
             //UPDATE [table_one] SET [name]=@name,[update_time]=@update_time,[age]=@age,[student_id]=@student_id WHERE [oid]=@oid
 
-            Console.WriteLine(Sql<One>.UpdateWhere);
+            Console.WriteLine(SqlEntity<One>.UpdateWhere);
             //UPDATE [table_one] SET [name]=@name,[update_time]=@update_time,[age]=@age,[student_id]=@student_id WHERE
 
-            Console.WriteLine(Sql<One>.DeleteByPrimary);
+            Console.WriteLine(SqlEntity<One>.DeleteByPrimary);
             //DELETE FROM [table_one] WHERE [oid] = @oid
 
-            Console.WriteLine(Sql<One>.DeleteWhere);
+            Console.WriteLine(SqlEntity<One>.DeleteWhere);
             //DELETE FROM [table_one] WHERE
 
 
-            Console.WriteLine(Sql<One>.Insert);
+            Console.WriteLine(SqlEntity<One>.Insert);
             //INSERT INTO [table_one] ([name],[create_time],[update_time],[age],[student_id])VALUES(@name, @create_time, @update_time, @age, @student_id)
 
-            Console.WriteLine(Sql<One>.InsertAll);
+            Console.WriteLine(SqlEntity<One>.InsertAll);
             //INSERT INTO [table_one] ([name],[create_time],[update_time],[age],[student_id])VALUES(@name, @create_time, @update_time, @age, @student_id)
 
-            Console.WriteLine(Sql<One>.RepeateCount);
+            Console.WriteLine(SqlEntity<One>.RepeateCount);
             //SELECT COUNT(*) FROM [table_one] WHERE [student_id] = @student_id
 
-            Console.WriteLine(Sql<One>.RepeateEntities);
+            Console.WriteLine(SqlEntity<One>.RepeateEntities);
             //SELECT * FROM [table_one] WHERE [student_id] = @student_id
-            Console.WriteLine(Sql<One>.RepeateId);
+            Console.WriteLine(SqlEntity<One>.RepeateId);
             //SELECT [oid] FROM [table_one] WHERE [student_id] = @student_id
 
-            Console.WriteLine(Sql<One>.SelectCount);
+            Console.WriteLine(SqlEntity<One>.SelectCount);
             //SELECT Count(*) FROM [table_one]
-            Console.WriteLine(Sql<One>.SelectCountWhere);
+            Console.WriteLine(SqlEntity<One>.SelectCountWhere);
             //SELECT  Count(*) FROM [table_one] WHERE
 
 

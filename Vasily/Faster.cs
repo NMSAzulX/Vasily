@@ -58,9 +58,9 @@ namespace System
     {
         public static implicit operator SqlCP<T>(SqlVP<T> key)
         {
-            if (Sql<T>.Cache.ContainsKey(key.sql))
+            if (SqlEntity<T>.Cache.ContainsKey(key.sql))
             {
-                SqlCP<T> result = Sql<T>.GetCP(key.sql).Clone<T>();
+                SqlCP<T> result = SqlEntity<T>.GetCP(key.sql).Clone<T>();
                 result.Instance = key.value;
                 return result;
             }

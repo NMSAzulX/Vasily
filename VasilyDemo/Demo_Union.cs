@@ -19,12 +19,12 @@ namespace VasilyDemo
         [BenchmarkDotNet.Attributes.Benchmark]
         public void TestUnion()
         {
-            var result = SqlCollection<One>.Union(Sql<One>.SelectAllWhere + (condition > "oid").Full, "table1", "table2", "table3");
+            var result = SqlCollection<One>.Union(SqlEntity<One>.SelectAllWhere + (condition > "oid").Full, "table1", "table2", "table3");
         }
         [BenchmarkDotNet.Attributes.Benchmark]
         public void TestFull()
         {
-            var result = Sql<One>.SelectAllWhere + (condition > "oid").Full;
+            var result = SqlEntity<One>.SelectAllWhere + (condition > "oid").Full;
         }
         [BenchmarkDotNet.Attributes.Benchmark]
         public void TestConditon()

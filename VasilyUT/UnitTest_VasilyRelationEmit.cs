@@ -18,7 +18,7 @@ namespace VasilyUT
             NormalAnalysis<Relation2> package = new NormalAnalysis<Relation2>();
             NormalAnalysis<Student> package1 = new NormalAnalysis<Student>();
             Student student = new Student();
-            Sql<Student>.SetPrimary(student, 1);
+            SqlEntity<Student>.SetPrimary(student, 1);
             Assert.Equal(1, (int)RelationSql<Student, Relation2, Student1, Class, Class1>.Getters[0](student));
 
         }
@@ -28,7 +28,7 @@ namespace VasilyUT
             NormalAnalysis<Relation2> package = new NormalAnalysis<Relation2>();
             NormalAnalysis<Student1> package1 = new NormalAnalysis<Student1>();
             Student1 student = new Student1();
-            Sql<Student1>.SetPrimary(student, "abc");
+            SqlEntity<Student1>.SetPrimary(student, "abc");
             Assert.Equal("abc", (string)RelationSql<Student1, Relation2, Student, Class, Class1>.Getters[0](student));
 
         }
@@ -39,7 +39,7 @@ namespace VasilyUT
             NormalAnalysis<Relation2> package = new NormalAnalysis<Relation2>();
             NormalAnalysis<Class> package1 = new NormalAnalysis<Class>();
             Class myClass = new Class();
-            Sql<Class>.SetPrimary(myClass,1);
+            SqlEntity<Class>.SetPrimary(myClass,1);
            Assert.Equal(1, (int)RelationSql<Class, Relation2, Student1, Student, Class1>.Getters[0](myClass));
 
         }
@@ -49,7 +49,7 @@ namespace VasilyUT
             NormalAnalysis<Relation2> package = new NormalAnalysis<Relation2>();
             NormalAnalysis<Class1> package1 = new NormalAnalysis<Class1>();
             Class1 myClass = new Class1();
-            Sql<Class1>.SetPrimary(myClass, "abc");
+            SqlEntity<Class1>.SetPrimary(myClass, "abc");
             Assert.Equal("abc", (string)RelationSql<Class1, Relation2, Student1, Class, Student>.Getters[0](myClass));
         }
     }
