@@ -54,7 +54,7 @@ namespace System
         {
             List<Exception> errors = new List<Exception>();
             HashSet<int> dict = new HashSet<int>(get_errors);
-            for (int i = 0; i < retry; i += 1)
+            for (int i = 1; i <= retry; i += 1)
             {
                 try
                 {
@@ -88,7 +88,7 @@ namespace System
             List<Exception> errors = new List<Exception>();
             if (predicate != null)
             {
-                for (int i = 0; i < retry; i += 1)
+                for (int i = 1; i <= retry; i += 1)
                 {
                     try
                     {
@@ -106,7 +106,7 @@ namespace System
             }
             else
             {
-                for (int i = 0; i < retry; i += 1)
+                for (int i = 1; i <= retry; i += 1)
                 {
                     try
                     {
@@ -242,8 +242,10 @@ namespace System
             }
             return Reader.QueryFirst<T>(sql, condition);
         }
-
-
+        public T Get(Func<SqlCondition<T>, SqlCondition<T>> condition, object instance)
+        {
+            return Get(condition(new SqlCondition<T>()), instance);
+        }
         /// <summary>
         /// 根据条件更新实体
         /// </summary>
@@ -263,6 +265,10 @@ namespace System
                 sql = GetRealSqlString(condition, SqlEntity<T>.UpdateWhere);
             }
             return Writter.Execute(sql, instance, transaction: _transcation);
+        }
+        public int Modify(Func<SqlCondition<T>, SqlCondition<T>> condition, object instance)
+        {
+            return Modify(condition(new SqlCondition<T>()), instance);
         }
         public int Modify(SqlCP condition)
         {
@@ -308,6 +314,11 @@ namespace System
                 return Writter.Execute(GetRealSqlString(condition, SqlEntity<T>.DeleteWhere), condition.Instance, transaction: _transcation);
             }
         }
+
+        public int Delete(Func<SqlCondition<T>, SqlCondition<T>> condition, object instance, ForceDelete flag = ForceDelete.No)
+        {
+            return Delete(condition(new SqlCondition<T>()), instance, flag);
+        }
         /// <summary>
         /// 根据条件批量查询
         /// </summary>
@@ -346,13 +357,17 @@ namespace System
             return Reader.Query<T>(sql, condition.Instance);
 
         }
+        public IEnumerable<T> Gets(Func<SqlCondition<T>, SqlCondition<T>> condition, object instance)
+        {
+            return Gets(condition(new SqlCondition<T>()), instance);
+        }
         /// <summary>
         /// 根据条件批量查询数量
         /// </summary>
         /// <param name="condition">条件查询</param>
         /// <param name="instance">查询参数化实例</param>
         /// <returns></returns>
-     
+
         public int CountWithCondition(SqlCondition<T> condition, object instance)
         {
             if (Tables==null)
@@ -379,6 +394,11 @@ namespace System
                 Tables = null;
                 return Sum(temp);
             }
+        }
+
+        public int CountWithCondition(Func<SqlCondition<T>, SqlCondition<T>> condition, object instance)
+        {
+            return CountWithCondition(condition(new SqlCondition<T>()), instance);
         }
 
         /// <summary>
