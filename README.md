@@ -24,7 +24,7 @@
 
 > 1. 引擎的入口VasilyRunner会扫描整个项目，挑选出实现IVasilyNormal接口的类。
 
-> 2. 将扫描结果切片并发交由NormalAnalysis类处理。NormalAnalysis心部分是由SqlMaker以及Template组成，包括SelectTemplate,UpdateTemplate,InsertTemplate,RepeateTemplate,DeleteTemplate,RelationTemplate,CountTemplate.
+> 2. 将扫描结果切片并发交由NormalAnalysis类处理。NormalAnalysis核心部分是由SqlMaker以及Template组成，包括SelectTemplate,UpdateTemplate,InsertTemplate,RepeateTemplate,DeleteTemplate,RelationTemplate,CountTemplate.
 
 > 3. NormalAnalysis通过SqlMaker将实体类解析为SqlModel以便Template生成逻辑，SqlModel 和 Template 可以在运行时复用。
 
