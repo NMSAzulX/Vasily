@@ -117,7 +117,7 @@ relation_table  as  V_relation_table_TB   ON
 
     V_relation_table_TB.[class_id]
                 =
-           [@class_id]   <----
+           [@class_id]   <----跟下面不一样的地方
 ```  
   - 第二种
 
@@ -139,7 +139,7 @@ relation_table  as  V_relation_table_TB   ON
 
     V_relation_table_TB.[class_id]
                 =
-              [@cid]   <----
+              [@cid]   <----跟上面不一样的地方
 ```
 
 第一种，后面查询条件为 @class_id，该字段属于表本身的字段，对应的封装dapper后的操作为操作为TableGets、TableUpdate等等
@@ -262,11 +262,11 @@ c>"id" ^ c -"id" ^ (current_page, size)  ==> id>@id ORDER BY id DESC +分页查�
 
 
 //Vasily可根据语法树解析字符串脚本进而生成SQL语句，如下：
-"c>id ^ c-id ^(2,10)" = >id>@id ORDER BY id DESC +分页查询
+"c>id ^ c-id ^(2,10)" => id>@id ORDER BY id DESC +分页查询
 ```
 
 
-- #### VasilyProtocal(VP),瓦西里查询协议):
+- #### VasilyProtocal(VP,瓦西里查询协议):
 
 Vasiy 提供了一个基于语法和参数化的查询协议
 
