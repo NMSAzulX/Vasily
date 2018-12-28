@@ -23,7 +23,7 @@ namespace Vasily
         /// <summary>
         /// /Protocal SET Instance
         /// </summary>
-        public object Instance;
+        public T Instance;
         /// <summary>
         /// Protocal SET Script
         /// </summary>
