@@ -86,6 +86,15 @@ namespace Vasily
             result.Tails = value.Tails;
             return result;
         }
+        public static implicit operator VasilyProtocal<T>(Func<SqlCondition<T>, SqlCondition<T>> func)
+        {
+            var result = new VasilyProtocal<T>();
+            var value = func(new SqlCondition<T>());
+            result.Order = value.Order;
+            result.Query = value.Query;
+            result.Tails = value.Tails;
+            return result;
+        }
     }
 
     public class VasilyProtocal<T, S> : VasilyProtocal<T> {

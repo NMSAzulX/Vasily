@@ -239,49 +239,49 @@ var children = DapperWrapper<TestRelation,TestRelation,TestRelation_AnyName>.Use
 
 SqlCondition<TEntity> c = new SqlCondition<TEntity>();
 
+
 //普通操作符
 c>"id"  ==> id>@id 如果采用泛型操作 id可以根据Column注解进行数据库字段的映射
 c!="id" ==> id<>@id
 
+
 //与或操作符
 c>"id" & (c!="id" | c<"id")  ==>  (id>@id AND (id!=@id OR id<@id))
+
 
 //排序操作符
 c +"id" - "age" ==> ORDER BY id ASC, age DESC
 
+
 //分页操作符
 c ^ (2,10) ==> 分页语句，兼容MySql，SqlServer2012以后，PgSql，SqlLite
 
+
 //组合
 c>"id" ^ c -"id" ^ (current_page, size)  ==> id>@id ORDER BY id DESC +分页查询
+
 
 //Vasily可根据语法树解析字符串脚本进而生成SQL语句，如下：
 "c>id ^ c-id ^(2,10)" = >id>@id ORDER BY id DESC +分页查询
 ```
 
-- #### CP (Condition+Parameter)语法：
- Vasily提供了一个简单的语法封装，以便于CURD排序分页等简单业务
- 任何对象都可以.Condition，返回CP对象进行参数化查询，例如：
 
+- #### VasilyProtocal(VP),瓦西里查询协议):
 
-```c#
-	Student student = new Student();
-  SqlCondition<student> c = new SqlCondition<student>();
-	handler.Gets(student.Condition("c>id"));
-	handler.Gets(student.Condition(c>"id"));
-``` 
+Vasiy 提供了一个基于语法和参数化的查询协议
 
+为了方便操作，封装了3种隐式转换：
+VasilyProtocal<Entity> vp = script;
+VasilyProtocal<Entity> vp = SqlCondition<TEntity>
+VasilyProtocal<Entity> vp = condition=>condition.....
 
-
-- #### VP(VasilyScript +Parameter)格式即:
-
-Vasily提供了一个可来自前端的协议对象操作，按照以下格式通过AJAX即可完成自定义查询
+为了方便前端进行交互，AJAX自定义查询传送格式定位如下
 
 ```c#
-//vp可以隐式转换为cp,进而适配vasily进行查询
+//可以隐式转换为vp,进而适配vasily进行查询
 {
-     value:{ id:10000, name:"小明" },
-     sql:"c>id & c==name ^c - id ^(3,10)"
+     Instance:{ id:10000, name:"小明" },
+     Script:"c>id & c==name ^c - id ^(3,10)"
 }
 
 //VasilyController中增加了两个默认API：
@@ -323,7 +323,7 @@ Vasily提供了一个可来自前端的协议对象操作，按照以下格式�
    
    - [x] 支持雪花算法生成唯一ID
 
-   - [ ]  考虑是否只支持未来.NETStandard2.1 
+   - [ ]  考虑未来是否只支持.NETStandard2.1 
 
    - [ ]  添加常用运行时脚本解析，重构底层映射，替换dapper.
 
@@ -348,6 +348,7 @@ Vasily提供了一个可来自前端的协议对象操作，按照以下格式�
    - 2018-11-02：修复Union逻辑封装，优化运行时运算符重载逻辑，增加模糊查询，运行时%符号重载，以及脚本解析.
    - 2018-11-21：增加Union、Intersect、Except、UnionAll集合查询.
    - 2018-12-07：重构关系操作，采用INNER JOIN, 优化引擎架构，提高复用性。
+   - 2018-12-28：重构VP协议格式，使其更规范，消去对object的扩展。
 
 ~~~
 
