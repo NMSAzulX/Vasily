@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Vasily;
 using Vasily.Core;
+using Vasily.Model;
 
 namespace System
 {
@@ -183,7 +184,7 @@ namespace System
         }
 
 
-        private string GetRealSqlString(SqlPBase condition, string query)
+        private string GetRealSqlString(SqlConditionBase condition, string query)
         {
             if (Tables != null)
             {
@@ -227,7 +228,7 @@ namespace System
             return Reader.QueryFirst<T>(sql, instance);
 
         }
-        public T Get(SqlCP condition)
+        public T Get(VasilyProtocal<T> condition)
         {
             string sql = null;
 
@@ -270,7 +271,7 @@ namespace System
         {
             return Modify(condition(new SqlCondition<T>()), instance);
         }
-        public int Modify(SqlCP condition)
+        public int Modify(VasilyProtocal<T> condition)
         {
             string sql = null;
 
@@ -303,7 +304,7 @@ namespace System
                 return Writter.Execute(temp, instance, transaction: _transcation);
             }
         }
-        public int Delete(SqlCP condition, ForceDelete flag = ForceDelete.No)
+        public int Delete(VasilyProtocal<T> condition, ForceDelete flag = ForceDelete.No)
         {
             if (flag == ForceDelete.No)
             {
@@ -340,7 +341,7 @@ namespace System
 
             return Reader.Query<T>(sql, instance);
         }
-        public IEnumerable<T> Gets(SqlCP condition)
+        public IEnumerable<T> Gets(VasilyProtocal<T> condition)
         {
 
             string sql = null;
@@ -381,7 +382,7 @@ namespace System
                 return Sum(temp);
             }
         }
-        public int CountWithCondition(SqlCP condition)
+        public int CountWithCondition(VasilyProtocal<T> condition)
         {
             if (Tables == null)
             {

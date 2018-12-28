@@ -58,14 +58,14 @@ namespace VasilyUT
         {
             NormalAnalysis<Relation2> package = new NormalAnalysis<Relation2>();
             SqlCondition<Relation2> c = new SqlCondition<Relation2>();
+            VasilyProtocal<Relation2> vp = ((c > "StudentId" | c == "ClassId") & c != "ClassName") ^ (2, 10);
+            vp.Instance = new { StudentId = 1, ClassId = 2, ClassName = "abc" };
 
-            var cp = new { StudentId = 1, ClassId = 2, ClassName = "abc" }.
-                Condition(((c > "StudentId" | c == "ClassId") & c != "ClassName")^(2,10));
             Assert.Equal(
 
                 "((StudentId > @StudentId OR ClassId = @ClassId) AND ClassName <> @ClassName) OFFSET 10 ROW FETCH NEXT 10 rows only",
 
-                cp.Full
+                vp.Full
 
                 );
         }
@@ -75,16 +75,16 @@ namespace VasilyUT
             NormalAnalysis<Relation> package = new NormalAnalysis<Relation>();
             SqlCondition<Relation> c = new SqlCondition<Relation>();
 
-            var cp = 
-                new { StudentId = 1, ClassId = 2, ClassName = "abc" }.
-                Condition(c > "StudentId" | c == "ClassId" & c != "Id" ^ (2, 10));
+
+            VasilyProtocal<Relation> vp = c > "StudentId" | c == "ClassId" & c != "Id" ^ (2, 10);
+            vp.Instance = new { StudentId = 1, ClassId = 2, ClassName = "abc" };
 
 
             Assert.Equal(
 
                 "(StudentId > @StudentId OR (ClassId = @ClassId AND Id <> @Id)) LIMIT 10,10",
 
-                cp.Full
+                vp.Full
 
                 );
         }

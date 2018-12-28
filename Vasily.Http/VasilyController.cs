@@ -40,22 +40,22 @@ namespace Microsoft.AspNetCore.Mvc
         }
 
         [HttpPost("query--page-vp")]
-        public ReturnPageResult QueryPageVP(SqlVP<T> vp_instance)
+        public ReturnPageResult QueryPageVP(VasilyProtocal<T> vp)
         {
-            return GetsPageResult(vp_instance);
+            return GetsPageResult(vp);
         }
 
         [HttpPost("query-vp")]
-        public ReturnResult QueryVP(SqlVP<T> vp_instance)
+        public ReturnResult QueryVP(VasilyProtocal<T> vp)
         {
-            return GetResult(vp_instance);
+            return GetResult(vp);
         }
 
         #region NormalQuery
         [HttpGet("vasily")]
-        public ReturnPageResult VasilyGet(SqlVP<T> vp_instance)
+        public ReturnPageResult VasilyGet(VasilyProtocal<T> vp)
         {
-            return GetsPageResult(vp_instance);
+            return GetsPageResult(vp);
         }
         [HttpPost("vasily")]
         public ReturnResult VasilyModify(params T[] instances)
@@ -81,11 +81,7 @@ namespace Microsoft.AspNetCore.Mvc
         /// <param name="cp">实例与查询条件</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
-        protected ReturnResult ModifyResult(SqlCP<T> cp, string msg = "更新失败!")
-        {
-            return Result(driver.Modify(cp), msg);
-        }
-        protected ReturnResult ModifyResult(SqlCP cp, string msg = "更新失败!")
+        protected ReturnResult ModifyResult(VasilyProtocal<T>cp, string msg = "更新失败!")
         {
             return Result(driver.Modify(cp), msg);
         }
@@ -99,13 +95,9 @@ namespace Microsoft.AspNetCore.Mvc
         /// <param name="cp">实例与查询条件</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
-        protected ReturnResult DeleteResult(SqlCP<T> cp, string msg = "删除失败!", ForceDelete flag = ForceDelete.No )
+        protected ReturnResult DeleteResult(VasilyProtocal<T> vp, string msg = "删除失败!", ForceDelete flag = ForceDelete.No)
         {
-            return Result(driver.Delete(cp, flag), msg);
-        }
-        protected ReturnResult DeleteResult(SqlCP cp, string msg = "删除失败!", ForceDelete flag = ForceDelete.No)
-        {
-            return Result(driver.Delete(cp, flag), msg);
+            return Result(driver.Delete(vp, flag), msg);
         }
         protected ReturnResult DeleteResult(T[] instances, string msg = "删除失败!")
         {
@@ -138,17 +130,13 @@ namespace Microsoft.AspNetCore.Mvc
         /// <summary>
         /// 用条件查询实例结果集，用条件查询总数
         /// </summary>
-        /// <param name="cp_value">实例与查询条件</param>
+        /// <param name="vp">实例与查询条件</param>
         /// <param name="cp_count">实例与查询条件</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
-        protected ReturnPageResult GetsPageResult(SqlCP cp_value, string msg = "查询失败!")
+        protected ReturnPageResult GetsPageResult(VasilyProtocal<T> vp, string msg = "查询失败!")
         {
-            return Result(driver.Gets(cp_value), driver.CountWithCondition(cp_value), msg);
-        }
-        protected ReturnPageResult GetsPageResult(SqlCP<T> cp_value, string msg = "查询失败!")
-        {
-            return Result(driver.Gets(cp_value), driver.CountWithCondition(cp_value), msg);
+            return Result(driver.Gets(vp), driver.CountWithCondition(vp), msg);
         }
         /// <summary>
         /// 用条件查询实例结果
@@ -156,13 +144,9 @@ namespace Microsoft.AspNetCore.Mvc
         /// <param name="cp">实例与查询条件</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
-        protected ReturnResult GetResult(SqlCP<T> cp, string msg = "查询失败!")
+        protected ReturnResult GetResult(VasilyProtocal<T> vp, string msg = "查询失败!")
         {
-            return Result(driver.Get(cp), msg);
-        }
-        protected ReturnResult GetResult(SqlCP cp, string msg = "查询失败!")
-        {
-            return Result(driver.Get(cp), msg);
+            return Result(driver.Get(vp), msg);
         }
         /// <summary>
         /// 用条件查询实例结果集
@@ -170,13 +154,9 @@ namespace Microsoft.AspNetCore.Mvc
         /// <param name="cp">实例与查询条件</param>
         /// <param name="msg">附加信息</param>
         /// <returns></returns>
-        protected ReturnResult GetsResult(SqlCP<T> cp, string msg = "查询失败!")
+        protected ReturnResult GetsResult(VasilyProtocal<T> vp, string msg = "查询失败!")
         {
-            return Result(driver.Gets(cp), msg);
-        }
-        protected ReturnResult GetsResult(SqlCP cp, string msg = "查询失败!")
-        {
-            return Result(driver.Gets(cp), msg);
+            return Result(driver.Gets(vp), msg);
         }
         #endregion
     }

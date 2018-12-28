@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Vasily;
 
 namespace VasilyHttpDemo.Controllers
 {
@@ -32,9 +33,9 @@ namespace VasilyHttpDemo.Controllers
 
             //模拟POST
 
-            SqlVP<TestEntity> vp = new SqlVP<TestEntity>();
-            vp.sql = "c>id ^c - id ^(3,10)";
-            vp.value = new TestEntity() { id = 1000 };
+            VasilyProtocal<TestEntity> vp = new VasilyProtocal<TestEntity>();
+            vp.Script = "c>id ^c - id ^(3,10)";
+            vp.Instance = new TestEntity() { id = 1000 };
             driver.RequestType = VasilyRequestType.Normal;
 
             UseUnion("td_teacher1", "td_teacher2");

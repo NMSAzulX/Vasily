@@ -2,11 +2,12 @@
 using System.Diagnostics;
 using System.Text;
 using Vasily;
+using Vasily.Model;
 
 namespace System
 {
 
-    public class SqlCondition:SqlPBase
+    public class SqlCondition:SqlConditionBase
     {
         public StringBuilder SqlResults;
         public StringBuilder SqlOrders;

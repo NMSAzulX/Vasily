@@ -7,25 +7,11 @@ namespace System
     
     public class SqlEntity<T>
     {
-        public static ConcurrentDictionary<string, SqlCP> Cache;
         static SqlEntity()
         {
-            Cache = new ConcurrentDictionary<string, SqlCP>();
+
         }
-        public static SqlCP GetCP(string script)
-        {
-            if (Cache.ContainsKey(script))
-            {
-                return Cache[script].Clone();
-            }
-            else
-            {
-                ASTParser<T> parser = new ASTParser<T>();
-                SqlCP cp = new object().Condition(parser.GetCondition(script));
-                Cache[script] = cp;
-                return cp;
-            }
-        }
+
 
         public static MemberSetter SetPrimary;
         public static string Primary;
