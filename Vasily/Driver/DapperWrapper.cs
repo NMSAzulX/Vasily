@@ -20,6 +20,25 @@ namespace System
         public IDbConnection Writter;
         public IDbConnection Reader;
         public VasilyRequestType RequestType;
+
+        /// <summary>
+        /// 绑定事务 
+        /// </summary>
+        /// <param name="other">使用other节点的事务</param>
+        public void UseTransaction(DapperWrapper other)
+        {
+            Writter = other.Writter;
+            Reader = other.Reader;
+            _transcation = other._transcation;
+
+            // DapperWrapper a = new DapperWrapper();
+            // DapperWrapper b = new DapperWrapper();
+            // a.Transacation((w,r)=>{
+            //      int id = a.GetId();
+            //      b.UseTransacation(a);
+            //      b.Update(id);
+            //})；
+        }
         public DapperWrapper(string writter, string reader)
         {
             Writter = Connector.WriteInitor(writter)();
