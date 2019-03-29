@@ -31,20 +31,20 @@ namespace VasilyDemo
         {
             var result =(condition > "oid").Full;
         }
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void TestScript()
-        {
-            string test = "c<=oid&c==name|c!= create_time^c+oid- create_time^(3,10)";
-            string result = test.Condition<One>(test).Full;
-        }
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void TestScriptCache()
-        {
-            string test = "c!= create_time^c+oid- create_time^(3,10)";
-            string result = test.Condition<One>(test).Full;
-            string cache = test.Condition<One>(test).Full;
-            cache = test.Condition<One>(test).Full;
-            cache = test.Condition<One>(test).Full;
-        }
+        //[BenchmarkDotNet.Attributes.Benchmark]
+        //public void TestScript()
+        //{
+        //    string test = "c<=oid&c==name|c!= create_time^c+oid- create_time^(3,10)";
+        //    string result = test.Condition<One>(test).Full;
+        //}
+        //[BenchmarkDotNet.Attributes.Benchmark]
+        //public void TestScriptCache()
+        //{
+        //    string test = "c!= create_time^c+oid- create_time^(3,10)";
+        //    string result = test.Condition<One>(test).Full;
+        //    string cache = test.Condition<One>(test).Full;
+        //    cache = test.Condition<One>(test).Full;
+        //    cache = test.Condition<One>(test).Full;
+        //}
     }
 }

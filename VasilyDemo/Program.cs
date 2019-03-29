@@ -38,7 +38,7 @@ namespace VasilyDemo
                 {
                     //wrapper.ModifyByPrimary(check_repeate);
                     wrapper.Modify(
-                        item => item == "age" & item == "小玉", 
+                        item => item == "age" & item == "name", 
                         entity
                     );
                 }
