@@ -64,10 +64,6 @@
 |  NoRepeate   |       ——       |                              ——                              |   成员   |            使用该注解将成员标记为查重所需要的成员            | IVasilyNormal                  |
 |   Relation   |  Type,string   | 第一个参数为当前列与哪个实体类相关联；第二个参数为所关联实体类的成员名 |   成员   |              使用该注解我们可以创建关系封装操作              | IVasilyRelation                |
 |    Ignore    |       ——       |                              ——                              |   成员   |         使用该注解表示该成员不会参与SQL自动生成过程          | IVasilyNormal，IVasilyRelation |
-| InsertIgnore |       ——       |                              ——                              |   成员   | 使用该注解的成员生成SQL之后，将不会出现在Sql&lt;T&gt;.Insert中,但会出现在Sql&lt;T&gt;.InsertAll中 | IVasilyNormal                  |
-| SelectIgnore |       ——       |                              ——                              |   成员   |   使用该注解的成员生成SQL之后，不会在带有‘All’的SQL语句中    | IVasilyNormal                  |
-| UpdateIgnore |       ——       |                              ——                              |   成员   |   使用该注解的成员生成SQL之后，不会在带有‘All’的SQL语句中    | IVasilyNormal                  |
-
 ----------
 
 #### 关系实战
@@ -322,6 +318,8 @@ VasilyProtocal<Entity> vp = condition=>condition.....
    - [x] 支持多模糊查询语法及脚本解析
    
    - [x] 支持雪花算法生成唯一ID
+   
+   - [x] 支持Link自定义操作
 
    - [ ]  考虑未来是否只支持.NETStandard2.1 
 
@@ -349,6 +347,7 @@ VasilyProtocal<Entity> vp = condition=>condition.....
    - 2018-11-21：增加Union、Intersect、Except、UnionAll集合查询.
    - 2018-12-07：重构关系操作，采用INNER JOIN, 优化引擎架构，提高复用性。
    - 2018-12-28：重构VP协议格式，使其更规范，消去对object的扩展。
+   - 2019-04-05：增加LINK操作，移除3个ignore注解。
 
 ~~~
 
