@@ -137,6 +137,24 @@ namespace Vasily
             return _handler.Reader.Execute(sql, obj);
         }
 
+
+        /// <summary>
+        /// 删除数据
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public int Add(object obj)
+        {
+            string sql = string.Empty;
+            if (_conditions != null)
+            {
+                sql = SqlTemplate.CustomerInsert(_model);
+            }
+            return _handler.Reader.Execute(sql, obj);
+        }
+
+
+
         /// <summary>
         /// 查重数据
         /// </summary>

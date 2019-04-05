@@ -19,7 +19,6 @@ namespace System
         }
         public IDbConnection Writter;
         public IDbConnection Reader;
-        public VasilyRequestType RequestType;
 
         /// <summary>
         /// 绑定事务 
@@ -43,7 +42,6 @@ namespace System
         {
             Writter = Connector.WriteInitor(writter)();
             Reader = Connector.ReadInitor(reader)();
-            RequestType = VasilyRequestType.Complete;
             Tables = null;
         }
 
@@ -177,9 +175,6 @@ namespace System
         public DapperWrapper(string key) : base(key, key) { }
         public DapperWrapper(string writter, string reader) : base(writter, reader) { }
 
-        public DapperWrapper<T> Normal { get { RequestType = VasilyRequestType.Normal; return this; } }
-        public DapperWrapper<T> Complete { get { RequestType = VasilyRequestType.Complete; return this; } }
-
         public int Count { get { return GetCount(); } }
 
 
@@ -233,34 +228,12 @@ namespace System
         /// <returns></returns>
         public T Get(SqlCondition<T> condition, object instance)
         {
-            string sql = null;
-
-            if (RequestType == VasilyRequestType.Complete)
-            {
-                sql = GetRealSqlString(condition, SqlEntity<T>.SelectAllWhere);
-            }
-            else
-            {
-                sql = GetRealSqlString(condition, SqlEntity<T>.SelectWhere);
-                
-            }
-            return Reader.QueryFirst<T>(sql, instance);
+            return Reader.QueryFirst<T>(GetRealSqlString(condition, SqlEntity<T>.SelectAllWhere), instance);
 
         }
         public T Get(VasilyProtocal<T> condition)
         {
-            string sql = null;
-
-            if (RequestType == VasilyRequestType.Complete)
-            {
-                sql = GetRealSqlString(condition, SqlEntity<T>.SelectAllWhere);
-            }
-            else
-            {
-                sql = GetRealSqlString(condition, SqlEntity<T>.SelectWhere);
-
-            }
-            return Reader.QueryFirst<T>(sql, condition);
+            return Reader.QueryFirst<T>(GetRealSqlString(condition, SqlEntity<T>.SelectAllWhere));
         }
         public T Get(Func<SqlCondition<T>, SqlCondition<T>> condition, object instance)
         {
@@ -274,16 +247,7 @@ namespace System
         /// <returns></returns>
         public int Modify(SqlCondition<T> condition, object instance)
         {
-            string sql = null;
-
-            if (RequestType == VasilyRequestType.Complete)
-            {
-                sql = GetRealSqlString(condition, SqlEntity<T>.UpdateAllWhere);
-            }
-            else
-            {
-                sql = GetRealSqlString(condition, SqlEntity<T>.UpdateWhere);
-            }
+            string sql = GetRealSqlString(condition, SqlEntity<T>.UpdateAllWhere);
             return Writter.Execute(sql, instance, transaction: _transcation);
         }
         public int Modify(Func<SqlCondition<T>, SqlCondition<T>> condition, object instance)
@@ -292,17 +256,7 @@ namespace System
         }
         public int Modify(VasilyProtocal<T> condition)
         {
-            string sql = null;
-
-            if (RequestType == VasilyRequestType.Complete)
-            {
-                sql = GetRealSqlString(condition, SqlEntity<T>.UpdateAllWhere);
-            }
-            else
-            {
-                sql = GetRealSqlString(condition, SqlEntity<T>.UpdateWhere);
-            }
-
+            string sql = GetRealSqlString(condition, SqlEntity<T>.UpdateAllWhere);
             return Writter.Execute(sql, condition.Instance, transaction: _transcation);
         }
         /// <summary>
@@ -347,33 +301,12 @@ namespace System
         /// <returns></returns>
         public IEnumerable<T> Gets(SqlCondition<T> condition, object instance)
         {
-            string sql = null;
-
-            if (RequestType == VasilyRequestType.Complete)
-            {
-                sql = GetRealSqlString(condition, SqlEntity<T>.SelectAllWhere);
-            }
-            else
-            {
-                sql = GetRealSqlString(condition, SqlEntity<T>.SelectWhere);
-            }
-
+            string sql = GetRealSqlString(condition, SqlEntity<T>.SelectAllWhere);
             return Reader.Query<T>(sql, instance);
         }
         public IEnumerable<T> Gets(VasilyProtocal<T> condition)
         {
-
-            string sql = null;
-
-            if (RequestType == VasilyRequestType.Complete)
-            {
-                sql = GetRealSqlString(condition, SqlEntity<T>.SelectAllWhere);
-            }
-            else
-            {
-                sql = GetRealSqlString(condition, SqlEntity<T>.SelectWhere);
-            }
-
+            string sql = GetRealSqlString(condition, SqlEntity<T>.SelectAllWhere);
             return Reader.Query<T>(sql, condition.Instance);
 
         }
@@ -443,164 +376,47 @@ namespace System
 
         #region 把下面的Complate和Normal方法都封装一下
         /// <summary>
-        /// 使用where id in (1,2,3)的方式，根据主键来获取对象集合，有Normal和Complete区分
+        /// 使用where id in (1,2,3)的方式，根据主键来获取对象集合
         /// </summary>
         /// <param name="range">主键数组</param>
         /// <returns></returns>
         public IEnumerable<T> GetsIn(params int[] range)
         {
-            if (RequestType == VasilyRequestType.Complete)
-            {
-                return Complete_GetByIn(range);
-            }
-            else
-            {
-                return Normal_GetByIn(range);
-            }
+            var dynamicParams = new DynamicParameters();
+            dynamicParams.Add("keys", range);
+            return Reader.Query<T>(SqlEntity<T>.SelectAllIn, dynamicParams);
         }
         /// <summary>
-        /// 使用where id in (1,2,3)的方式，根据主键来获取对象集合，有Normal和Complete区分
+        /// 使用where id in (1,2,3)的方式，根据主键来获取对象集合
         /// </summary>
         /// <param name="range">主键数组</param>
         /// <returns></returns>
         public IEnumerable<T> GetsIn(IEnumerable<int> range)
         {
-            if (RequestType == VasilyRequestType.Complete)
-            {
-                return Complete_GetByIn(range.ToArray());
-            }
-            else
-            {
-                return Normal_GetByIn(range.ToArray());
-            }
+            var dynamicParams = new DynamicParameters();
+            dynamicParams.Add("keys", range);
+            return Reader.Query<T>(SqlEntity<T>.SelectAllIn, dynamicParams);
         }
         /// <summary>
-        /// 使用where id in (1,2,3)的方式，根据主键来获取一个对象，有Normal和Complete区分
+        /// 使用where id in (1,2,3)的方式，根据主键来获取一个对象
         /// </summary>
         /// <param name="range">主键</param>
         /// <returns></returns>
         public T GetIn(int range)
         {
-            if (RequestType == VasilyRequestType.Complete)
-            {
-                return Complete_GetByPrimary(range);
-            }
-            else
-            {
-                return Normal_GetByPrimary(range);
-            }
+           var dynamicParams = new DynamicParameters();
+            dynamicParams.Add(SqlEntity<T>.Primary, range);
+            return Reader.QuerySingle<T>(SqlEntity<T>.SelectAllByPrimary, dynamicParams);
         }
-        public T GetIn(IEnumerable<int> range)
-        {
-            if (RequestType == VasilyRequestType.Complete)
-            {
-                return Complete_GetByPrimary(range.ToArray()[0]);
-            }
-            else
-            {
-                return Normal_GetByPrimary(range.ToArray()[0]);
-            }
-        }
+
         /// <summary>
-        /// 获取无条件，整个对象的在数据库的所有数据，有Normal和Complete区分
+        /// 获取无条件，整个对象的在数据库的所有数据
         /// </summary>
         /// <returns></returns>
         public IEnumerable<T> GetAll()
         {
-            if (RequestType == VasilyRequestType.Complete)
-            {
-                return Complete_GetAll();
-            }
-            else
-            {
-                return Normal_GetAll();
-            }
-        }
-        /// <summary>
-        /// 通过主键获取单个实体，有Normal和Complete区分
-        /// </summary>
-        /// <param name="primary">主键</param>
-        /// <returns></returns>
-        public T GetByPrimary(object primary)
-        {
-            if (RequestType == VasilyRequestType.Complete)
-            {
-                return Complete_GetByPrimary(primary);
-            }
-            else
-            {
-                return Normal_GetByPrimary(primary);
-            }
-        }
-        /// <summary>
-        /// 更新实体或者实体的集合，有Normal和Complete区分
-        /// </summary>
-        /// <param name="instances">实体类</param>
-        /// <returns></returns>
-        public bool ModifyByPrimary(params T[] instances)
-        {
-            if (RequestType == VasilyRequestType.Complete)
-            {
-                return Complete_UpdateByPrimary(instances);
-            }
-            else
-            {
-                return Normal_UpdateByPrimary(instances);
-            }
-        }
-        public bool ModifyByPrimary(IEnumerable<T> instances)
-        {
-            if (RequestType == VasilyRequestType.Complete)
-            {
-                return Complete_UpdateByPrimary(instances);
-            }
-            else
-            {
-                return Normal_UpdateByPrimary(instances);
-            }
-        }
-        /// <summary>
-        /// 插入实体或者实体的集合，有Normal和Complete区分
-        /// </summary>
-        /// <param name="instances">实体类</param>
-        /// <returns></returns>
-        public int Add(params T[] instances)
-        {
-            if (RequestType == VasilyRequestType.Complete)
-            {
-                return Complate_Insert(instances);
-            }
-            else
-            {
-                return Normal_Insert(instances);
-            }
-        }
-        public int Add(IEnumerable<T> instances)
-        {
-            if (RequestType == VasilyRequestType.Complete)
-            {
-                return Complate_Insert(instances);
-            }
-            else
-            {
-                return Normal_Insert(instances);
-            }
-        }
-
-
-        #endregion
-
-
-        #region 完整实体类的SELECT函数
-        /// <summary>
-        /// 获取表中所有的完整实体类
-        /// </summary>
-        /// <returns>结果集</returns>
-        internal IEnumerable<T> Complete_GetAll()
-        {
-
             string sql = null;
-            if (Tables==null)
+            if (Tables == null)
             {
                 sql = SqlEntity<T>.SelectAll;
             }
@@ -612,139 +428,58 @@ namespace System
             return Reader.Query<T>(sql);
         }
         /// <summary>
-        /// 根据主键来获取完整的实体类
+        /// 通过主键获取单个实体
         /// </summary>
-        /// <param name="primary">主键ID</param>
-        /// <returns>实体类</returns>
-        internal T Complete_GetByPrimary(object primary)
+        /// <param name="primary">主键</param>
+        /// <returns></returns>
+        public T GetByPrimary(object primary)
         {
             var dynamicParams = new DynamicParameters();
             dynamicParams.Add(SqlEntity<T>.Primary, primary);
             return Reader.QuerySingle<T>(SqlEntity<T>.SelectAllByPrimary, dynamicParams);
         }
         /// <summary>
-        /// 获取指定范围主键的完整实体类
+        /// 更新实体或者实体的集合
         /// </summary>
-        /// <param name="range">主键范围</param>
-        /// <returns>结果集</returns>
-        internal IEnumerable<T> Complete_GetByIn<S>(params S[] range)
-        {
-            var dynamicParams = new DynamicParameters();
-            dynamicParams.Add("keys", range);
-            return Reader.Query<T>(SqlEntity<T>.SelectAllIn, dynamicParams);
-        }
-
-
-        #endregion
-
-        #region 业务相关实体类的SELECT函数
-        /// <summary>
-        /// 获取表中所有的业务相关的实体类(带有select_ignore标签的会被排除)
-        /// </summary>
+        /// <param name="instances">实体类</param>
         /// <returns></returns>
-        internal IEnumerable<T> Normal_GetAll()
+        public bool ModifyByPrimary(params T[] instances)
         {
-            string sql = null;
-            if (Tables == null)
-            {
-                sql = SqlEntity<T>.Select;
-            }
-            else
-            {
-                sql = GetRealSqlString(SqlEntity<T>.Select);
-                Tables = null;
-            }
-            return Reader.Query<T>(sql);
+            return Writter.Execute(
+
+                GetRealSqlString(SqlEntity<T>.UpdateAllByPrimary), 
+                instances, 
+                transaction: _transcation
+
+                ) == instances.Length;
+        }
+        public bool ModifyByPrimary(IEnumerable<T> instances)
+        {
+            return Writter.Execute(
+
+                GetRealSqlString(SqlEntity<T>.UpdateAllByPrimary), 
+                instances, 
+                transaction: _transcation
+
+                ) == instances.Count();
         }
         /// <summary>
-        /// 根据主键来获取业务相关的实体类(带有select_ignore标签的会被排除)
-        /// </summary>
-        /// <param name="primary">主键ID</param>
-        /// <returns>实体类</returns>
-        internal T Normal_GetByPrimary(object primary)
-        {
-            var dynamicParams = new DynamicParameters();
-            dynamicParams.Add(SqlEntity<T>.Primary, primary);
-            return Reader.QuerySingle<T>(SqlEntity<T>.SelectByPrimary, dynamicParams);
-        }
-        /// <summary>
-        /// 获取指定范围主键的普通实体类
-        /// </summary>
-        /// <param name="range">主键范围</param>
-        /// <returns>结果集</returns>
-        internal IEnumerable<T> Normal_GetByIn<S>(params S[] range)
-        {
-            var dynamicParams = new DynamicParameters();
-            dynamicParams.Add("keys", range);
-            return Reader.Query<T>(SqlEntity<T>.SelectIn, dynamicParams);
-        }
-        #endregion
-
-
-        #region 完整实体类的UPDATE函数
-        /// <summary>
-        /// 根据主键更新
-        /// </summary>
-        /// <param name="instance">需要更新的实体类</param>
-        /// <returns>更新结果</returns>
-        internal bool Complete_UpdateByPrimary(params T[] instances)
-        {
-            return Writter.Execute(GetRealSqlString(SqlEntity<T>.UpdateAllByPrimary), instances, transaction: _transcation) == instances.Length;
-        }
-        internal bool Complete_UpdateByPrimary(IEnumerable<T> instances)
-        {
-            return Writter.Execute(GetRealSqlString(SqlEntity<T>.UpdateAllByPrimary), instances, transaction: _transcation) == instances.Count();
-        }
-        #endregion
-
-        #region 业务相关实体类的UPDATE函数
-        /// <summary>
-        /// 根据主键更新
-        /// </summary>
-        /// <param name="instance">需要更新的实体类</param>
-        /// <returns>更新结果</returns>
-        internal bool Normal_UpdateByPrimary(params T[] instances)
-        {
-            return Writter.Execute(GetRealSqlString(SqlEntity<T>.UpdateByPrimary), instances, transaction: _transcation) == instances.Length;
-        }
-        internal bool Normal_UpdateByPrimary(IEnumerable<T> instances)
-        {
-            return Writter.Execute(GetRealSqlString(SqlEntity<T>.UpdateByPrimary), instances, transaction: _transcation) == instances.Count();
-        }
-        #endregion
-
-
-        #region 完整实体类的INSERT函数
-        /// <summary>
-        /// 插入新节点
+        /// 插入实体或者实体的集合
         /// </summary>
         /// <param name="instances">实体类</param>
-        /// <returns>返回结果</returns>
-        internal int Complate_Insert(params T[] instances)
+        /// <returns></returns>
+        public int Add(params T[] instances)
         {
             return Writter.Execute(SqlEntity<T>.InsertAll, instances, transaction: _transcation);
         }
-        internal int Complate_Insert(IEnumerable<T> instances)
+        public int Add(IEnumerable<T> instances)
         {
             return Writter.Execute(SqlEntity<T>.InsertAll, instances, transaction: _transcation);
         }
+
+
         #endregion
 
-        #region 业务相关实体类的INSERT函数
-        /// <summary>
-        /// 插入新节点
-        /// </summary>
-        /// <param name="instances">实体类</param>
-        /// <returns>返回结果</returns>
-        internal int Normal_Insert(params T[] instances)
-        {
-            return Writter.Execute(SqlEntity<T>.Insert, instances, transaction: _transcation);
-        }
-        internal int Normal_Insert(IEnumerable<T> instances)
-        {
-            return Writter.Execute(SqlEntity<T>.Insert, instances, transaction: _transcation);
-        }
-        #endregion
 
 
         #region 查重函数
@@ -811,7 +546,7 @@ namespace System
             }
         }
         /// <summary>
-        /// 通过查重条件进行不重复插入，有Normal和Complete区分
+        /// 通过查重条件进行不重复插入
         /// </summary>
         /// <param name="instance">实体类</param>
         /// <returns></returns>
@@ -819,19 +554,12 @@ namespace System
         {
             if (!IsRepeat(instance))
             {
-                if (RequestType == VasilyRequestType.Complete)
-                {
-                    return Complate_Insert(instance) > 0;
-                }
-                else
-                {
-                    return Normal_Insert(instance) > 0;
-                }
+                return Writter.Execute(SqlEntity<T>.InsertAll, instance, transaction: _transcation)>0;
             }
             return false;
         }
         /// <summary>
-        /// 先查重，如果没有则插入，再根据插入的实体类通过唯一约束找到主键赋值给实体类，有Normal和Complete区分
+        /// 先查重，如果没有则插入，再根据插入的实体类通过唯一约束找到主键赋值给实体类
         /// </summary>
         /// <typeparam name="S">主键类型</typeparam>
         /// <param name="instance">实体类</param>
@@ -2130,10 +1858,5 @@ namespace System
         #endregion
 
 
-    }
-    public enum VasilyRequestType
-    {
-        Complete = 0,
-        Normal = 1
     }
 }

@@ -25,14 +25,6 @@ namespace System
         public static string SelectAllByPrimary;
         public static string SelectAllIn;
 
-        public static string Select;
-        public static string SelectWhere;
-        public static string SelectByPrimary;
-        public static string SelectIn;
-
-        public static string UpdateWhere;
-        public static string UpdateByPrimary;
-
         public static string UpdateAllWhere;
         public static string UpdateAllByPrimary;
 

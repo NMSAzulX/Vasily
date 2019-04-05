@@ -29,29 +29,17 @@ namespace Vasily.Core
             gs["SelectAllWhere"] = select.SelectAllWhere(model);
             gs["SelectAllByPrimary"] = select.SelectAllByPrimary(model);
             gs["SelectAllIn"] = select.SelectAllIn(model);
-
-            var selectModel = model.ModelWithoutAttr<SelectIgnoreAttribute>();
-            gs["Select"] = select.Select(selectModel);
-            gs["SelectWhere"] = select.SelectWhere(selectModel);
-            gs["SelectByPrimary"] = select.SelectByPrimary(selectModel);
-            gs["SelectIn"] = select.SelectIn(selectModel);
-
+          
 
             UpdateTemplate update = new UpdateTemplate();
            
             gs["UpdateAllWhere"] = update.UpdateWhere(model);
             gs["UpdateAllByPrimary"] = update.UpdateByPrimary(model);
 
-            var updateModel = model.ModelWithoutAttr<UpdateIgnoreAttribute>();
-            gs["UpdateWhere"] = update.UpdateWhere(updateModel);
-            gs["UpdateByPrimary"] = update.UpdateByPrimary(updateModel);
-
 
             InsertTemplate insert = new InsertTemplate();
             gs["InsertAll"] = insert.Insert(model);
 
-            var insertModel = model.ModelWithoutAttr<InsertIgnoreAttribute>();
-            gs["Insert"] = insert.Insert(insertModel);
 
             DeleteTemplate delete = new DeleteTemplate();
             gs["DeleteWhere"] = delete.DeleteWhere(model);

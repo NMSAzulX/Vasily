@@ -11,7 +11,6 @@ namespace VasilyDemo.Entities
 
         public string name { get; set; }
 
-        [UpdateIgnore]
         public int create_time { get; set; }
 
         public int update_time { get; set; }

@@ -113,5 +113,17 @@ namespace Vasily
         {
             return Repeate.RepeateCount(model);
         }
+
+
+        /// <summary>
+        /// 生成 DELETE FROM [TableName] WHERE [condition1]=@condition1 AND [condition2]=@condition2
+        /// </summary>
+        /// <param name="model">载有生成信息的Model</param>
+        /// <param name="condition">查询字符串</param>
+        /// <returns>删除字符串结果</returns>
+        public static string CustomerInsert(SqlModel model)
+        {
+            return Insert.Insert(model);
+        }
     }
 }

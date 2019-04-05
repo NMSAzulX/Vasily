@@ -30,29 +30,12 @@ namespace VasilyDemo
             //SELECT * FROM [table_one] WHERE
 
 
-            Console.WriteLine(SqlEntity<One>.Select);
-            //SELECT [oid],[name],[create_time],[update_time],[age],[student_id] FROM [table_one]
-
-            Console.WriteLine(SqlEntity<One>.SelectByPrimary);
-            //SELECT [oid],[name],[create_time],[update_time],[age],[student_id] FROM [table_one] WHERE [oid]=@oid
-
-            Console.WriteLine(SqlEntity<One>.SelectIn);
-            //SELECT [oid],[name],[create_time],[update_time],[age],[student_id] FROM [table_one] WHERE [oid] IN @keys
-
-            Console.WriteLine(SqlEntity<One>.SelectWhere);
-            //SELECT [oid],[name],[create_time],[update_time],[age],[student_id] FROM [table_one] WHERE
-
             Console.WriteLine(SqlEntity<One>.UpdateAllByPrimary);
             //UPDATE [table_one] SET [name]=@name,[create_time]=@create_time,[update_time]=@update_time,[age]=@age,[student_id]=@student_id WHERE [oid]=@oid
 
             Console.WriteLine(SqlEntity<One>.UpdateAllWhere);
             //UPDATE [table_one] SET [name]=@name,[create_time]=@create_time,[update_time]=@update_time,[age]=@age,[student_id]=@student_id WHERE
 
-            Console.WriteLine(SqlEntity<One>.UpdateByPrimary);
-            //UPDATE [table_one] SET [name]=@name,[update_time]=@update_time,[age]=@age,[student_id]=@student_id WHERE [oid]=@oid
-
-            Console.WriteLine(SqlEntity<One>.UpdateWhere);
-            //UPDATE [table_one] SET [name]=@name,[update_time]=@update_time,[age]=@age,[student_id]=@student_id WHERE
 
             Console.WriteLine(SqlEntity<One>.DeleteByPrimary);
             //DELETE FROM [table_one] WHERE [oid] = @oid
