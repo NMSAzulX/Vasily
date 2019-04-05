@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using Vasily;
 using Vasily.Core;
 using Vasily.Model;
@@ -147,7 +146,7 @@ namespace System
             using (_transcation = Writter.BeginTransaction())
             {
                 try
-                {
+                { 
                     action?.Invoke(Reader, Writter);
                     _transcation.Commit();
                 }
