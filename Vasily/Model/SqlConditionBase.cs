@@ -6,6 +6,6 @@ namespace Vasily.Model
 {
     public abstract class SqlConditionBase
     {
-        public string Full { get; set; }
+        public virtual string Full { get; set; }
     }
 }

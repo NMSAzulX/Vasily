@@ -4,7 +4,7 @@ using Vasily;
 namespace VasilyDemo.Entities
 {
     [Table("table_relation", SqlType.MsSql)]
-    public class Two : IVasilyRelation
+    public class Two
     {
         [PrimaryKey]
         [Relation(typeof(Two))]

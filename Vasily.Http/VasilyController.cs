@@ -39,7 +39,7 @@ namespace Microsoft.AspNetCore.Mvc
             driver.UseCollection(SqlCollectionType.UnionAll, tables);
         }
 
-        [HttpPost("query--page-vp")]
+        [HttpPost("query-page-vp")]
         public ReturnPageResult QueryPageVP(VasilyProtocal<T> vp)
         {
             return GetsPageResult(vp);
@@ -52,22 +52,22 @@ namespace Microsoft.AspNetCore.Mvc
         }
 
         #region NormalQuery
-        [HttpGet("vasily")]
+        [HttpPost("vasily-page-get")]
         public ReturnPageResult VasilyGet(VasilyProtocal<T> vp)
         {
             return GetsPageResult(vp);
         }
-        [HttpPost("vasily")]
+        [HttpPost("vasily-modify")]
         public ReturnResult VasilyModify(params T[] instances)
         {
             return ModifyResult(instances);
         }
-        [HttpPut("vasily")]
+        [HttpPut("vasily-add")]
         public ReturnResult VasilyAdd(params T[] instances)
         {
             return AddResult(instances);
         }
-        [HttpDelete("vasily")]
+        [HttpDelete("vasily-delete")]
         public ReturnResult VasilyDelete(params T[] instances)
         {
             return DeleteResult(instances);

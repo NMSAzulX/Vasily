@@ -95,7 +95,7 @@ namespace VasilyUT
             SqlCondition<Relation2> c = new SqlCondition<Relation2>();
             Assert.Equal(
 
-                "((StudentId > @StudentId OR ClassId = @ClassId) AND ClassName <> @ClassName) ORDER BY StudentId ASC",
+                "(([StudentId] > @StudentId OR [ClassId] = @ClassId) AND [ClassName] <> @ClassName) ORDER BY [StudentId] ASC",
 
                 //----------------------------条件----------------排序链接--升序------------
                 //                                                    ↓   ↓
@@ -110,7 +110,7 @@ namespace VasilyUT
             SqlCondition<Relation2> c = new SqlCondition<Relation2>();
             Assert.Equal(
 
-                "((StudentId > @StudentId OR ClassId = @ClassId) AND ClassName <> @ClassName) ORDER BY StudentId ASC,ClassId DESC",
+                "(([StudentId] > @StudentId OR [ClassId] = @ClassId) AND [ClassName] <> @ClassName) ORDER BY [StudentId] ASC,[ClassId] DESC",
                 //升序-----------降序-----排序链接-----------------条件----------------------------
                 //↓             ↓          ↓
                 (c + "StudentId" - "ClassId" ^(c > "StudentId" | c == "ClassId") & c != "ClassName").ToString()

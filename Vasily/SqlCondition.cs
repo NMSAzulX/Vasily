@@ -64,7 +64,7 @@ namespace System
         }
         public string Order { get { return SqlOrders.ToString(); } }
         public string Tails { get { return GetString(SqlOrders, SqlPages); } }
-        public new string Full
+        public override string Full
         {
             get
             {
@@ -237,7 +237,7 @@ namespace System
         public SqlCondition<T> GetParameterString(string operators, string field2)
         {
             SqlCondition<T> newInstance = new SqlCondition<T>();
-            newInstance.SqlResults.Append(SqlModel<T>.Column(field2)).Append($" {operators} @").Append(field2);
+            newInstance.SqlResults.Append($"{SqlModel<T>.Left}{SqlModel<T>.Column(field2)}{SqlModel<T>.Right}").Append($" {operators} @").Append(field2);
             return newInstance;
         }
 
@@ -302,12 +302,12 @@ namespace System
         {
             if (field1.HasOrder)
             {
-                field1.SqlOrders.Append($",{SqlModel<T>.Column(field2)} ASC");
+                field1.SqlOrders.Append($",{SqlModel<T>.Left}{SqlModel<T>.Column(field2)}{SqlModel<T>.Right} ASC");
             }
             else
             {
                 field1.HasOrder = true;
-                field1.SqlOrders.Append($" ORDER BY {SqlModel<T>.Column(field2)} ASC");
+                field1.SqlOrders.Append($" ORDER BY {SqlModel<T>.Left}{SqlModel<T>.Column(field2)}{SqlModel<T>.Right} ASC");
             }
             return field1;
         }
@@ -315,12 +315,12 @@ namespace System
         {
             if (field1.HasOrder)
             {
-                field1.SqlOrders.Append($",{SqlModel<T>.Column(field2)} ASC");
+                field1.SqlOrders.Append($",{SqlModel<T>.Left}{SqlModel<T>.Column(field2)}{SqlModel<T>.Right} ASC");
             }
             else
             {
                 field1.HasOrder = true;
-                field1.SqlOrders.Append($" ORDER BY {SqlModel<T>.Column(field2)} ASC");
+                field1.SqlOrders.Append($" ORDER BY {SqlModel<T>.Left}{SqlModel<T>.Column(field2)}{SqlModel<T>.Right} ASC");
             }
             return field1;
         }
@@ -328,12 +328,12 @@ namespace System
         {
             if (field1.HasOrder)
             {
-                field1.SqlOrders.Append($",{SqlModel<T>.Column(field2)} DESC");
+                field1.SqlOrders.Append($",{SqlModel<T>.Left}{SqlModel<T>.Column(field2)}{SqlModel<T>.Right} DESC");
             }
             else
             {
                 field1.HasOrder = true;
-                field1.SqlOrders.Append($" ORDER BY {SqlModel<T>.Column(field2)} DESC");
+                field1.SqlOrders.Append($" ORDER BY {SqlModel<T>.Left}{SqlModel<T>.Column(field2)}{SqlModel<T>.Right} DESC");
             }
             return field1;
         }
@@ -341,18 +341,19 @@ namespace System
         {
             if (field1.HasOrder)
             {
-                field1.SqlOrders.Append($",{SqlModel<T>.Column(field2)} DESC");
+                field1.SqlOrders.Append($",{SqlModel<T>.Left}{SqlModel<T>.Column(field2)}{SqlModel<T>.Right} DESC");
             }
             else
             {
                 field1.HasOrder = true;
-                field1.SqlOrders.Append($" ORDER BY {SqlModel<T>.Column(field2)} DESC");
+                field1.SqlOrders.Append($" ORDER BY {SqlModel<T>.Left}{SqlModel<T>.Column(field2)}{SqlModel<T>.Right} DESC");
             }
             return field1;
         }
 
         public static SqlCondition<T> operator %(SqlCondition<T> field1, string field2)
         {
+            //$"{SqlModel<T>.Left}{SqlModel<T>.Column(field2)}{SqlModel<T>.Right}"
             return field1.GetParameterString("LIKE", field2);
         }
         public static SqlCondition<T> operator %(string field2, SqlCondition<T> field1)

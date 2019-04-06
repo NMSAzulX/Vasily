@@ -20,6 +20,14 @@ namespace Vasily
         {
             Script = script;
         }
+        public T AcceptInstance
+        {
+            set
+            {
+                Instance = value;
+            }
+        }
+
         /// <summary>
         /// /Protocal SET Instance
         /// </summary>
@@ -55,7 +63,10 @@ namespace Vasily
         public string Order;
         public string Tails;
 
-        public new string Full { get { return Query + Tails; } }
+        public override string Full { get { return Query + Tails; } }
+
+        public string[] Fields;
+
         public override string ToString()
         {
             return Query + Tails;

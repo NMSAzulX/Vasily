@@ -232,7 +232,7 @@ namespace System
         }
         public T Get(VasilyProtocal<T> condition)
         {
-            return Reader.QueryFirst<T>(GetRealSqlString(condition, SqlEntity<T>.SelectAllWhere));
+            return Reader.QueryFirst<T>(GetRealSqlString(condition, SqlEntity<T>.SelectAllWhere),condition.Instance);
         }
         public T Get(Func<SqlCondition<T>, SqlCondition<T>> condition, object instance)
         {
@@ -300,13 +300,11 @@ namespace System
         /// <returns></returns>
         public IEnumerable<T> Gets(SqlCondition<T> condition, object instance)
         {
-            string sql = GetRealSqlString(condition, SqlEntity<T>.SelectAllWhere);
-            return Reader.Query<T>(sql, instance);
+            return Reader.Query<T>(GetRealSqlString(condition, SqlEntity<T>.SelectAllWhere), instance);
         }
         public IEnumerable<T> Gets(VasilyProtocal<T> condition)
         {
-            string sql = GetRealSqlString(condition, SqlEntity<T>.SelectAllWhere);
-            return Reader.Query<T>(sql, condition.Instance);
+            return Reader.Query<T>(GetRealSqlString(condition, SqlEntity<T>.SelectAllWhere), condition.Instance);
 
         }
         public IEnumerable<T> Gets(Func<SqlCondition<T>, SqlCondition<T>> condition, object instance)
