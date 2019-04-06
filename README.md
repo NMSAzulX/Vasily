@@ -276,15 +276,9 @@ VasilyProtocal<Entity> vp = condition=>condition.....
 ```c#
 //可以隐式转换为vp,进而适配vasily进行查询
 {
-     Instance:{ id:10000, name:"小明" },
+     AcceptInstance:{ id:10000, name:"小明" },
      Script:"c>id & c==name ^c - id ^(3,10)"
 }
-
-//VasilyController中增加了两个默认API：
-//api/[controller]/query-page-vp
-//api/[controoler]/query-vp
-//参数传vp格式即可
-
 ```
 
   sql 已经进行了防注入检测，参数也采用参数化处理
