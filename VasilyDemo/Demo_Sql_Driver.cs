@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Text;
 using VasilyDemo.Entities;
 
 namespace VasilyDemo
@@ -41,11 +39,10 @@ namespace VasilyDemo
 
             //指定操作方式,RequestType赋值一次即可。
             //RequestType默认为 Complete;
-            wrapper.RequestType = VasilyRequestType.Complete;
+
             wrapper.GetAll();
 
             //使用属性调用
-            wrapper.Complete.GetAll();
 
             //获取所有元素
             wrapper.GetAll();
