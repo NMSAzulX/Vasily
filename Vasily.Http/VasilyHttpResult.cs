@@ -7,14 +7,14 @@ namespace Microsoft.AspNetCore.Mvc
     {
         public string Msg;
         public object Data;
-        public int Status;
+        public int Code;
         public int Totle;
     }
     public struct ReturnResult
     {
         public string Msg;
         public object Data;
-        public int Status;
+        public int Code;
     }
 
    

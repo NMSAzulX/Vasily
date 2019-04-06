@@ -74,7 +74,7 @@ namespace Microsoft.AspNetCore.Mvc
         }
         #endregion
 
-        #region 信息返回封装
+        #region 信息返回封装,对内的
         /// <summary>
         /// 更新操作的结果返回
         /// </summary>
@@ -376,12 +376,12 @@ namespace Microsoft.AspNetCore.Mvc
             _result.Totle = totle;
             if (value)
             {
-                _result.Status = 0;
+                _result.Code = 0;
                 _result.Msg = succeed;
             }
             else
             {
-                _result.Status = 1;
+                _result.Code = 1;
                 _result.Msg = faild;
             }
             return _result;
@@ -403,7 +403,7 @@ namespace Microsoft.AspNetCore.Mvc
             }
             else
             {
-                _result.Status = 1;
+                _result.Code = 1;
                 _result.Msg = msg;
             }
             return _result;
@@ -420,12 +420,12 @@ namespace Microsoft.AspNetCore.Mvc
             ReturnResult _result = new ReturnResult();
             if (value)
             {
-                _result.Status = 0;
+                _result.Code = 0;
                 _result.Msg = succeed;
             }
             else
             {
-                _result.Status = 1;
+                _result.Code = 1;
                 _result.Msg = faild;
             }
             return _result;
@@ -445,7 +445,7 @@ namespace Microsoft.AspNetCore.Mvc
             }
             else
             {
-                _result.Status = 1;
+                _result.Code = 1;
                 _result.Msg = msg;
             }
             return _result;
@@ -456,11 +456,11 @@ namespace Microsoft.AspNetCore.Mvc
         /// <param name="value">提示信息</param>
         /// <param name="status">状态码，默认200</param>
         /// <returns></returns>
-        protected ReturnResult Msg(string value, int status = 200)
+        protected ReturnResult Msg(string value, int status = 0)
         {
             ReturnResult _result = new ReturnResult();
             _result.Msg = value;
-            _result.Status = status;
+            _result.Code = status;
             return _result;
         }
     }
