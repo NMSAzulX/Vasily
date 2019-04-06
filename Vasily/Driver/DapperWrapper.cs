@@ -4,7 +4,6 @@ using System.Data;
 using System.Linq;
 using Vasily;
 using Vasily.Core;
-using Vasily.Model;
 
 namespace System
 {
@@ -403,7 +402,7 @@ namespace System
         {
            var dynamicParams = new DynamicParameters();
             dynamicParams.Add(SqlEntity<T>.Primary, range);
-            return Reader.QuerySingle<T>(SqlEntity<T>.SelectAllByPrimary, dynamicParams);
+            return Reader.QueryFirst<T>(SqlEntity<T>.SelectAllByPrimary, dynamicParams);
         }
 
         /// <summary>
@@ -433,7 +432,7 @@ namespace System
         {
             var dynamicParams = new DynamicParameters();
             dynamicParams.Add(SqlEntity<T>.Primary, primary);
-            return Reader.QuerySingle<T>(SqlEntity<T>.SelectAllByPrimary, dynamicParams);
+            return Reader.QueryFirst<T>(SqlEntity<T>.SelectAllByPrimary, dynamicParams);
         }
         /// <summary>
         /// 更新实体或者实体的集合
@@ -695,7 +694,7 @@ namespace System
             {
                 dynamicParams.Add(_sources[i + 1], _emits[i + 1](parameters[i]));
             }
-            return Reader.QuerySingle<T>(sql, dynamicParams);
+            return Reader.QueryFirst<T>(sql, dynamicParams);
         }
 
         /// <summary>
@@ -725,7 +724,7 @@ namespace System
             {
                 dynamicParams.Add(_tables[i + 1], parameters[i]);
             }
-            return Reader.QuerySingle<T>(sql, dynamicParams);
+            return Reader.QueryFirst<T>(sql, dynamicParams);
         }
         #endregion
 

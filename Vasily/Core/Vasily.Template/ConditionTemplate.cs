@@ -14,8 +14,11 @@ namespace Vasily.Core
         /// <returns>条件字符串结果</returns>
         public string Condition(SqlModel model, params string[] conditions)
         {
+            if (conditions==null)
+            {
+                return string.Empty;
+            }
             StringBuilder sql = new StringBuilder();
-
             for (int i = 0; i < conditions.Length; i += 1)
             {
                 sql.Append(model.Left);
@@ -45,8 +48,8 @@ namespace Vasily.Core
         }
         public string Condition(SqlModel model, IEnumerable<string> conditions)
         {
-            StringBuilder sql = new StringBuilder();
 
+            StringBuilder sql = new StringBuilder();
             foreach (var item in conditions)
             {
                 sql.Append(model.Left);

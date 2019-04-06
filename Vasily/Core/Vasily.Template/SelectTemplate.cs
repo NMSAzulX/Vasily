@@ -89,15 +89,20 @@ namespace Vasily.Core
             sql.Append("SELECT ");
             foreach (var item in model.Members)
             {
-                sql.Append(model.Left);
+               
                 if (model.ColFunction!= null)
                 {
-                    sql.Append(model.ColFunction(item)).Append(" AS ").Append(item);
+                    string sourceName = model.ColFunction(item);
+                    if (sourceName!=item)
+                    {
+                        sql.Append(model.Left);
+                        sql.Append(model.ColFunction(item)).Append(" AS ");
+                        sql.Append(model.Right);
+                    }
                 }
-                else
-                {
-                    sql.Append(item);
-                }
+               
+                sql.Append(model.Left);
+                sql.Append(item);
                 sql.Append(model.Right);
                 sql.Append(",");
             }

@@ -51,6 +51,45 @@ namespace Microsoft.AspNetCore.Mvc
             return GetResult(vp);
         }
 
+        #region LinkQuery
+        [HttpPost("accurate-get")]
+        public ReturnResult VasilyLinkGet(VasilyProtocal<T> vp)
+        {
+            return Result(SqlLink<T>.Load(driver).Fields(vp.Fields).Conditions(vp).Get<object>(vp.Instance));
+        }
+        [HttpPost("accurate-gets")]
+        public ReturnResult VasilyLinkGets(VasilyProtocal<T> vp)
+        {
+            return Result(SqlLink<T>.Load(driver).Fields(vp.Fields).Conditions(vp).Gets<object>(vp.Instance));
+        }
+        [HttpPost("accurate-page-gets")]
+        public ReturnPageResult VasilyLinkPageGets(VasilyProtocal<T> vp)
+        {
+            return Result(SqlLink<T>.Load(driver).Fields(vp.Fields).Conditions(vp).Gets<object>(vp.Instance), driver.CountWithCondition(vp));
+        }
+        [HttpPost("accurate-modify")]
+        public ReturnResult VasilyLinkModify(VasilyProtocal<T> vp)
+        {
+            return Result(SqlLink<T>.Load(driver).Fields(vp.Fields).Conditions(vp).Modify(vp.Instance));
+        }
+        [HttpPut("accurate-add")]
+        public ReturnResult VasilyLinkAdd(VasilyProtocal<T> vp)
+        {
+            return Result(SqlLink<T>.Load(driver).Fields(vp.Fields).Conditions(vp).Add(vp.Instance));
+        }
+        [HttpDelete("accurate-delete")]
+        public ReturnResult VasilyLinkDelete(VasilyProtocal<T> vp)
+        {
+            return Result(SqlLink<T>.Load(driver).Fields(vp.Fields).Conditions(vp).Delete(vp.Instance));
+        }
+        [HttpDelete("accurate-repeate")]
+        public ReturnResult VasilyLinkRepeate(VasilyProtocal<T> vp)
+        {
+            return Result(SqlLink<T>.Load(driver).Fields(vp.Fields).Conditions(vp).Repeate(vp.Instance));
+        }
+        #endregion
+
+
         #region NormalQuery
         [HttpPost("vasily-page-get")]
         public ReturnPageResult VasilyGet(VasilyProtocal<T> vp)

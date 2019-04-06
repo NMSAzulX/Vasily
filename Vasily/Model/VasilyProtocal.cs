@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using Vasily.Model;
 
 namespace Vasily
 {
@@ -64,7 +63,6 @@ namespace Vasily
         public string Tails;
 
         public override string Full { get { return Query + Tails; } }
-
         public string[] Fields;
 
         public override string ToString()

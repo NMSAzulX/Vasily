@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Vasily.Model
+namespace Vasily
 {
     public abstract class SqlConditionBase
     {

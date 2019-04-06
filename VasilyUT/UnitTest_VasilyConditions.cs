@@ -16,28 +16,28 @@ namespace VasilyUT
         {
             NormalAnalysis<Relation2> package = new NormalAnalysis<Relation2>();
             SqlCondition<Relation2> condition = new SqlCondition<Relation2>();
-            Assert.Equal("(StudentId > @StudentId AND StudentId LIKE @StudentId)", (condition > "StudentId" & condition  % "StudentId").ToString());
+            Assert.Equal("([StudentId] > @StudentId AND [StudentId] LIKE @StudentId)", (condition > "StudentId" & condition  % "StudentId").ToString());
         }
         [Fact(DisplayName = "条件模糊查询测试2")]
         public void TestLikeCondition2()
         {
             NormalAnalysis<Relation2> package = new NormalAnalysis<Relation2>();
             SqlCondition<Relation2> condition = new SqlCondition<Relation2>();
-            Assert.Equal("((StudentId LIKE @StudentId AND StudentId > @StudentId) AND StudentId LIKE @StudentId)", ("StudentId" % condition & condition > "StudentId" & condition % "StudentId").ToString());
+            Assert.Equal("(([StudentId] LIKE @StudentId AND [StudentId] > @StudentId) AND [StudentId] LIKE @StudentId)", ("StudentId" % condition & condition > "StudentId" & condition % "StudentId").ToString());
         }
         [Fact(DisplayName = "条件拼接测试1")]
         public void TestCondition()
         {
             NormalAnalysis<Relation2> package = new NormalAnalysis<Relation2>();
             SqlCondition<Relation2> condition = new SqlCondition<Relation2>();
-            Assert.Equal("StudentId > @StudentId", (condition > "StudentId").ToString());
+            Assert.Equal("[StudentId] > @StudentId", (condition > "StudentId").ToString());
          }
         [Fact(DisplayName = "条件拼接测试2")]
         public void TestCondition2()
         {
             NormalAnalysis<Relation2> package = new NormalAnalysis<Relation2>();
             SqlCondition<Relation2> condition = new SqlCondition<Relation2>();
-            Assert.Equal("(StudentId > @StudentId OR ClassId <> @ClassId)", (condition > "StudentId" | condition != "ClassId").ToString());
+            Assert.Equal("([StudentId] > @StudentId OR [ClassId] <> @ClassId)", (condition > "StudentId" | condition != "ClassId").ToString());
         }
         [Fact(DisplayName = "条件拼接测试3")]
         public void TestCondition3()
@@ -46,7 +46,7 @@ namespace VasilyUT
             SqlCondition<Relation2> c = new SqlCondition<Relation2>();
             Assert.Equal(
 
-                "((StudentId > @StudentId OR ClassId = @ClassId) AND ClassName <> @ClassName)",
+                "(([StudentId] > @StudentId OR [ClassId] = @ClassId) AND [ClassName] <> @ClassName)",
 
                 ((c > "StudentId" | c == "ClassId") & c != "ClassName").ToString()
 
@@ -63,7 +63,7 @@ namespace VasilyUT
 
             Assert.Equal(
 
-                "((StudentId > @StudentId OR ClassId = @ClassId) AND ClassName <> @ClassName) OFFSET 10 ROW FETCH NEXT 10 rows only",
+                "(([StudentId] > @StudentId OR [ClassId] = @ClassId) AND [ClassName] <> @ClassName) OFFSET 10 ROW FETCH NEXT 10 rows only",
 
                 vp.Full
 
@@ -82,7 +82,7 @@ namespace VasilyUT
 
             Assert.Equal(
 
-                "(StudentId > @StudentId OR (ClassId = @ClassId AND Id <> @Id)) LIMIT 10,10",
+                "(`StudentId` > @StudentId OR (`ClassId` = @ClassId AND `Id` <> @Id)) LIMIT 10,10",
 
                 vp.Full
 

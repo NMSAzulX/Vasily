@@ -32,7 +32,10 @@ namespace Vasily
         /// <returns></returns>
         public SqlLink<T> Fields(params string[] fields)
         {
-            _model.ResetMembers(fields);
+            if (fields!=null)
+            {
+                _model.ResetMembers(fields);
+            }
             return this;
         }
 
@@ -47,7 +50,11 @@ namespace Vasily
             _conditions = conditions;
             return this;
         }
-
+        public SqlLink<T> Conditions(VasilyProtocal<T> vp)
+        {
+            _sqlCondition = vp.Full;
+            return this;
+        }
         public SqlLink<T> Conditions(Func<SqlCondition<T>, SqlCondition<T>> condition)
         {
             return Conditions(condition(new SqlCondition<T>())); ;
@@ -67,7 +74,7 @@ namespace Vasily
         public IEnumerable<S> Gets<S>(object obj)
         {
             string sql = string.Empty;
-            if (_conditions!=null)
+            if (_conditions==null)
             {
                 sql = SqlTemplate.CustomerSelect(_model,_sqlCondition);
             }
@@ -86,7 +93,7 @@ namespace Vasily
         public S Get<S>(object obj)
         {
             string sql = string.Empty;
-            if (_conditions != null)
+            if (_conditions == null)
             {
                 sql = SqlTemplate.CustomerSelect(_model, _sqlCondition);
             }
@@ -94,7 +101,7 @@ namespace Vasily
             {
                 sql = SqlTemplate.SelectWithCondition(_model, _conditions);
             }
-            return _handler.Reader.QuerySingle<S>(sql, obj);
+            return _handler.Reader.QueryFirst<S>(sql, obj);
         }
 
 
@@ -106,7 +113,7 @@ namespace Vasily
         public int Modify(object obj)
         {
             string sql = string.Empty;
-            if (_conditions != null)
+            if (_conditions == null)
             {
                 sql = SqlTemplate.CustomerUpdate(_model, _sqlCondition);
             }
@@ -126,7 +133,7 @@ namespace Vasily
         public int Delete(object obj)
         {
             string sql = string.Empty;
-            if (_conditions != null)
+            if (_conditions == null)
             {
                 sql = SqlTemplate.CustomerDelete(_model, _sqlCondition);
             }
@@ -145,11 +152,7 @@ namespace Vasily
         /// <returns></returns>
         public int Add(object obj)
         {
-            string sql = string.Empty;
-            if (_conditions != null)
-            {
-                sql = SqlTemplate.CustomerInsert(_model);
-            }
+            string sql = SqlTemplate.CustomerInsert(_model);
             return _handler.Reader.Execute(sql, obj);
         }
 

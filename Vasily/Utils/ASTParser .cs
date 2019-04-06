@@ -45,6 +45,10 @@ namespace Vasily
         {
             get
             {
+                if (conditions.Last==null)
+                {
+                    return order_condition;
+                }
                 if (Page.Item1 == -1)
                 {
                     return conditions.Last.Value ^ order_condition;
