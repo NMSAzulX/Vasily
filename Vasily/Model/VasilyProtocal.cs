@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Vasily
 {
@@ -20,6 +21,14 @@ namespace Vasily
             Script = script;
         }
         public T AcceptInstance
+        {
+            set
+            {
+                Instance = value;
+            }
+        }
+
+        public Dictionary<string,object> AcceptDict
         {
             set
             {
