@@ -276,15 +276,9 @@ VasilyProtocal<Entity> vp = condition=>condition.....
 ```c#
 //可以隐式转换为vp,进而适配vasily进行查询
 {
-     Instance:{ id:10000, name:"小明" },
+     AcceptInstance:{ id:10000, name:"小明" },
      Script:"c>id & c==name ^c - id ^(3,10)"
 }
-
-//VasilyController中增加了两个默认API：
-//api/[controller]/query-page-vp
-//api/[controoler]/query-vp
-//参数传vp格式即可
-
 ```
 
   sql 已经进行了防注入检测，参数也采用参数化处理
@@ -320,6 +314,13 @@ VasilyProtocal<Entity> vp = condition=>condition.....
    - [x] 支持雪花算法生成唯一ID
    
    - [x] 支持Link自定义操作
+   
+   - [x] 路由支持query-page-vp、query-vp路由自定义查询。
+   
+   - [x] 路由支持all-modify、all-add、all-delete整个实体类操作。
+   
+   - [x] 路由支持accurate-get、accurate-gets、accurate-page-gets、accurate-modify、accurate-add、accurate-delete、accurate-repeate路由精确操作。
+   
 
    - [ ]  考虑未来是否只支持.NETStandard2.1 
 
@@ -348,6 +349,7 @@ VasilyProtocal<Entity> vp = condition=>condition.....
    - 2018-12-07：重构关系操作，采用INNER JOIN, 优化引擎架构，提高复用性。
    - 2018-12-28：重构VP协议格式，使其更规范，消去对object的扩展。
    - 2019-04-05：增加LINK操作，移除3个ignore注解。
+   - 2019-04-07：增强VP协议，支持精确操作，增加VasilyProtocalController路由，提供灵活操作。
 
 ~~~
 
