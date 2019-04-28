@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 using Vasily.Utils;
 
 namespace Vasily.Core
@@ -54,7 +53,6 @@ namespace Vasily.Core
             ColFunction = (item) => { return RealColumn(item); };
             SourceFunction = (item) => { return SourceColumn(item); };
             
-
         }
 
         public void UseDefaultFilter()

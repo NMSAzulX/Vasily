@@ -160,6 +160,7 @@ namespace System
         }
 
     }
+
     public class DapperWrapper<T> : DapperWrapper
     {
         public static DapperWrapper<T> UseKey(string key)
@@ -614,6 +615,7 @@ namespace System
             return new DapperWrapper<T>(key);
         }
     }
+
     public abstract class RelationWrapper<T> : DapperWrapper<T>
     {
         internal MemberGetter[] _emits;

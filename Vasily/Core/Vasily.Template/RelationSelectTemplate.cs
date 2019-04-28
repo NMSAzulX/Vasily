@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Vasily.Utils;
 
 namespace Vasily.Core
 {
@@ -57,8 +58,8 @@ namespace Vasily.Core
 
             string source_table = model.EntityModel.TableName;
             StringBuilder sql = new StringBuilder(16 + source_table.Length);
-            string join_inner_table = $"{model.Left}V_{source_table}_TA{model.Right}";
-            string join_outter_table = $"{model.Left}V_{model.TableName}_TB{model.Right}";
+            string join_inner_table = JoinHelper.GetA(model.EntityModel);
+            string join_outter_table = JoinHelper.GetB(model);
             sql.Append($" AS {join_inner_table} INNER JOIN {model.Left}{model.TableName}{model.Right} AS {join_outter_table} ON ");
             sql.Append($"{join_inner_table}.{model.Left}{model.PreSource}{model.Right}={join_outter_table}.{model.Left}{model.ColFunction(model.Tables[0])}{model.Right}");
             for (int i = 1; i < conditions.Length; i+=1)
