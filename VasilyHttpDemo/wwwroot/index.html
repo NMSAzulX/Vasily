@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>测试</title>
+    <script>
+        window.onload = function () {
+            var button = document.querySelector("#submit");
+            button.addEventListener("click", function () {
+                var url = document.querySelector("#url").value;
+                var content = document.querySelector("#content").value;
+                var result = document.querySelector("#result");
+                var method = document.querySelector("#method").value;
+                var fields = document.querySelector("#fields").value;
+
+                var vp = document.querySelector("#vp").value;
+                if (method == "GET") {
+                    content = undefined;
+                } else {
+                    content = JSON.parse(content);
+                   // if (vp != undefined && vp != "") {
+                        content = {
+                            Script: vp,
+                            AcceptDict: content,
+                            Fields: fields.split(',')
+                     //   };
+                    }
+                }
+                console.log(content);
+                
+                fetch("https://localhost:5001" + url, {
+
+                    body: JSON.stringify(content),
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json; charset=UTF-8'
+                    }
+
+                }).then(response => {
+                    response.text().then(function (text) {
+                        result.innerHTML = text;
+                    });
+                });
+
+            });
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <input id="url" type="text" style="width:300px;height:45px" value="/api/student/accurate-gets"/>
+    </div>
+    <div>
+        <input id="method" type="text" style="width:300px;height:45px" value="POST" />
+    </div>
+    <div>
+        <input id="fields" type="text" style="width:300px;height:45px" value="id,name,age" />
+    </div>
+    <div>
+        <input id="vp" type="text" style="width:300px;height:45px" value="c>id && c!=name" />
+    </div>
+    <div>
+        <textarea id="content" style="width:400px;height:150px">{"id":0,"name":"xiaohong"}</textarea>
+    </div>
+    <div>
+        <input id="submit" type="button" value="提交！" />
+    </div>
+
+    <div>
+        <textarea id="result" style="width:800px;height:400px"></textarea>
+    </div>
+
+</body>
+</html>

@@ -30,6 +30,7 @@ namespace VasilyHttpDemo
             services.AddVasily(item =>
             { 
                 item.Add<MySqlConnection>("key", "Database=tmp_cb2016;Data Source=192.168.30.225;Port=3306;User Id=root;Password=123321;Charset=utf8;SslMode = none;");
+                item.Add<MySqlConnection>("School", "Server=192.168.62.128;Database=test; User=test;Password=123456;");
             });
         }
 
@@ -44,7 +45,7 @@ namespace VasilyHttpDemo
             {
                 app.UseHsts();
             }
-
+            app.UseStaticFiles();
             app.UseHttpsRedirection();
             app.UseMvc();
         }
