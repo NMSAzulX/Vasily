@@ -2,8 +2,9 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Vasily.VP.Standard;
+using Vasily.VP.Utils;
 
-namespace Vasily
+namespace Vasily.VP
 {
     public class VasilyProtocal<T> : SqlConditionBase
     {

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Vasily.Engine.Utils;
+using Vasily.VP;
 using Vasily.VP.Standard;
 
 namespace Vasily

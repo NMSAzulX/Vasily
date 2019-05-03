@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using Vasily.Model;
 
-namespace Vasily
+namespace Vasily.VP.Utils
 {
-    public class ASTParser<T> : CSharpSyntaxWalker
+    internal class ASTParser<T> : CSharpSyntaxWalker
     {
         public string operator_string;
         public string order_string;

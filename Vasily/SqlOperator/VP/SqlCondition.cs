@@ -1,10 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using Vasily;
 using Vasily.Model;
 using Vasily.VP.Standard;
 
-namespace Vasily
+namespace Vasily.VP
 {
 
     public class SqlCondition:SqlConditionBase

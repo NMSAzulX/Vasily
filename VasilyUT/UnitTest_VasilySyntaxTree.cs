@@ -4,6 +4,7 @@ using System.Text;
 using Vasily;
 using Vasily.Core;
 using Vasily.Engine;
+using Vasily.VP;
 using VasilyUT.Entity;
 using Xunit;
 
