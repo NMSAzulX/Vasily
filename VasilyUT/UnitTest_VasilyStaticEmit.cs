@@ -1,6 +1,6 @@
 ﻿using System;
 using Vasily;
-using Vasily.Core;
+using Vasily.Engine.Utils;
 using Xunit;
 
 namespace VasilyUT

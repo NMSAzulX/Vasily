@@ -1,6 +1,7 @@
 ﻿using System;
 using Vasily;
 using Vasily.Core;
+using Vasily.Engine;
 using VasilyUT.Entity;
 using Xunit;
 

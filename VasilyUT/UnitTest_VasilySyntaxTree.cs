@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Vasily;
 using Vasily.Core;
+using Vasily.Engine;
 using VasilyUT.Entity;
 using Xunit;
 

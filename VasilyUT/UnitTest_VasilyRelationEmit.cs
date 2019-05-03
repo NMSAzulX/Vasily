@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using Vasily;
-using Vasily.Core;
+﻿using Vasily;
+using Vasily.Engine;
 using VasilyUT.Entity;
 using Xunit;
 

@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Reflection;
 using Vasily;
-using Vasily.Core;
 using VasilyUT.Entity;
 using Xunit;
-using Vasily.Extensions;
+using Vasily.Engine.Extensions;
+using Vasily.Engine.Utils;
 
 namespace VasilyUT
 {
