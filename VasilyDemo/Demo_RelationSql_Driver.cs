@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Vasily;
 using VasilyDemo.Entities;
 
 namespace VasilyDemo

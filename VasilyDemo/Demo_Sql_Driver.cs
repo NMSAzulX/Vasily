@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using Vasily;
 using VasilyDemo.Entities;
 
 namespace VasilyDemo

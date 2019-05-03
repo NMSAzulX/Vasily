@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Vasily;
-using Vasily.Core;
+﻿using Vasily;
+using Vasily.Engine;
 using VasilyDemo.Entities;
 
 namespace VasilyDemo
