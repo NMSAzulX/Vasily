@@ -15,13 +15,13 @@ namespace Vasily.Core
         public string DeletePreRule(SqlRelationModel model, string pre)
         {
             DeleteTemplate delete = new DeleteTemplate();
-            string result = delete.DeleteWithCondition(model.RelationModel, pre);
-            model.RelationModel.FilterFunction = null;
+            string result = delete.DeleteWithCondition(model, pre);
+            model.FilterFunction = null;
             return result;
         }
         public string DeletePreSource(SqlRelationModel model)
         {
-            model.RelationModel.FilterFunction = (item) => { return model.SourceColumn(item); };
+            model.FilterFunction = (item) => { return model.SourceColumn(item); };
             return DeletePreRule(model, model.PreTable);
         }
         public string DeletePreTable(SqlRelationModel model)
@@ -31,11 +31,11 @@ namespace Vasily.Core
         public string DeleteAftRule(SqlRelationModel model, string[] aft)
         {
             DeleteTemplate delete = new DeleteTemplate();
-            return delete.DeleteWithCondition(model.RelationModel, aft);
+            return delete.DeleteWithCondition(model, aft);
         }
         public string DeleteAftSource(SqlRelationModel model)
         {
-            model.RelationModel.FilterFunction = (item) => { return model.SourceColumn(item); };
+            model.FilterFunction = (item) => { return model.SourceColumn(item); };
             return DeleteAftRule(model, model.AfterTables);
         }
         public string DeleteAftTable(SqlRelationModel model)

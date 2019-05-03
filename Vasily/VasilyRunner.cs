@@ -60,7 +60,7 @@ namespace System
                     bool IsNormal = element.GetInterface("IVasilyNormal") != null;
                     if (IsNormal)
                     {
-                        NormalAnalysis analysis = new NormalAnalysis(element);
+                        SqlNormalMaker analysis = new SqlNormalMaker(element);
                     }
                 });
             }
@@ -71,7 +71,7 @@ namespace System
                     bool IsNormal = item.GetInterface("IVasilyNormal") != null;
                     if (IsNormal)
                     {
-                        NormalAnalysis analysis = new NormalAnalysis(item);
+                        SqlNormalMaker analysis = new SqlNormalMaker(item);
                     }
                 }
             }

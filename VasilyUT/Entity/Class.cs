@@ -5,14 +5,14 @@ using Vasily;
 
 namespace VasilyUT.Entity
 {
-    [Table("AB")]
+    [Table("AB",SqlType.MySql)]
     public class Class:IVasilyNormal
     {
         [PrimaryKey]
         public int Cid;
         public string Other;
     }
-    [Table("AB")]
+    [Table("AB", SqlType.MySql)]
     public class Class1 : IVasilyNormal
     {
         [PrimaryKey]

@@ -12,7 +12,7 @@ namespace VasilyDemo
         SqlCondition<One> condition;
         public Demo_Union()
         {
-            NormalAnalysis<One> package = new NormalAnalysis<One>();
+            SqlMaker<One> package = new SqlMaker<One>();
             condition = new SqlCondition<One>();
 
         }

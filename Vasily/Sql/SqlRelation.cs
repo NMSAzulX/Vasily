@@ -7,7 +7,7 @@ namespace System
     {
         static RelationSql()
         {
-            RelationAnalysis analysis = new RelationAnalysis(typeof(RelationSql<T, Relation, C1>));
+            SqlRelationMaker analysis = new SqlRelationMaker(typeof(RelationSql<T, Relation, C1>));
         }
 
         public static MemberGetter[] Getters;
@@ -41,7 +41,7 @@ namespace System
     {
         static RelationSql()
         {
-            RelationAnalysis analysis = new RelationAnalysis(typeof(RelationSql<T, Relation, C1, C2>));
+            SqlRelationMaker analysis = new SqlRelationMaker(typeof(RelationSql<T, Relation, C1, C2>));
 
         }
         public static MemberGetter[] Getters;
@@ -71,7 +71,7 @@ namespace System
     {
         static RelationSql()
         {
-            RelationAnalysis analysis = new RelationAnalysis(typeof(RelationSql<T, Relation, C1, C2, C3>));
+            SqlRelationMaker analysis = new SqlRelationMaker(typeof(RelationSql<T, Relation, C1, C2, C3>));
         }
         public static MemberGetter[] Getters;
 
@@ -99,7 +99,7 @@ namespace System
     {
         static RelationSql()
         {
-            RelationAnalysis analysis = new RelationAnalysis(typeof(RelationSql<T, Relation, C1, C2, C3, C4>));
+            SqlRelationMaker analysis = new SqlRelationMaker(typeof(RelationSql<T, Relation, C1, C2, C3, C4>));
         }
         public static MemberGetter[] Getters;
 
@@ -127,7 +127,7 @@ namespace System
     {
         static RelationSql()
         {
-            RelationAnalysis analysis = new RelationAnalysis(typeof(RelationSql<T, Relation, C1, C2, C3, C4, C5>));
+            SqlRelationMaker analysis = new SqlRelationMaker(typeof(RelationSql<T, Relation, C1, C2, C3, C4, C5>));
         }
         public static MemberGetter[] Getters;
 
@@ -156,7 +156,7 @@ namespace System
     {
         static RelationSql()
         {
-            RelationAnalysis analysis = new RelationAnalysis(typeof(RelationSql<T, Relation, C1, C2, C3, C4, C5, C6>));
+            SqlRelationMaker analysis = new SqlRelationMaker(typeof(RelationSql<T, Relation, C1, C2, C3, C4, C5, C6>));
 
         }
         public static MemberGetter[] Getters;

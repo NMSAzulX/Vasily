@@ -23,12 +23,15 @@ namespace Vasily
         public Func<string, string> FilterFunction;
         public ConcurrentDictionary<string, string> ColumnMapping;
         public Type EntityType;
-        private AttrOperator _handler;
+        internal AttrOperator _handler;
         
-
-        public SqlModel(Type type)
+        public SqlModel()
         {
-            ColFunction = (item) => { return Column(item); };
+            ColFunction = (item) => { return RealColumn(item); };
+        }
+
+        public SqlModel(Type type):this()
+        {
             EntityType = type;
             _handler = new AttrOperator(type);
         }
@@ -69,47 +72,6 @@ namespace Vasily
             model.RemoveMembers(PrimaryKey);
             model.FilterFunction = FilterFunction;
             return model;
-        }
-
-        /// <summary>
-        /// 手动设置分隔符
-        /// </summary>
-        /// <param name="splite"></param>
-        public void SetSplite(string splite)
-        {
-            if (splite == null)
-            {
-                Left = default(char);
-                Right = default(char);
-            }
-            else
-            {
-                Left = splite[0];
-                Right = splite[1];
-            }
-        }
-
-        /// <summary>
-        /// 解析表注解，完善分隔符
-        /// </summary>
-        /// <param name="handler"></param>
-        public void SetTable(AttrOperator handler=null)
-        {
-            if (handler == null)
-            {
-                handler = _handler;
-            }
-            var table = handler.Instance<TableAttribute>();
-            if (table==null)
-            {
-                throw new NullReferenceException($"{handler._type}类不存在Table注解，请检查实体类！");
-            }
-            TableName = table.Name;
-            OperatorType = table.Type;
-            if (Left == default(char))
-            {
-                SetSplite(SqlSpliter.GetSpliter(OperatorType));
-            }
         }
 
         /// <summary>
@@ -185,7 +147,7 @@ namespace Vasily
         /// 生成静态缓存
         /// </summary>
         /// <param name="type"></param>
-        public void CacheGeneric(Type type)
+        public void StaticGenericCache(Type type)
         {
             //静态sql生成器。例如 MakerModel<Student>
             GsOperator gs = new GsOperator(typeof(SqlModel<>),type);
@@ -203,7 +165,7 @@ namespace Vasily
         /// </summary>
         /// <param name="item">当前属性</param>
         /// <returns>数据库中实际字段名</returns>
-        public string Column(string item)
+        public string RealColumn(string item)
         {
             if (ColumnMapping.ContainsKey(item))
             {
@@ -216,7 +178,7 @@ namespace Vasily
         /// 成员集合求并集
         /// </summary>
         /// <param name="members">需要合并的集合</param>
-        public void AddMembers(IEnumerable<string> members)
+        public void AppendMembers(IEnumerable<string> members)
         {
             if (Members == null)
             {
@@ -274,6 +236,14 @@ namespace Vasily
             };
             newModel.Members = new HashSet<string>(Members);
             return newModel;
+        }
+
+        /// <summary>
+        /// 清除过滤器
+        /// </summary>
+        public void ClearFilter()
+        {
+            FilterFunction = null;
         }
     }
 

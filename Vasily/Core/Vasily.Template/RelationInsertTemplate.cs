@@ -9,10 +9,9 @@ namespace Vasily.Core
         public string InsertRule(SqlRelationModel model)
         {
             
-            var temp_model = model.RelationModel.CopyInstance();
+            var temp_model = model.ModelWithoutPrimary();
             temp_model.ResetMembers(model.Tables);
-            temp_model.FilterFunction = model.FilterFunction;
-            //temp_model.PrimaryManually = true;
+
             InsertTemplate insert = new InsertTemplate();
             string sql = insert.Insert(temp_model);
             model.ClearFilter();

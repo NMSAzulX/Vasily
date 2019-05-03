@@ -10,7 +10,7 @@ namespace VasilyUT
         [Fact(DisplayName = "缓存-SQL生成器Model测试")]
         public void TestSelectRelation32()
         {
-            NormalAnalysis<Relation> package = new NormalAnalysis<Relation>();
+            SqlMaker<Relation> package = new SqlMaker<Relation>();
             Assert.Equal("Id", SqlModel<Relation>.PrimaryKey);
             Assert.Equal('`', SqlModel<Relation>.Left);
             Assert.Equal('`', SqlModel<Relation>.Right);
