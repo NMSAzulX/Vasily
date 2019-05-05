@@ -3,10 +3,6 @@ using System.Data;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Vasily
-{
-    public delegate IDbConnection DbCreator();
-}
 namespace Vasily.Engine.Utils
 {
     static class CtorOperator

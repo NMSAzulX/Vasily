@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 using Vasily;
 
 namespace VasilyDemo
@@ -16,6 +13,7 @@ namespace VasilyDemo
             //连接字符串为"连接字符串"
             Connector.Add<SqlConnection>("key:sql1", "连接字符串");
             Connector.Add<SqlConnection>("key:sql2", "写-连接字符串","读-连接字符串");
+            Connector.Add<SqlConnection,SqlConnection>("key:sql2", "写-连接字符串", "读-连接字符串");
 
             //获取"key:sql"的连接初始化器
             var creator = Connector.Initor("key:sql1");

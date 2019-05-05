@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Data;
 using Vasily.Engine.Utils;
 
 namespace Vasily
 {
+    public delegate IDbConnection DbCreator();
     public class Connector
     {
         internal static ConcurrentDictionary<string, (string Read, string Write)> _info_cache;
