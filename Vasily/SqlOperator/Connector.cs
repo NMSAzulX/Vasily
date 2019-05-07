@@ -6,10 +6,22 @@ using Vasily.Engine.Utils;
 namespace Vasily
 {
     public delegate IDbConnection DbCreator();
+
+    //public class Connector<T>
+    //{
+    //    public static ConcurrentDictionary<string, (DbCreator Read, DbCreator Write)> FuncCache;
+    //    static Connector()
+    //    {
+    //        FuncCache = new ConcurrentDictionary<string, (DbCreator Read, DbCreator Write)>();
+    //    }
+    //}
+
     public class Connector
     {
+
         internal static ConcurrentDictionary<string, (string Read, string Write)> _info_cache;
-        internal static ConcurrentDictionary<string, (DbCreator Read, DbCreator Write)> _func_cache;
+        internal static ConcurrentDictionary<string,(DbCreator Read, DbCreator Write)> _func_cache;
+
         private static Connector _connector;
         static Connector()
         {
@@ -81,6 +93,7 @@ namespace Vasily
         /// <returns>本身</returns>
         public static Connector AddRead<T>(string key, string read)
         {
+            //Connector<T>.FuncCache[key] = _func_cache[key];
             return AddRead(key, read, typeof(T));
         }
         public static Connector AddRead(string key, string read, Type type)
@@ -108,6 +121,7 @@ namespace Vasily
         /// <returns>本身</returns>
         public static Connector AddWrite<T>(string key, string write)
         {
+            //Connector<T>.FuncCache[key] = _func_cache[key];
             return AddWrite(key, write, typeof(T));
         }
         public static Connector AddWrite(string key, string write, Type type)
@@ -135,6 +149,7 @@ namespace Vasily
         /// <returns></returns>
         public static Connector Add<T>(string key, string value)
         {
+            //Connector<T>.FuncCache[key] = _func_cache[key];
             return Add<T>(key, value, value);
         }
 
@@ -168,5 +183,5 @@ namespace Vasily
     /*public ref readonly struct DbCreatorDelegate
     {
 
-    }*/
+    }*/ 
 }
