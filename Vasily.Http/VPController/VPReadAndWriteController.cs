@@ -17,21 +17,10 @@ namespace Microsoft.AspNetCore.Mvc
         {
 
         }
-        [HttpPost("query-page-vp")]
-        public ReturnPageResult QueryPageVP(VasilyProtocal<T> vp)
-        {
-            return GetsPageResult(vp);
-        }
-
-        [HttpPost("query-vp")]
-        public ReturnResult QueryVP(VasilyProtocal<T> vp)
-        {
-            return GetResult(vp);
-        }
 
         #region LinkQuery
         [HttpPost("accurate-count")]
-        public ReturnResult VasilyLinkGet(VasilyProtocal<T> vp)
+        public ReturnResult VasilyLinkCount(VasilyProtocal<T> vp)
         {
             return Result(SqlLink<T>.Load(driver).Fields(vp.Fields).Conditions(vp).Count(vp.Instance));
         }

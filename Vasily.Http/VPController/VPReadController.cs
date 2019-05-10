@@ -17,17 +17,6 @@ namespace Microsoft.AspNetCore.Mvc
         {
 
         }
-        [HttpPost("query-page-vp")]
-        public ReturnPageResult QueryPageVP(VasilyProtocal<T> vp)
-        {
-            return GetsPageResult(vp);
-        }
-
-        [HttpPost("query-vp")]
-        public ReturnResult QueryVP(VasilyProtocal<T> vp)
-        {
-            return GetResult(vp);
-        }
 
         #region LinkQuery
         [HttpPost("accurate-get")]

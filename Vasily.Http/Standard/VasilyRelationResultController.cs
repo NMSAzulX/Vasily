@@ -6,9 +6,8 @@ namespace Vasily.Http.Standard
 {
     public class VasilyRelationResultController<T> : VasilyResultController where T : class
     {
-
-        protected RelationWrapper<T> driver;
-        protected SqlCondition<T> c;
+        public RelationWrapper<T> driver;
+        public SqlCondition<T> c;
         public VasilyRelationResultController()
         {
             c = new SqlCondition<T>();
