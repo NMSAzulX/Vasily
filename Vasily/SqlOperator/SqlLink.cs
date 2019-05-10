@@ -122,7 +122,7 @@ namespace Vasily
             {
                 sql = SqlTemplate.UpdateWithCondition(_model, _conditions);
             }
-            return _handler.Reader.Execute(sql, obj);
+            return _handler.Writter.Execute(sql, obj);
         }
 
 
@@ -142,7 +142,7 @@ namespace Vasily
             {
                 sql = SqlTemplate.DeleteWithCondition(_model, _conditions);
             }
-            return _handler.Reader.Execute(sql, obj);
+            return _handler.Writter.Execute(sql, obj);
         }
 
 
@@ -154,7 +154,7 @@ namespace Vasily
         public int Add(object obj)
         {
             string sql = SqlTemplate.CustomerInsert(_model);
-            return _handler.Reader.Execute(sql, obj);
+            return _handler.Writter.Execute(sql, obj);
         }
 
 
@@ -169,5 +169,8 @@ namespace Vasily
             string sql = SqlTemplate.RepeateCount(_model);
             return _handler.Reader.ExecuteScalar<int>(sql, obj);
         }
+
+
+
     }
 }

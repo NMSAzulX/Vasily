@@ -172,7 +172,7 @@ namespace Vasily
         /// <returns>查询字符串结果</returns>
         public string SelectWithCondition(SqlModel model, params string[] conditions)
         {
-            var select = SelectWhere(model);
+            var select = Select(model);
             StringBuilder sql = new StringBuilder(select);
             ConditionTemplate template = new ConditionTemplate();
             sql.Append(template.Condition(model, conditions));

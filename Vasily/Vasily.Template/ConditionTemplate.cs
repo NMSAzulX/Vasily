@@ -18,7 +18,7 @@ namespace Vasily
             {
                 return string.Empty;
             }
-            StringBuilder sql = new StringBuilder();
+            StringBuilder sql = new StringBuilder(" WHERE ");
             for (int i = 0; i < conditions.Length; i += 1)
             {
                 sql.Append(model.Left);
@@ -49,7 +49,7 @@ namespace Vasily
         public string Condition(SqlModel model, IEnumerable<string> conditions)
         {
 
-            StringBuilder sql = new StringBuilder();
+            StringBuilder sql = new StringBuilder(" WHERE ");
             foreach (var item in conditions)
             {
                 sql.Append(model.Left);

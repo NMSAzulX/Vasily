@@ -6,16 +6,16 @@ namespace Vasily
     public class UpdateTemplate
     {
         /// <summary>
-        /// 根据model信息生成 UPDATE [TableName] SET([member1]=@member1,[member2]...=@member2...) WHERE
+        /// 根据model信息生成 UPDATE [TableName] SET([member1]=@member1,[member2]...=@member2...)
         /// </summary>
         /// <param name="model">载有生成信息的Model</param>
         /// <returns>更新字符串结果</returns>
-        public string UpdateWhere(SqlModel model)
+        public string Update(SqlModel model)
         {
             var temp_model = model.ModelWithoutPrimary();
 
             StringBuilder update = new StringBuilder(40);
-  
+
             foreach (var item in temp_model.Members)
             {
                 update.Append(temp_model.Left);
@@ -30,7 +30,7 @@ namespace Vasily
                 update.Append(temp_model.Right);
 
                 update.Append("=@");
-                if (temp_model.FilterFunction!=null)
+                if (temp_model.FilterFunction != null)
                 {
                     update.Append(temp_model.FilterFunction(item));
                 }
@@ -38,7 +38,7 @@ namespace Vasily
                 {
                     update.Append(item);
                 }
-                
+
                 update.Append(',');
             }
 
@@ -52,9 +52,22 @@ namespace Vasily
                 sql.Append(temp_model.Right);
                 sql.Append(" SET ");
                 sql.Append(update);
-                sql.Append(" WHERE ");
+                //sql.Append(" WHERE ");
             }
-  
+
+            return sql.ToString();
+        }
+
+
+        /// <summary>
+        /// 根据model信息生成 UPDATE [TableName] SET([member1]=@member1,[member2]...=@member2...) WHERE
+        /// </summary>
+        /// <param name="model">载有生成信息的Model</param>
+        /// <returns>更新字符串结果</returns>
+        public string UpdateWhere(SqlModel model)
+        {
+            StringBuilder sql = new StringBuilder(Update(model));
+            sql.Append(" WHERE ");
             return sql.ToString();
         }
 
@@ -88,7 +101,7 @@ namespace Vasily
         /// <returns>更新字符串结果</returns>
         public string UpdateWithCondition(SqlModel model, params string[] conditions)
         {
-            var select = UpdateWhere(model);
+            var select = Update(model);
             StringBuilder sql = new StringBuilder(select);
             ConditionTemplate template = new ConditionTemplate();
             sql.Append(template.Condition(model, conditions));

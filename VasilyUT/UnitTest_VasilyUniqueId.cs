@@ -13,7 +13,7 @@ namespace VasilyUT
         {
             HashSet<long> hashSet = new HashSet<long>();
             Snowflake<Student>.SetNodesInfo(54321, 12345);
-            for (int i = 0; i < 10000; i+=1)
+            for (int i = 0; i < 10; i+=1)
             {
                 long result = Snowflake<Student>.NextId;
                 Assert.DoesNotContain(result, hashSet);

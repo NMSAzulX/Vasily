@@ -44,8 +44,7 @@ namespace Vasily
         /// <returns>查询字符串结果</returns>
         public string SelectCountWithCondition(SqlModel model, params string[] conditions)
         {
-            var select = SelectCountWhere(model);
-            StringBuilder sql = new StringBuilder(select);
+            StringBuilder sql = new StringBuilder(SelectCount(model));
             ConditionTemplate template = new ConditionTemplate();
             sql.Append(template.Condition(model, conditions));
             return sql.ToString();

@@ -5,6 +5,9 @@ namespace Vasily.Core
 {
     public class RepeateTemplate
     {
+
+
+
         /// <summary>
         /// 根据model信息生成 SELECT COUNT(*) FROM [TableName] WHERE [Member1]=@Member1 AND [Member2]=@Member2 ....
         /// </summary>
@@ -17,7 +20,6 @@ namespace Vasily.Core
             sql.Append(model.Left);
             sql.Append(model.TableName);
             sql.Append(model.Right);
-            sql.Append(" WHERE ");
 
             ConditionTemplate template = new ConditionTemplate();
             sql.Append(template.Condition(model, model.Members));
@@ -41,7 +43,6 @@ namespace Vasily.Core
             sql.Append(model.Left);
             sql.Append(model.TableName);
             sql.Append(model.Right);
-            sql.Append(" WHERE ");
 
             ConditionTemplate template = new ConditionTemplate();
             sql.Append(template.Condition(model, model.Members));
@@ -61,7 +62,6 @@ namespace Vasily.Core
             sql.Append(model.Left);
             sql.Append(model.TableName);
             sql.Append(model.Right);
-            sql.Append(" WHERE ");
 
             ConditionTemplate template = new ConditionTemplate();
             sql.Append(template.Condition(model, model.Members));

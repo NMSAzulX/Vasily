@@ -30,7 +30,7 @@ namespace Vasily
 
         public static string CustomerSelect(SqlModel model,string condition)
         {
-            return Select.SelectWhere(model) + condition;
+            return $"{Select.Select(model)} WHERE {condition}";
         }
 
 
@@ -65,7 +65,7 @@ namespace Vasily
         /// <returns>更新字符串结果</returns>
         public static string CustomerUpdate(SqlModel model,string condition)
         {
-            return Update.UpdateWhere(model) + condition;
+            return $"{Update.Update(model)} WHERE {condition}";
         }
 
 
@@ -101,7 +101,7 @@ namespace Vasily
         /// <returns>删除字符串结果</returns>
         public static string CustomerDelete(SqlModel model, string condition)
         {
-            return Delete.DeleteWhere(model)+condition;
+            return $"{Delete.Delete(model)} WHERE {condition}";
         }
 
 

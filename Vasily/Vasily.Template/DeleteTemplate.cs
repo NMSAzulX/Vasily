@@ -6,17 +6,29 @@ namespace Vasily
     public class DeleteTemplate 
     {
         /// <summary>
-        /// 根据model信息生成 DELETE FROM [TableName] WHERE 
+        /// 根据model信息生成 DELETE FROM [TableName] 
         /// </summary>
         /// <param name="model">载有生成信息的Model</param>
         /// <returns>删除字符串结果</returns>
-        public string DeleteWhere(SqlModel model)
+        public string Delete(SqlModel model)
         {
             StringBuilder sql = new StringBuilder(21 + model.TableName.Length);
             sql.Append("DELETE FROM ");
             sql.Append(model.Left);
             sql.Append(model.TableName);
             sql.Append(model.Right);
+            //sql.Append(" WHERE ");
+            return sql.ToString();
+        }
+
+        /// <summary>
+        /// 根据model信息生成 DELETE FROM [TableName] WHERE 
+        /// </summary>
+        /// <param name="model">载有生成信息的Model</param>
+        /// <returns>删除字符串结果</returns>
+        public string DeleteWhere(SqlModel model)
+        {
+            StringBuilder sql = new StringBuilder(Delete(model));
             sql.Append(" WHERE ");
             return sql.ToString();
         }
@@ -51,8 +63,7 @@ namespace Vasily
         /// <returns>删除字符串结果</returns>
         public string DeleteWithCondition(SqlModel model, params string[] conditions)
         {
-            var del = DeleteWhere(model);
-            StringBuilder sql = new StringBuilder(del);
+            StringBuilder sql = new StringBuilder(Delete(model));
             ConditionTemplate template = new ConditionTemplate();
             sql.Append(template.Condition(model, conditions));
             return sql.ToString();
