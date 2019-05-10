@@ -38,6 +38,10 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             Connector.Add<T>(key, reader, writter);
         }
+        public void Add<T,S>(string key, string reader, string writter)
+        {
+            Connector.Add<T,S>(key, reader, writter);
+        }
         public void AddRead<T>(string key, string reader)
         {
             Connector.AddRead<T>(key, reader);
