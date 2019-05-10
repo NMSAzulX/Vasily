@@ -10,6 +10,7 @@ namespace Vasily
         public static DeleteTemplate Delete;
         public static InsertTemplate Insert;
         public static RepeateTemplate Repeate;
+        public static CountTemplate Count;
         static SqlTemplate()
         {
             Select = new SelectTemplate();
@@ -17,6 +18,31 @@ namespace Vasily
             Delete = new DeleteTemplate();
             Insert = new InsertTemplate();
             Repeate = new RepeateTemplate();
+            Count = new CountTemplate();
+        }
+
+
+        /// <summary>
+        /// 根据model信息生成 SELECT COUNT(*) FROM [TableName] WHERE  + condition
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+
+        public static string CustomerCount(SqlModel model, string condition)
+        {
+            return $"{Count.SelectCount(model)} WHERE {condition}";
+        }
+
+        /// <summary>
+        /// 根据model信息生成 SELECT COUNT(*) FROM [TableName] WHERE [condition1]=@condition,[condition2]=@condition2.....
+        /// </summary>
+        /// <param name="model">载有生成信息的Model</param>
+        /// <param name="condition_models">需要匹配的成员集合</param>
+        /// <returns>查询字符串结果</returns>
+        public static string CountWithCondition(SqlModel model, params string[] conditions)
+        {
+            return Count.SelectCountWithCondition(model, conditions);
         }
 
 

@@ -3,6 +3,18 @@ using Vasily.VP;
 
 namespace Microsoft.AspNetCore.Mvc
 {
+
+    public class VPCountController<T> : VasilyController<T> where T : class {
+
+        #region LinkQuery
+        [HttpPost("accurate-count")]
+        public ReturnResult VasilyLinkGet(VasilyProtocal<T> vp)
+        {
+            return Result(SqlLink<T>.Load(driver).Fields(vp.Fields).Conditions(vp).Count(vp.Instance));
+        }
+        #endregion
+    }
+
     public class VPReadController<T> : VasilyController<T> where T : class
     {
         public VPReadController()
@@ -44,13 +56,10 @@ namespace Microsoft.AspNetCore.Mvc
         {
             return Result(SqlLink<T>.Load(driver).Fields(vp.Fields).Conditions(vp).Gets<object>(vp.Instance), driver.CountWithCondition(vp));
         }
-        [HttpDelete("accurate-repeate")]
-        public ReturnResult VasilyLinkRepeate(VasilyProtocal<T> vp)
-        {
-            return Result(SqlLink<T>.Load(driver).Fields(vp.Fields).Conditions(vp).Repeate(vp.Instance));
-        }
         #endregion
     }
+
+
 
     public class VPWriteController<T> : VasilyController<T> where T : class
     {
@@ -85,7 +94,6 @@ namespace Microsoft.AspNetCore.Mvc
             return Result(SqlLink<T>.Load(driver).Fields(vp.Fields).Conditions(vp).Delete(vp.Instance));
         }
         #endregion
-
 
         #region 整个实体进行操作
         [HttpPost("all-modify")]
@@ -146,11 +154,6 @@ namespace Microsoft.AspNetCore.Mvc
         public ReturnPageResult VasilyLinkPageGets(VasilyProtocal<T> vp)
         {
             return Result(SqlLink<T>.Load(driver).Fields(vp.Fields).Conditions(vp).Gets<object>(vp.Instance), driver.CountWithCondition(vp));
-        }
-        [HttpDelete("accurate-repeate")]
-        public ReturnResult VasilyLinkRepeate(VasilyProtocal<T> vp)
-        {
-            return Result(SqlLink<T>.Load(driver).Fields(vp.Fields).Conditions(vp).Repeate(vp.Instance));
         }
         [HttpPost("accurate-modify")]
         public ReturnResult VasilyLinkModify(VasilyProtocal<T> vp)

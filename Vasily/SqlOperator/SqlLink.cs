@@ -170,6 +170,24 @@ namespace Vasily
             return _handler.Reader.ExecuteScalar<int>(sql, obj);
         }
 
+        /// <summary>
+        /// 查重数据
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public int Count(object obj)
+        {
+            string sql = string.Empty;
+            if (_conditions == null)
+            {
+                sql = SqlTemplate.CustomerCount(_model, _sqlCondition);
+            }
+            else
+            {
+                sql = SqlTemplate.CountWithCondition(_model, _conditions);
+            }
+            return _handler.Reader.ExecuteScalar<int>(sql, obj);
+        }
 
 
     }
