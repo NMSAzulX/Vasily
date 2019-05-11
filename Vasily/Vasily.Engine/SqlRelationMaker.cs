@@ -62,9 +62,15 @@ namespace Vasily.Engine
                     return;
                 }
                 //创建标签Helper
-
+                Type entityType = types[0];
+                string temp_name = entityType.Name.Split('_')[0];
+                if (VasilyRunner.RelationExtentsionTyps.ContainsKey(temp_name))
+                {
+                    entityType =  VasilyRunner.RelationExtentsionTyps[temp_name];
+                }
+               
                 SqlRelationModel model = new SqlRelationModel(types[1], temp_types);
-                _handler = new AttrOperator(types[1]);
+                _handler = new AttrOperator(entityType);
                 //初始化关系类型
                 Init(model);
                 //主键解析
@@ -76,7 +82,7 @@ namespace Vasily.Engine
                 //表名解析
                 SetTable(model);
                 //设置主体类Model -- 关联的实体
-                model.SetJoinSourceModel(SqlNormalMaker.Create(types[0], splite));
+                model.SetJoinSourceModel(SqlNormalMaker.Create(entityType, splite));
 
                 StaticGenericModelCache(model, type);
                 StaticSqlStringCache(model, type);

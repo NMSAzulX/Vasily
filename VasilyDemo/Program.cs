@@ -2,6 +2,7 @@
 using System;
 using System.Data.SqlClient;
 using Vasily;
+using Vasily.Engine;
 using VasilyDemo.Entities;
 
 namespace VasilyDemo
@@ -10,7 +11,7 @@ namespace VasilyDemo
     {
         static void Main(string[] args)
         {
-
+            /*
             Connector.Add<SqlConnection>("key:sql1", "连接字符串");
             Connector.Add<SqlConnection>("key:sql2", "写-连接字符串", "读-连接字符串");
 
@@ -54,7 +55,27 @@ namespace VasilyDemo
             //Demo_RelationSql.Start();
 
 
-            //BenchmarkRunner.Run<Demo_Union>();
+            //BenchmarkRunner.Run<Demo_Union>();*/
+            //SqlMaker<Student> package = new SqlMaker<Student>();
+            //var fields = typeof(SqlEntity<Student>).GetFields();
+            //foreach (var item in fields)
+            //{
+            //    Console.WriteLine(item.Name + "\t:\t"+ item.GetValue(null));
+            //}
+            //new SqlMaker<SchoolClass>();
+            //new SqlRelationMaker(typeof(RelationSql<Student, StudentAndClass, SchoolClass>));
+            //fields = typeof(RelationSql<Student, StudentAndClass, SchoolClass>).GetFields();
+            //foreach (var item in fields)
+            //{
+            //    Console.WriteLine(item.Name + "\t:\t" + item.GetValue(null));
+            //}
+            VasilyRunner.Run();
+            new SqlRelationMaker(typeof(RelationSql<City, City, City_Anyname>));
+            var fields = typeof(RelationSql<City, City, City_Anyname>).GetFields();
+            foreach (var item in fields)
+            {
+                Console.WriteLine(item.Name + "\t:\t" + item.GetValue(null));
+            }
             Console.ReadKey();
         }
     }

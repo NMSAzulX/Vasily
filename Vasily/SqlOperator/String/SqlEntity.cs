@@ -30,7 +30,6 @@ namespace Vasily
         public static string DeleteByPrimary;
 
         public static string InsertAll;
-        public static string Insert;
 
         public static string RepeateCount;
         public static string RepeateId;

@@ -40,12 +40,12 @@ namespace Vasily.Engine.Standard
             {
                 _column_mapping[item.Name] = item.Name;
             }
+            model.ResetMembers(_column_mapping.Values.ToArray());
             foreach (var item in mappings)
             {
                 _column_mapping[item.Member.Name] = item.Instance.Name;
             }
             model.ColumnMapping = _column_mapping;
-            model.ResetMembers(_column_mapping.Values.ToArray());
         }
 
 

@@ -104,9 +104,9 @@ namespace Vasily.Engine
 
             RepeateTemplate repeate = new RepeateTemplate();
             var repeateModel = model.ModelWithAttr<NoRepeateAttribute>();
-            gs["RepeateCount"] = repeate.RepeateCount(model);
-            gs["RepeateId"] = repeate.RepeateId(model);
-            gs["RepeateEntities"] = repeate.RepeateEntities(model);
+            gs["RepeateCount"] = repeate.RepeateCount(repeateModel);
+            gs["RepeateId"] = repeate.RepeateId(repeateModel);
+            gs["RepeateEntities"] = repeate.RepeateEntities(repeateModel);
         }
 
 

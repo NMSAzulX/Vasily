@@ -45,9 +45,6 @@ namespace VasilyDemo
             //DELETE FROM [table_one] WHERE
 
 
-            Console.WriteLine(SqlEntity<One>.Insert);
-            //INSERT INTO [table_one] ([name],[create_time],[update_time],[age],[student_id])VALUES(@name, @create_time, @update_time, @age, @student_id)
-
             Console.WriteLine(SqlEntity<One>.InsertAll);
             //INSERT INTO [table_one] ([name],[create_time],[update_time],[age],[student_id])VALUES(@name, @create_time, @update_time, @age, @student_id)
 
