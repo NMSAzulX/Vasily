@@ -22,6 +22,7 @@ namespace System
         static Snowflake()
         {
             _datacenter_length = 5;
+            _datanodes_length = 5;
         }
         /// <summary>
         /// 区域以及节点信息
