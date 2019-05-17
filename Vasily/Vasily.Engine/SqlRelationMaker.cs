@@ -70,7 +70,7 @@ namespace Vasily.Engine
                 }
                
                 SqlRelationModel model = new SqlRelationModel(types[1], temp_types);
-                _handler = new AttrOperator(entityType);
+                _handler = new AttrOperator(types[1]);
                 //初始化关系类型
                 Init(model);
                 //主键解析

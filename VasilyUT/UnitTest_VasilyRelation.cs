@@ -12,26 +12,26 @@ namespace VasilyUT
         [Fact(DisplayName = "A32-关系数组")]
         public void TestTableArray()
         {
-            //SqlMaker<Relation> package = new SqlMaker<Relation>();
+            new SqlRelationMaker(typeof(RelationSql<Student, Relation, Relation>));
             Assert.Equal("StudentId,Id", string.Join(',', RelationSql<Student, Relation, Relation>.TableConditions));
         }
 
         [Fact(DisplayName = "A32-总数查询")]
         public void TestTableCount()
         {
-            //SqlMaker<Relation> package = new SqlMaker<Relation>();
+            new SqlRelationMaker(typeof(RelationSql<Student, Relation, Relation>));
             Assert.Equal("SELECT COUNT(*) FROM `1` AS `V_1_TA` INNER JOIN `关系映射表` AS `V_关系映射表_TB` ON `V_1_TA`.`Sid`=`V_关系映射表_TB`.`StudentId` AND `V_关系映射表_TB`.`Id`=@Id",  RelationSql<Student, Relation, Relation>.CountFromTable);
         }
         [Fact(DisplayName = "A32-总数查询")]
         public void TestSourceCount()
         {
-            //SqlMaker<Relation> package = new SqlMaker<Relation>();
+            new SqlRelationMaker(typeof(RelationSql<Relation, Relation, Student>));
             Assert.Equal("SELECT COUNT(*) FROM `关系映射表` AS `V_关系映射表_TA` INNER JOIN `关系映射表` AS `V_关系映射表_TB` ON `V_关系映射表_TA`.`Id`=`V_关系映射表_TB`.`Id` AND `V_关系映射表_TB`.`StudentId`=@Sid", RelationSql<Relation, Relation, Student>.CountFromSource);
         }
         [Fact(DisplayName = "A32-关系数组")]
         public void TestSourceArray()
         {
-            //SqlMaker<Relation> package = new SqlMaker<Relation>();
+            new SqlRelationMaker(typeof(RelationSql<Student, Relation, Relation>));
             Assert.Equal("Sid,Id", string.Join(',', RelationSql<Student, Relation, Relation>.SourceConditions));
         }
         [Fact(DisplayName = "A32-查询-关系表生成测试")]
